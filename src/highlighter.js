@@ -1,1 +1,3 @@
-console.log(11);
+export default class Highlighter {
+  constructor () {}
+}
