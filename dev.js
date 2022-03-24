@@ -34,7 +34,8 @@ const config = {
       filename: 'demos/test.html',
       template: path.resolve(__dirname, 'template/test.html'),
       publicPath: '../',
-      scriptLoading: 'blocking'
+      scriptLoading: 'blocking',
+      inject: 'head'
     }),
     new ESLintPlugin()
   ]
