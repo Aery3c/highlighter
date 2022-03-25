@@ -3,7 +3,6 @@ module.exports = {
     "browser": true,
     "es2021": true,
     "node": true,
-    // "amd": true,
   },
   "extends": "eslint:recommended",
   "parserOptions": {
@@ -11,5 +10,7 @@ module.exports = {
     "sourceType": "module"
   },
   "rules": {
+    "no-debugger": "off",
+    "no-unused-vars": 1
   }
 }
