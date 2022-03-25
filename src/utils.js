@@ -6,7 +6,7 @@
  * @param [defaults] - defaults
  * @return {{}}
  */
-export function createOptions(options, defaults) {
+export function createOptions (options, defaults) {
   let params = {};
   if (typeof params === 'object') {
     Object.assign(params, options);
