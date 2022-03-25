@@ -1,6 +1,9 @@
 import Highlighter from './highlighter';
-import enhancePrototype from './core/range';
+import enhanceRangePrototype from './core/range';
+import enhanceSelectionPrototype from './core/selection';
 
-Object.assign(Range.prototype, enhancePrototype);
+Object.assign(Range.prototype, enhanceRangePrototype);
+
+Object.assign(Selection.prototype, enhanceSelectionPrototype);
 
 export default Highlighter;
