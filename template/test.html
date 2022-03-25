@@ -3,11 +3,31 @@
 <head>
   <meta charset="UTF-8">
   <title><%= htmlWebpackPlugin.options.title %></title>
+  <style>
+    .highlight {
+      background-color: yellow;
+    }
+  </style>
 </head>
-<body>
+<body><br><br><p id="main">where <code>CompareHow</code> is one of four values:
+<code>START_TO_START</code>, <code>START_TO_END</code>,
+    <code>END_TO_END</code> and <code>END_TO_START</code>. The return
+    value is -1, 0 or 1 depending on whether the corresponding
+    boundary-point of the Range is before, equal to, or after the
+    corresponding boundary-point of <code>sourceRange</code>. An
+    exception is thrown if the two Ranges have different <a href="ranges.html#td-root-container"><em>root
+      container</em></a>s.</p>
+  <br>
+  <button id="test-highlight">test-highlight</button>
   <script>
-    const highligt = new Highlighter()
-    console.log(highligt);
+    const highligter = new Highlighter()
+
+    document.querySelector('#test-highlight').addEventListener('click', function() {
+      highligter.highlightToSelection({
+        containerElementId: 'main'
+      });
+    });
+
   </script>
 </body>
 </html>
