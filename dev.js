@@ -37,7 +37,10 @@ const config = {
       scriptLoading: 'blocking',
       inject: 'head'
     }),
-    new ESLintPlugin()
+    new ESLintPlugin({
+      failOnWarning: false,
+      quiet: true
+    })
   ]
 };
 
