@@ -4,7 +4,7 @@ interface Selection {
 }
 
 interface Range {
-  getBookMark(containerElement: HTMLElement): BookMark
+  getBookmark(containerElement: HTMLElement | Node): BookMark
 }
 
-type BookMark = { start: number, end: number, containerElement: HTMLElement }
+type BookMark = { start: number, end: number, containerElement: HTMLElement | Node }
