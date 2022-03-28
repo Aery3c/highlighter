@@ -3,11 +3,15 @@
 import { createOptions } from './utils';
 import { getContainerElement } from './dom';
 import CharacterRange from './core/characterRange';
+import Highlight from './core/highlight';
 
 const highligterPropsNames = ['className', 'tagName'];
 
 export default class Highlighter {
   constructor (options = {}) {
+
+    this.highlights = [];
+
     options = createOptions(options, {
       className: 'highlight',
       tagName: 'span'
@@ -48,11 +52,18 @@ export default class Highlighter {
    * @return {Highlight[]}
    */
   highlightToCharacterRanges (characterRanges, containerElementId) {
-    characterRanges.forEach(characterRange => {
-      // todo
-    });
-  }
 
+    const containerElement = getContainerElement(containerElementId);
+
+    characterRanges.forEach(characterRange => {
+      this.highlights.push(new Highlight(characterRange, containerElement, containerElementId))
+    });
+
+    this.highlights.forEach(highlight => {
+      highlight.apply();
+    });
+
+  }
 }
 
 /**
@@ -66,7 +77,7 @@ export function serializeSelection (selection, containerElement) {
   const ranges = selection.getAllRange();
   ranges.forEach(range => {
     selInfos.push({
-      characterRange: CharacterRange.fromRange(range, containerElement),
+      characterRange: CharacterRange.rangeToCharacterRange(range, containerElement),
       isBackward: selection.isBackward()
     })
   });
