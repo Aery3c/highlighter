@@ -18,11 +18,11 @@ export default class CharacterRange {
    * @return {Range}
    */
   getRange () {
-    return CharacterRange.CharacterRangeToRange(this);
+    return CharacterRange.characterRangeToRange(this);
   }
 
   toString () {
-
+    return this.getRange().toString();
   }
 
   /**
@@ -38,7 +38,7 @@ export default class CharacterRange {
     return new CharacterRange(start, end, containerElement);
   }
 
-  static CharacterRangeToRange (characterRange) {
+  static characterRangeToRange (characterRange) {
     const range = document.createRange();
     range.moveToBookmark(characterRange);
     return range;
