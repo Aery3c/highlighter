@@ -1,5 +1,6 @@
 'use strict'
 
+import RangeIterator from './core/rangeIterator';
 /**
  *
  * @param {string} id
@@ -31,4 +32,65 @@ export function getNodeIndex (node) {
   }
 
   return index;
+}
+
+/**
+ *
+ * @param {Range} range
+ * @param {number} whatToShow
+ * @param {NodeFilter} [filter]
+ */
+export function getNodesInRange (range, whatToShow, filter) {
+  let nodes = [], it = RangeIterator.createRangeIterator(range, whatToShow, filter), node;
+  while ((node = it.next().value)) {
+    nodes.push(node);
+  }
+  return nodes;
+}
+
+/**
+ *
+ * @param {Node} node
+ * @param {Node} ancestor
+ * @return {Node | null}
+ */
+export function getClosestAncestorIn (node, ancestor) {
+  let p;
+  while (node) {
+    p = node.parentNode;
+    if (p === ancestor) {
+      return node;
+    }
+    node = p;
+  }
+
+  return null;
+}
+
+/**
+ *
+ * @param {Node} ancestor
+ * @param {Node} descendant
+ * @return {boolean}
+ */
+export function isAncestorOf (ancestor, descendant) {
+  return !!(ancestor.compareDocumentPosition(descendant) & 16)
+}
+
+/**
+ *
+ * @param {Node} node
+ * @return {number}
+ */
+export function getNodeLength (node) {
+  switch (node.nodeType) {
+    case Node.PROCESSING_INSTRUCTION_NODE:
+    case Node.DOCUMENT_TYPE_NODE:
+      return 0;
+    case Node.TEXT_NODE:
+    case Node.COMMENT_NODE:
+      return node.length;
+    default:
+      return node.childNodes.length;
+  }
 }
