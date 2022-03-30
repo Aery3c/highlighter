@@ -94,3 +94,12 @@ export function getNodeLength (node) {
       return node.childNodes.length;
   }
 }
+
+/**
+ *
+ * @param {HTMLElement} el
+ * @param {string} className
+ */
+export function addClass (el, className) {
+  el.classList.add(className);
+}
