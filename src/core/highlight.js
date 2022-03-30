@@ -1,13 +1,10 @@
 'use strict';
+import { addClass } from '../dom';
 
 export default class Highlight {
-  /**
-   *
-   * @param {CharacterRange} characterRange
-   * @param {HTMLElement} containerElement
-   * @param {string} containerElementId
-   */
-  constructor(characterRange, containerElement, containerElementId) {
+  constructor(className, tagName, characterRange, containerElement, containerElementId) {
+    this.className = className;
+    this.tagName = tagName;
     this.characterRange = characterRange;
     this.containerElement = containerElement;
     this.containerElementId = containerElementId;
@@ -42,12 +39,17 @@ export default class Highlight {
   applyTextNode (textNode) {
     const textNodeParent = textNode.parentNode;
     if (textNodeParent) {
-      textNodeParent.insertBefore();
+      const el = this.createWrapperContainer();
     }
   }
 
-  createWrapper () {
-
+  /**
+   * @return {HTMLElement}
+   */
+  createWrapperContainer () {
+    const el = document.createElement(this.tagName);
+    addClass(el, this.className);
+    return el;
   }
 
 }
