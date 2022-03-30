@@ -1,17 +1,23 @@
 'use strict'
 
-import { isCharacterDataNode, getNodeIndex } from '../dom';
+import { isCharacterDataNode, getNodeIndex, getNodesInRange } from '../dom';
 
-Range.prototype.getNodes = function () {
-  // todo
+/**
+ *
+ * @param {number} [whatToShow]
+ * @param {NodeFilter} [filter]
+ * @return {Node[]}
+ */
+Range.prototype.getNodes = function (whatToShow, filter) {
+  return getNodesInRange(this, whatToShow, filter);
 }
 
 /**
  *
- * @return {Text[]}
+ * @return {Node[]}
  */
 Range.prototype.getEffectiveTextNodes = function () {
-  const textNodes = this.getNodes([ Node.TEXT_NODE ]);
+  const textNodes = this.getNodes(NodeFilter.SHOW_TEXT);
 
   let start = 0, node;
   while ( (node = textNodes[start]) && !rangeSelectsAnyText(this, node) ) {
@@ -27,7 +33,7 @@ Range.prototype.getEffectiveTextNodes = function () {
 
 /** @this Range */
 Range.prototype.splitBoundaries = function () {
-  let sc = this.startContainer, so = this.startOffset, ec = this.endContainer, eo = this.endOffset;
+  let [sc, so, ec, eo] = [this.startContainer, this.startOffset, this.endContainer, this.endOffset];
   const startSameEnd = (sc === ec);
   if (isCharacterDataNode(ec) && eo > 0 && eo < ec.length) {
     ec.splitText(eo);
@@ -43,6 +49,8 @@ Range.prototype.splitBoundaries = function () {
     }
     so = 0;
   }
+
+  this.setStartAndEnd(sc, so, ec, eo);
 }
 
 /**
@@ -65,6 +73,11 @@ Range.prototype.getBookmark = function (containerElement) {
     end,
     containerElement
   }
+}
+
+Range.prototype.setStartAndEnd = function (sc, so, ec, eo) {
+  this.setStart(sc, so);
+  this.setEnd(ec, eo);
 }
 
 /**
