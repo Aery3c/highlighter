@@ -103,3 +103,13 @@ export function getNodeLength (node) {
 export function addClass (el, className) {
   el.classList.add(className);
 }
+
+/**
+ *
+ * @param {HTMLElement} el
+ * @param {string} className
+ * @return {boolean}
+ */
+export function hasClass(el, className) {
+  return el.classList.contains(className);
+}

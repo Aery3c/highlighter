@@ -1,5 +1,6 @@
 'use strict';
-import { addClass } from '../dom';
+import { addClass, hasClass } from '../dom';
+import { updateRangeFromCharacterRange } from '../utils';
 
 export default class Highlight {
   constructor(className, tagName, characterRange, containerElement, containerElementId) {
@@ -24,12 +25,22 @@ export default class Highlight {
 
     // get all textNode from range
     const textNodes = range.getEffectiveTextNodes();
-
-    // applyToTextNodes
     textNodes.forEach(textNode => {
-      this.applyTextNode(textNode);
+      // forEach textNodes and applyTextNode
+      if (this.getSelfOrAncestorWithClass(textNode) == null) {
+        this.applyTextNode(textNode);
+      }
     });
 
+    // infect Adjacent node
+    this.infect()
+
+    updateRangeFromCharacterRange(range, this.characterRange);
+
+  }
+
+  infect () {
+    // todo
   }
 
   /**
@@ -40,6 +51,8 @@ export default class Highlight {
     const textNodeParent = textNode.parentNode;
     if (textNodeParent) {
       const el = this.createWrapperContainer();
+      textNodeParent.insertBefore(el, textNode);
+      el.appendChild(textNode);
     }
   }
 
@@ -52,4 +65,28 @@ export default class Highlight {
     return el;
   }
 
+  /**
+   *
+   * @param {Node} node
+   * @return {Node | null}
+   */
+  getSelfOrAncestorWithClass (node) {
+    while (node) {
+      if (this.hasClass(node, this.className)) {
+        return node;
+      }
+      node = node.parentNode;
+    }
+    return null;
+  }
+
+  /**
+   *
+   * @param {Node | HTMLElement} node
+   * @param {string} className
+   * @return {boolean}
+   */
+  hasClass (node, className) {
+    return node.nodeType === Node.ELEMENT_NODE && hasClass(node, className);
+  }
 }
