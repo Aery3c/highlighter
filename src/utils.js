@@ -1,5 +1,9 @@
 'use strict'
 
+import CharacterRange from './core/characterRange';
+
+/** @typedef {{ characterRange: CharacterRange, isBackward: boolean }[]} Serialized  */
+
 /**
  *
  * @param [options] - options
@@ -16,4 +20,46 @@ export function createOptions (options, defaults) {
   }
 
   return params;
+}
+
+/**
+ *
+ * @param {Range} range
+ * @param {CharacterRange} characterRange
+ */
+export function updateRangeFromCharacterRange (range, characterRange) {
+  const { startContainer, startOffset, endContainer, endOffset } = characterRange.getRange();
+  range.setStartAndEnd(startContainer, startOffset, endContainer, endOffset);
+}
+
+/**
+ *
+ * @param {Selection} selection
+ * @param {Serialized} serialized
+ */
+export function restoreSelection (selection, serialized) {
+  selection.removeAllRanges();
+  serialized.forEach(({ characterRange }) => {
+    const range = characterRange.getRange();
+    selection.addRange(range);
+  });
+}
+
+/**
+ *
+ * @param {Selection} selection
+ * @param {HTMLElement} containerElement
+ * @return {{ characterRange: CharacterRange, isBackward: boolean }[]}
+ */
+export function serializeSelection (selection, containerElement) {
+  const selInfos = [];
+  const ranges = selection.getAllRange();
+  ranges.forEach(range => {
+    selInfos.push({
+      characterRange: CharacterRange.rangeToCharacterRange(range, containerElement),
+      isBackward: selection.isBackward()
+    })
+  });
+
+  return selInfos;
 }

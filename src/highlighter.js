@@ -1,8 +1,7 @@
 'use strict'
 
-import { createOptions } from './utils';
+import { createOptions, restoreSelection, serializeSelection } from './utils';
 import { getContainerElement } from './dom';
-import CharacterRange from './core/characterRange';
 import Highlight from './core/highlight';
 
 const highligterPropsNames = ['className', 'tagName'];
@@ -42,7 +41,11 @@ export default class Highlighter {
       characterRanges.push(characterRange);
     })
 
-    return this.highlightToCharacterRanges(characterRanges, containerElementId);
+    const highlights =  this.highlightToCharacterRanges(characterRanges, containerElementId);
+
+    restoreSelection(selection, serialized);
+
+    return highlights;
   }
 
   /**
@@ -57,13 +60,13 @@ export default class Highlighter {
 
     characterRanges.forEach(characterRange => {
       this.highlights.push(
-        new Highlight({
-          className: this.className,
-          tagName: this.tagName,
+        new Highlight(
+          this.className,
+          this.tagName,
           characterRange,
           containerElement,
-          containerElementId,
-        })
+          containerElementId
+        )
       )
     });
 
@@ -72,23 +75,4 @@ export default class Highlighter {
     });
 
   }
-}
-
-/**
- *
- * @param {Selection} selection
- * @param {HTMLElement} containerElement
- * @return {{ characterRange: CharacterRange, isBackward: boolean }[]}
- */
-export function serializeSelection (selection, containerElement) {
-  const selInfos = [];
-  const ranges = selection.getAllRange();
-  ranges.forEach(range => {
-    selInfos.push({
-      characterRange: CharacterRange.rangeToCharacterRange(range, containerElement),
-      isBackward: selection.isBackward()
-    })
-  });
-
-  return selInfos;
 }
