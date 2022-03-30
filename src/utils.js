@@ -63,3 +63,19 @@ export function serializeSelection (selection, containerElement) {
 
   return selInfos;
 }
+
+/**
+ *
+ * @param {boolean} forward
+ * @return {function(node: Node, checkParentElement?: boolean): node | null}
+ */
+function createAdjacentMergeableTextNodeGetter(forward) {
+  // todo
+  return function (textNode, checkParentElement) {
+
+    return null
+  }
+}
+
+export const getPreviousMergeableTextNode = createAdjacentMergeableTextNodeGetter(false);
+export const getNextMergeableTextNode = createAdjacentMergeableTextNodeGetter(true);
