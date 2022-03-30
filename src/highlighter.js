@@ -56,7 +56,15 @@ export default class Highlighter {
     const containerElement = getContainerElement(containerElementId);
 
     characterRanges.forEach(characterRange => {
-      this.highlights.push(new Highlight(characterRange, containerElement, containerElementId))
+      this.highlights.push(
+        new Highlight({
+          className: this.className,
+          tagName: this.tagName,
+          characterRange,
+          containerElement,
+          containerElementId,
+        })
+      )
     });
 
     this.highlights.forEach(highlight => {
