@@ -27,7 +27,27 @@ export default class Highlight {
 
     // get all textNode from range
     const textNodes = range.getEffectiveTextNodes();
-    console.log(textNodes, 'textNodes');
+
+    // applyToTextNodes
+    textNodes.forEach(textNode => {
+      this.applyTextNode(textNode);
+    });
+
+  }
+
+  /**
+   *
+   * @param {Node} textNode
+   */
+  applyTextNode (textNode) {
+    const textNodeParent = textNode.parentNode;
+    if (textNodeParent) {
+      textNodeParent.insertBefore();
+    }
+  }
+
+  createWrapper () {
+
   }
 
 }
