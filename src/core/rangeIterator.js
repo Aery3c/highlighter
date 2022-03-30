@@ -24,11 +24,15 @@ export default class RangeIterator {
     const [sc, so, ec, eo] = [range.startContainer, range.startOffset, range.endContainer, range.endOffset];
     const root = range.commonAncestorContainer;
     if (!range.collapsed) {
-      this._current = (root === sc && !isCharacterDataNode(sc))
-        ? sc.childNodes[so] : getClosestAncestorIn(sc, root);
+      if (sc === ec) {
+        this._current = this._last = sc;
+      } else {
+        this._current = (root === sc && !isCharacterDataNode(sc))
+          ? sc.childNodes[so] : getClosestAncestorIn(sc, root);
 
-      this._last = (root === ec && !isCharacterDataNode(ec))
-        ? ec.childNodes[eo] : getClosestAncestorIn(ec, root);
+        this._last = (root === ec && !isCharacterDataNode(ec))
+          ? ec.childNodes[eo] : getClosestAncestorIn(ec, root);
+      }
     }
   }
 
@@ -79,4 +83,3 @@ export default class RangeIterator {
     return new RangeIterator(range, whatToShow, filter).generator();
   }
 }
-
