@@ -41,7 +41,7 @@ export default class Highlighter {
       characterRanges.push(characterRange);
     })
 
-    const highlights =  this.highlightToCharacterRanges(characterRanges, containerElementId);
+    const highlights = this.highlightToCharacterRanges(characterRanges, containerElementId);
 
     restoreSelection(selection, serialized);
 
@@ -71,7 +71,9 @@ export default class Highlighter {
     });
 
     this.highlights.forEach(highlight => {
-      highlight.apply();
+      if (!highlight.applied) {
+        highlight.apply();
+      }
     });
 
   }
