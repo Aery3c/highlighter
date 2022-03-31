@@ -110,6 +110,32 @@ export function addClass (el, className) {
  * @param {string} className
  * @return {boolean}
  */
-export function hasClass(el, className) {
+export function hasClass (el, className) {
   return el.classList.contains(className);
+}
+
+/**
+ *
+ * @param {HTMLElement} el1
+ * @param {HTMLElement} el2
+ */
+export function haveSameClass (el1, el2) {
+  return sortClass(el1.className) === sortClass(el2.className);
+}
+
+/**
+ *
+ * @param {string} className
+ * @return {string}
+ */
+export function sortClass (className) {
+  return className.split(/\s+/).sort().join(' ');
+}
+
+/**
+ *
+ * @param {Node} node
+ */
+export function removeNode (node) {
+  return node.parentNode.removeChild(node);
 }
