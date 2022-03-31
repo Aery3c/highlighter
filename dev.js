@@ -24,8 +24,12 @@ const config = {
   devServer: {
     hot: true,
     compress: true,
-    open: true,
+    open: ['/dist/demos/'],
+    static: './',
     port: 3000,
+    devMiddleware: {
+      writeToDisk: true
+    }
   },
   mode: 'development',
   plugins: [
@@ -33,6 +37,14 @@ const config = {
       title: 'test',
       filename: 'demos/test.html',
       template: path.resolve(__dirname, 'template/test.html'),
+      publicPath: '../',
+      scriptLoading: 'blocking',
+      inject: 'head'
+    }),
+    new HtmlWebpackPlugin({
+      title: 'highlight',
+      filename: 'demos/highlight.html',
+      template: path.resolve(__dirname, 'template/highlight.html'),
       publicPath: '../',
       scriptLoading: 'blocking',
       inject: 'head'
