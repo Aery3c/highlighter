@@ -8,3 +8,7 @@ interface Range {
 }
 
 type BookMark = { start: number, end: number, containerElement: HTMLElement | Node }
+
+interface Highlighter {
+
+}
