@@ -13,11 +13,12 @@ import { haveSameClass } from './dom';
  */
 export function createOptions (options, defaults) {
   let params = {};
-  if (typeof params === 'object') {
-    Object.assign(params, options);
-  }
   if (typeof defaults === 'object') {
     Object.assign(params, defaults);
+  }
+
+  if (typeof options === 'object') {
+    Object.assign(params, options);
   }
 
   return params;
@@ -53,16 +54,16 @@ export function restoreSelection (selection, serialized) {
  * @return {{ characterRange: CharacterRange, isBackward: boolean }[]}
  */
 export function serializeSelection (selection, containerElement) {
-  const selInfos = [];
+  const rangeInfos = [];
   const ranges = selection.getAllRange();
   ranges.forEach(range => {
-    selInfos.push({
+    rangeInfos.push({
       characterRange: CharacterRange.rangeToCharacterRange(range, containerElement),
       isBackward: selection.isBackward()
     })
   });
 
-  return selInfos;
+  return rangeInfos;
 }
 
 /**
@@ -106,3 +107,13 @@ function isElementMergeable (el1, el2) {
 
 export const getPreviousMergeableTextNode = createAdjacentMergeableTextNodeGetter(false);
 export const getNextMergeableTextNode = createAdjacentMergeableTextNodeGetter(true);
+
+/**
+ *
+ * @param {Range} range
+ * @param {HTMLElement} containerElement
+ */
+export function getRangeBoundaries (range, containerElement) {
+  const { start, end } = range.getBookmark(containerElement);
+  return [ start, end ];
+}
