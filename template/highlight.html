@@ -13,8 +13,7 @@
 </head>
 
 <body>
-<div class="post_body">
-  <p>新手德州扑克玩家刚上桌往往有些手足无措，对牌桌上的一切感到好奇又拘谨。最尴尬的就是一些大鲨鱼在牌桌上高谈阔论，各种专业术语侃侃而来，萌新们只能一脸懵比，努力保持微笑。<br></p>
+<div class="post_body" id="post_body"><p>新手德州扑克玩家刚上桌往往有些手足无措，对牌桌上的一切感到好奇又拘谨。最尴尬的就是一些大鲨鱼在牌桌上高谈阔论，各种专业术语侃侃而来，萌新们只能一脸懵比，努力保持微笑。<br></p>
   <p>其实游学者只能说，你们这些萌新还是图样图森破了，你们以为这些高谈阔论的玩家都一定是高手吗？</p>
   <p>其实只需要5分钟的时间，就可以把一个萌新包装成一个德扑“高手”。怎么样，酷不酷，想不想学？</p>
   <p>好，言归正传，我们马上进行专（装）业（逼）大讲堂：</p>
@@ -52,9 +51,10 @@
 
     document.querySelector('#apply').addEventListener('click', function() {
       const [range] = window.getSelection().getAllRange();
-      const characterRange = CharacterRange.rangeToCharacterRange(range, document.body);
-      const highlight = new Highlight('highlight', 'span', characterRange, document.body, null);
-      highlight.applyRange(range);
+      const characterRange = CharacterRange.rangeToCharacterRange(range, document.querySelector('#post_body'));
+      const highlight = new Highlight(characterRange, range, { className: 'highlight', tagName: 'span' });
+      highlight.apply();
+      console.log(highlight);
     });
 
 
