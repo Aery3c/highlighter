@@ -23,9 +23,12 @@
     const highligter = new Highlighter()
 
     document.querySelector('#test-highlight').addEventListener('click', function() {
-      highligter.highlightToSelection({
+      const highligts = highligter.highlightSelection({
         containerElementId: 'main'
       });
+
+      console.log(highligts);
+
     });
 
   </script>
