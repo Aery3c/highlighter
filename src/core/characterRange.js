@@ -15,6 +15,33 @@ export default class CharacterRange {
 
   /**
    *
+   * @param {CharacterRange} otherCharRange
+   * @return {boolean}
+   */
+  intersects (otherCharRange) {
+    return this.start < otherCharRange.end && this.end > otherCharRange.start;
+  }
+  /**
+   *
+   * @param {CharacterRange} otherCharRange
+   * @return {boolean}
+   */
+  isContiguousWith (otherCharRange) {
+    return this.start === otherCharRange.end || this.end === otherCharRange.start
+  }
+
+  /**
+   *
+   * @param {CharacterRange} otherCharRange
+   * @return {CharacterRange}
+   *
+   */
+  union (otherCharRange) {
+    return new CharacterRange(Math.min(this.start, otherCharRange.start), Math.max(this.end, otherCharRange.end), this.containerElement);
+  }
+
+  /**
+   *
    * @return {Range}
    */
   getRange () {
