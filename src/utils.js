@@ -26,16 +26,6 @@ export function createOptions (options, defaults) {
 
 /**
  *
- * @param {Range} range
- * @param {CharacterRange} characterRange
- */
-export function updateRangeFromCharacterRange (range, characterRange) {
-  const { startContainer, startOffset, endContainer, endOffset } = characterRange.getRange();
-  range.setStartAndEnd(startContainer, startOffset, endContainer, endOffset);
-}
-
-/**
- *
  * @param {Selection} selection
  * @param {Serialized} serialized
  */
@@ -107,13 +97,3 @@ function isElementMergeable (el1, el2) {
 
 export const getPreviousMergeableTextNode = createAdjacentMergeableTextNodeGetter(false);
 export const getNextMergeableTextNode = createAdjacentMergeableTextNodeGetter(true);
-
-/**
- *
- * @param {Range} range
- * @param {HTMLElement} containerElement
- */
-export function getRangeBoundaries (range, containerElement) {
-  const { start, end } = range.getBookmark(containerElement);
-  return [ start, end ];
-}
