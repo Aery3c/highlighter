@@ -139,3 +139,24 @@ export function sortClass (className) {
 export function removeNode (node) {
   return node.parentNode.removeChild(node);
 }
+
+/**
+ *
+ * @param {Node} node
+ * @param {Node} parentNode
+ * @param {boolean} removeSelf
+ * @return {Node[]}
+ */
+export function moveChildren (node, parentNode, removeSelf) {
+  let child, children = [], index = getNodeIndex(node);
+  while ((child = node.firstChild)) {
+    parentNode.insertBefore(child, parentNode.childNodes[index++]);
+    children.push(child);
+  }
+
+  if (removeSelf) {
+    parentNode.removeChild(node);
+  }
+
+  return children;
+}
