@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>Title</title>
+  <title><%= htmlWebpackPlugin.options.title %></title>
   <style>
     .highlight {
       background-color: yellow;
@@ -49,12 +49,16 @@
     const Highlight = Highlighter.Highlight;
     const CharacterRange = Highlighter.CharacterRange;
 
+
     document.querySelector('#apply').addEventListener('click', function() {
-      const [range] = window.getSelection().getAllRange();
-      const characterRange = CharacterRange.rangeToCharacterRange(range, document.querySelector('#post_body'));
-      const highlight = new Highlight(characterRange, range, { className: 'highlight', tagName: 'span' });
-      highlight.apply();
-      console.log(highlight);
+      const sel = window.getSelection();
+      const [range] = sel.getAllRange();
+      const highlight = new Highlight('highlight', 'tagName', CharacterRange.rangeToCharacterRange(range, document.body));
+      if (!highlight.applied) {
+        highlight.apply();
+      } else {
+        highlight.unapply();
+      }
     });
 
 
