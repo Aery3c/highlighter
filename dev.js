@@ -7,6 +7,16 @@ const ESLintPlugin = require('eslint-webpack-plugin');
 const webpackDevServer = require('webpack-dev-server');
 const path = require('path');
 
+function createHtmlWebpackPluginOptions (params) {
+  return {
+    title: 'highlight',
+    publicPath: '../',
+    scriptLoading: 'blocking',
+    inject: 'head',
+    ...params
+  }
+}
+
 const config = {
   entry: path.resolve(__dirname, 'src/index.js'),
   devtool: 'eval-source-map',
@@ -33,22 +43,21 @@ const config = {
   },
   mode: 'development',
   plugins: [
-    new HtmlWebpackPlugin({
+    new HtmlWebpackPlugin(createHtmlWebpackPluginOptions({
       title: 'test',
       filename: 'demos/test.html',
       template: path.resolve(__dirname, 'template/test.html'),
-      publicPath: '../',
-      scriptLoading: 'blocking',
-      inject: 'head'
-    }),
-    new HtmlWebpackPlugin({
+    })),
+    new HtmlWebpackPlugin(createHtmlWebpackPluginOptions({
       title: 'highlight',
       filename: 'demos/highlight.html',
       template: path.resolve(__dirname, 'template/highlight.html'),
-      publicPath: '../',
-      scriptLoading: 'blocking',
-      inject: 'head'
-    }),
+    })),
+    new HtmlWebpackPlugin(createHtmlWebpackPluginOptions({
+      title: 'applier',
+      filename: 'demos/applier.html',
+      template: path.resolve(__dirname, 'template/applier.html'),
+    })),
     new ESLintPlugin({
       failOnWarning: false,
       quiet: true
