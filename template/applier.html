@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title><%= htmlWebpackPlugin.options.title %></title>
+  <style>
+    .highlight {
+      background-color: yellow;
+    }
+  </style>
+  <script src="../src/core/merge.js"></script>
+</head>
+
+<body><div class="post_body" id="post_body"><p>新手德州扑克玩家刚上桌往往有些手足无措，对牌桌上的一切感到好奇又拘谨。最尴尬的就是一些大鲨鱼在牌桌上高谈阔论，各种专业术语侃侃而来，萌新们只能一脸懵比，努力保持微笑。<br></p>
+  <p>其实游学者只能说，你们这些萌新还是图样图森破了，你们以为这些高谈阔论的玩家都一定是高手吗？</p>
+  <p>其实只需要5分钟的时间，就可以把一个萌新包装成一个德扑“高手”。怎么样，酷不酷，想不想学？</p>
+  <p>好，言归正传，我们马上进行专（装）业（逼）大讲堂：</p>
+  <p>首先，提醒一下各位，<strong>德州扑克的英文是：Texas Hold'em</strong>，写法比较特别，碰见老外可别忘了怎么说哦。<strong>然后我们一般打的牌局有现金局（cash
+    game）和锦标赛（MTT）之分，另外还有单桌锦标赛（SNG）之类的</strong>。打牌之前总得知道你自己玩的是啥，对吧......</p>
+  <p>接下来我们讲讲牌局基本情况：你打任何牌局，<strong>第一个要知道的是牌局的规格，也就是大盲（Big Blind，简称BB）和小盲（Small
+    Blind，简称......）</strong>。一般来说，大部分玩家会说1/2啊、5/10啊，都是代指小盲/大盲。有的时候一些特别的牌局还有前注（ante），意思是每个玩家都要交的费用，一般会用例如1/2/4的形式代替，这个例子指的就是前注1块、小盲2块、大盲4块的情况。
+  </p>
+  <p>好，进入牌局以后，我们要观察每个人的位置，除了大小盲位以外，<strong>还有庄位（Dealer，又称按钮位，Button，简称Btn）、关煞位（Cut Off，简称CO）、中位（Middle
+    Position，简称MP）、枪口位（Under The Gun，简称UTG）等</strong>，具体见下两图：</p>
+  <p>十人桌：</p>
+  <p>拿到手牌以后，你要知道自己有什么样的手牌，<strong>一般分口袋对子（Pocket Pair，如AA、KK）、两高张（Over Cards，如AK、QT）、同色牌（Suited
+    Cards，AK同色就是AKs），连张（Connected Cards，如89）等等</strong>。</p>
+  <p>之后就要讲到打牌了，德州扑克有四个轮次，俗称四条街，分别是<strong>翻牌前（Preflop）、翻牌（Flop）、转牌（Turn）、河牌（River）</strong>。</p>
+  <p>在翻牌前，我们可以做的行动有<strong>平跟（limp），加注（Raise，第一个加注者又称为公开加注，Open），跟注（Call）、二次加注（3bet，之后依次类推为4bet、5bet等等）、过牌（Check，翻牌前只有大盲有可能可以过牌）、弃牌（Fold）</strong>。比较特殊的是挤压（Squeeze），指的是在有一个加注并且有另一个对手参与（不管是跟注还是二次加注）的情况下的再次加注。
+  </p>
+  <p>到了翻牌后，<strong>就有下注（Bet）和持续性下注（Cbet，翻牌前的加注者继续下注）</strong>，当然依然还有弃牌、跟注、过牌、再加注等等。此时也衍生出了底池（Pot）的概念。<strong>另外提一个激动人心的词全下（ALL
+    IN，又称Shove）</strong>，但是大家要慎用哦。<strong>当我们拿着好牌时的下注称为价值下注（Value Bet），烂牌时称为诈唬（Bluff）。</strong></p>
+  <p>最后再提一下一些特殊的牌面情况，如果翻牌三张花色各不相同，我们称之为彩虹面（Rainbow）；反正如果是三张一样花色的就称之为天花面。而如果翻牌就有例如ATT这样成对牌面的，我们称之为公对面。另外还有所谓潮湿面与干燥面，这两个概念略复杂，我们以后会详细介绍。<strong>以及诸如GTO、平衡、两级分化、范围这种概念，一篇文章讲不清楚，我们之后会单独来讲解。</strong>
+  </p>
+  <p>好，基本上就是这样了，所以，准备好用这些词汇来造（装）句（逼）了吗？游学者给你们做一个示范：</p>
+  <p><strong>5/10的6人桌cash
+    game，本人（Hero）在按钮位拿到9Ts，对手（Villain）在UTG公开加注3个BB，Hero跟注，其他人弃牌，有效筹码100bb。FlopK78，两s，对手持续下注75%的底池，Hero这里花顺双抽，反加3倍，对手allin，Hero跟注。RIVER击中一张6，对手AK，Hero拿下底池。</strong>
+  </p>
+  <p>怎么样，大家学到了吗？</p>
+  <p>欢迎大家关注游学者的：</p>
+  <p>扑克人社区专栏： http://www.pokerren.com/u/331</p>
+  <p>The Mathematics of Poker 翻译： http://www.pokerren.com/Search/index?key=The+Mathematics&amp;type=article</p>
+  <button id="applyToRange">applier.applyToRange</button>
+  <button id="isAppliedToRange">applier.isAppliedToRange</button>
+  <button id="undoToRange">applier.undoToRange</button>
+</div>
+</body>
+<script>
+
+  const applier = new Highlighter.Applier({ className: 'highlight' });
+
+  document.querySelector('#applyToRange').addEventListener('click', function () {
+    const sel = window.getSelection();
+    const [range] = sel.getAllRange();
+    applier.applyToRange(range);
+  });
+
+  document.querySelector('#isAppliedToRange').addEventListener('click', function () {
+    const sel = window.getSelection();
+    const [range] = sel.getAllRange();
+    console.log(applier.isAppliedToRange(range));
+  });
+
+  document.querySelector('#undoToRange').addEventListener('click', function () {
+    const sel = window.getSelection();
+    const [range] = sel.getAllRange();
+    applier.undoToRange(range);
+  });
+
+</script>
+</html>
