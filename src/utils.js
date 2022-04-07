@@ -1,7 +1,6 @@
 'use strict'
 
 import CharacterRange from './core/characterRange';
-import { haveSameClass } from './dom';
 
 /** @typedef {{ characterRange: CharacterRange, isBackward: boolean }[]} Serialized  */
 
@@ -58,42 +57,20 @@ export function serializeSelection (selection, containerElement) {
 
 /**
  *
- * @param {boolean} forward
- * @return {function(node: Node, checkParentElement?: boolean): Node | null}
+ * @param {Range} range
+ * @return {[number, number]}
  */
-function createAdjacentMergeableTextNodeGetter(forward) {
-  const adjacentPropName = forward ? 'nextSibling' : 'previousSibling';
-  const position = forward ? 'firstChild' : 'lastChild';
-  return function (textNode, checkParentElement) {
-
-    let adjacentNode = textNode[adjacentPropName], parent = textNode.parentNode;
-
-    if (adjacentNode && adjacentNode.nodeType === Node.TEXT_NODE) {
-      return adjacentNode
-    } else if (checkParentElement) {
-      adjacentNode = parent[adjacentPropName];
-      if (adjacentNode && adjacentNode.nodeType === Node.ELEMENT_NODE && isElementMergeable(adjacentNode, parent)) {
-        let adjacentNodeChild = adjacentNode[position];
-        if (adjacentNodeChild && adjacentNodeChild.nodeType === Node.TEXT_NODE) {
-          return adjacentNodeChild;
-        }
-      }
-    }
-
-    return null
-  }
+export function getRangeBoundaries (range) {
+  const { start, end } = range.getBookmark(document.body);
+  return [start, end];
 }
 
 /**
  *
- * @param {HTMLElement} el1
- * @param {HTMLElement} el2
- * @return {boolean}
+ * @param {Range} range
+ * @param {[number, number]} position
  */
-function isElementMergeable (el1, el2) {
-  // todo
-  return el1.tagName.toLowerCase() === el2.tagName.toLowerCase() && haveSameClass(el1, el2);
+export function updateRangeFromPosition (range, position) {
+  const [start, end] = position;
+  range.moveToBookmark({ start, end, containerElement: document.body });
 }
-
-export const getPreviousMergeableTextNode = createAdjacentMergeableTextNodeGetter(false);
-export const getNextMergeableTextNode = createAdjacentMergeableTextNodeGetter(true);
