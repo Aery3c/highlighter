@@ -1,8 +1,8 @@
 'use strict';
 
-import { getRangeBoundaries, updateRangeFromPosition } from '../utils';
+import { getRangeBoundaries, updateRangeFromPosition, omit } from '../utils';
 import Merge from './merge';
-import { addClass, hasClass, moveChildren, splitNodeAt } from '../dom';
+import { addClass, hasClass, moveChildren, splitNodeAt, copyAttributesToElement } from '../dom';
 
 export default class Applier {
   constructor (options = {}) {
@@ -10,6 +10,8 @@ export default class Applier {
     this.tagName = options.tagName?.toLowerCase() || 'span';
     this.normal = options.normal || true;
     this.removeEmptyElement = options.removeEmptyElement || true;
+    this.elProperty = options.elProperty || {};
+    this.elAttribute = options.elAttribute || {};
   }
 
   /**
@@ -105,14 +107,21 @@ export default class Applier {
     }
   }
 
-  isElementMergeable (el1) {
-    // todo
-    // return el1.tagName.toLowerCase() === el2.tagName.toLowerCase() && haveSameClass(el1, el2) && el1.isEqualNode(el2);
+  /**
+   *
+   * @param {HTMLElement | Node} el
+   * @return {boolean}
+   */
+  isElementMergeable (el) {
+    const newEl = this.createContainer();
+    // align at textContent
+    newEl.textContent = el.textContent;
+    return el.isEqualNode(newEl);
   }
 
-  getPreviousMergeableTextNode = createAdjacentMergeableTextNodeGetter(false, this.isElementMergeable)
+  getPreviousMergeableTextNode = createAdjacentMergeableTextNodeGetter(false, node => !this.isElementMergeable(node))
 
-  getNextMergeableTextNode = createAdjacentMergeableTextNodeGetter(true, this.isElementMergeable)
+  getNextMergeableTextNode = createAdjacentMergeableTextNodeGetter(true, node => !this.isElementMergeable(node))
   /**
    *
    * @param {Node[]} textNodes
@@ -188,9 +197,21 @@ export default class Applier {
    */
   createContainer () {
     const el = document.createElement(this.tagName);
+    this.copyAttributesToElement(this.elAttribute, el);
     addClass(el, this.className);
     return el;
   }
+
+  /**
+   *
+   * @param {Object} attrs
+   * @param {HTMLElement} el
+   */
+  copyAttributesToElement (attrs, el) {
+    attrs = omit(attrs, ['class', 'className']);
+    return copyAttributesToElement(attrs, el);
+  }
+
   /**
    *
    * @param {Node} node
@@ -248,7 +269,7 @@ function createAdjacentMergeableTextNodeGetter(forward, filter) {
       return adjacentNode
     } else if (checkParentElement) {
       adjacentNode = parent[adjacentPropName];
-      if (adjacentNode && adjacentNode.nodeType === Node.ELEMENT_NODE && !filter) {
+      if (adjacentNode && adjacentNode.nodeType === Node.ELEMENT_NODE && !filter(adjacentNode)) {
         let adjacentNodeChild = adjacentNode[position];
         if (adjacentNodeChild && adjacentNodeChild.nodeType === Node.TEXT_NODE) {
           return adjacentNodeChild;
