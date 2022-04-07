@@ -1,13 +1,15 @@
 'use strict';
 
-import { getNextMergeableTextNode, getPreviousMergeableTextNode } from '../utils';
+import { getRangeBoundaries, updateRangeFromPosition } from '../utils';
 import Merge from './merge';
-import { addClass, hasClass, moveChildren, isAncestorOf, isCharacterDataNode, getNodeIndex } from '../dom';
+import { addClass, hasClass, moveChildren, splitNodeAt } from '../dom';
 
 export default class Applier {
   constructor (options = {}) {
-    this.className = options.className;
+    this.className = options.className || 'highlight';
     this.tagName = options.tagName?.toLowerCase() || 'span';
+    this.normal = options.normal || true;
+    this.removeEmptyElement = options.removeEmptyElement || true;
   }
 
   /**
@@ -15,8 +17,13 @@ export default class Applier {
    * @param {Range} range
    */
   applyToRange (range) {
+    const position = getRangeBoundaries(range);
     // split Boundaries
     range.splitBoundaries();
+
+    if (this.removeEmptyElement) {
+      range._removeEmptyElements();
+    }
 
     // get all textNode from range
     const textNodes = range.getEffectiveTextNodes();
@@ -32,9 +39,13 @@ export default class Applier {
       const lastTextNode = textNodes[textNodes.length - 1];
       range.setStartAndEnd(textNodes[0], 0, lastTextNode, lastTextNode.length);
 
-      // normal mode
-      this.normal(textNodes, range, true);
+      // normalize mode
+      if (this.normal) {
+        this.normalize(textNodes, range, true);
+      }
     }
+
+    updateRangeFromPosition(range, position);
   }
 
   /**
@@ -42,23 +53,29 @@ export default class Applier {
    * @param {Range} range
    */
   undoToRange (range) {
-    // split Boundaries
+    const position = getRangeBoundaries(range);
+
     range.splitBoundaries();
 
-    // get all textNode from range
     const textNodes = range.getEffectiveTextNodes();
+    const lastTextNode = textNodes[textNodes.length - 1];
 
     if (textNodes.length) {
       this.splitAncestorWithClass(range);
-      // textNodes.forEach(textNode => {
-      //   let ancestorWithClass = this.getSelfOrAncestorWithClass(textNode);
-      //   if (ancestorWithClass) {
-      //     this.undoToAncestor(ancestorWithClass);
-      //   }
-      // });
-
+      textNodes.forEach(textNode => {
+        let ancestorWithClass = this.getSelfOrAncestorWithClass(textNode);
+        if (ancestorWithClass) {
+          this.undoToAncestor(ancestorWithClass);
+        }
+      });
+      range.setStartAndEnd(textNodes[0], 0, lastTextNode, lastTextNode.length);
     }
 
+    if (this.normal) {
+      this.normalize(textNodes, range, true)
+    }
+
+    updateRangeFromPosition(range, position);
   }
 
   /**
@@ -88,13 +105,21 @@ export default class Applier {
     }
   }
 
+  isElementMergeable (el1) {
+    // todo
+    // return el1.tagName.toLowerCase() === el2.tagName.toLowerCase() && haveSameClass(el1, el2) && el1.isEqualNode(el2);
+  }
+
+  getPreviousMergeableTextNode = createAdjacentMergeableTextNodeGetter(false, this.isElementMergeable)
+
+  getNextMergeableTextNode = createAdjacentMergeableTextNodeGetter(true, this.isElementMergeable)
   /**
    *
    * @param {Node[]} textNodes
    * @param {Range} range
    * @param {boolean} isUndo
    */
-  normal (textNodes, range, isUndo) {
+  normalize (textNodes, range, isUndo) {
     let firstNode = textNodes[0], lastNode = textNodes[textNodes.length - 1];
 
     let currentMerge = null, merges = [];
@@ -104,7 +129,7 @@ export default class Applier {
 
     textNodes.forEach(textNode => {
       // check preceding node need to merge
-      const precedingNode = getPreviousMergeableTextNode(textNode, isUndo);
+      const precedingNode = this.getPreviousMergeableTextNode(textNode, isUndo);
       if (precedingNode) {
         if (!currentMerge) {
           currentMerge = new Merge(precedingNode);
@@ -127,7 +152,7 @@ export default class Applier {
       }
     });
 
-    const nextNode = getNextMergeableTextNode(lastNode, isUndo);
+    const nextNode = this.getNextMergeableTextNode(lastNode, isUndo);
     if (nextNode) {
       if (!currentMerge) {
         currentMerge = new Merge(nextNode);
@@ -152,7 +177,7 @@ export default class Applier {
   applyTextNode (textNode) {
     const textNodeParent = textNode.parentNode;
     if (textNodeParent) {
-      const el = this.createWrapperContainer();
+      const el = this.createContainer();
       textNodeParent.insertBefore(el, textNode);
       el.appendChild(textNode);
     }
@@ -161,7 +186,7 @@ export default class Applier {
   /**
    * @return {HTMLElement}
    */
-  createWrapperContainer () {
+  createContainer () {
     const el = document.createElement(this.tagName);
     addClass(el, this.className);
     return el;
@@ -204,32 +229,33 @@ export default class Applier {
   hasClass (node, className) {
     return node.nodeType === Node.ELEMENT_NODE && hasClass(node, className);
   }
-
 }
 
 /**
  *
- * @param {Node} ancestor
- * @param {Node} descendant
- * @param {number} descendantOffset
+ * @param {boolean} forward
+ * @param {(node: Node) => boolean} filter
+ * @return {function(node: Node, checkParentElement?: boolean): Node | null}
  */
-function splitNodeAt (ancestor, descendant, descendantOffset) {
-  let newNode, parentNode;
-  let splitAtStart = (descendantOffset === 0);
+function createAdjacentMergeableTextNodeGetter(forward, filter) {
+  const adjacentPropName = forward ? 'nextSibling' : 'previousSibling';
+  const position = forward ? 'firstChild' : 'lastChild';
+  return function (textNode, checkParentElement) {
 
-  if (isAncestorOf(descendant, ancestor)) {
-    return ancestor;
-  }
+    let adjacentNode = textNode[adjacentPropName], parent = textNode.parentNode;
 
-  if (isCharacterDataNode(descendant)) {
-    const index = getNodeIndex(descendant);
-    if (descendantOffset === 0) {
-      descendantOffset = index;
-    } else if (descendantOffset === descendant.length) {
-      descendantOffset += index + 1;
+    if (adjacentNode && adjacentNode.nodeType === Node.TEXT_NODE) {
+      return adjacentNode
+    } else if (checkParentElement) {
+      adjacentNode = parent[adjacentPropName];
+      if (adjacentNode && adjacentNode.nodeType === Node.ELEMENT_NODE && !filter) {
+        let adjacentNodeChild = adjacentNode[position];
+        if (adjacentNodeChild && adjacentNodeChild.nodeType === Node.TEXT_NODE) {
+          return adjacentNodeChild;
+        }
+      }
     }
+
+    return null
   }
-
-  console.log(descendantOffset, 'descendantOffset');
-
 }
