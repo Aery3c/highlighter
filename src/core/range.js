@@ -1,6 +1,7 @@
 'use strict'
 
-import { isCharacterDataNode, getNodeIndex, getNodesInRange } from '../dom';
+import { isCharacterDataNode, getNodeIndex, getNodesInRange, isEmptyElement } from '../dom';
+import { getRangeBoundaries, updateRangeFromPosition } from '../utils';
 
 /**
  *
@@ -137,6 +138,20 @@ Range.prototype.moveToBookmark = function ({ start, end, containerElement }) {
       foundEnd = true;
     }
     charIndex = nextCharIndex;
+  }
+}
+
+Range.prototype._removeEmptyElements = function () {
+  const position = getRangeBoundaries(this);
+  const removeToNodes = this.getNodes(Node.ELEMENT_NODE, {
+    acceptNode: node => isEmptyElement(node)
+  });
+  if (removeToNodes.length) {
+    removeToNodes.forEach(node => {
+      node.parentNode.removeChild(node);
+    });
+
+    updateRangeFromPosition(this, position);
   }
 }
 
