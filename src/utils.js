@@ -74,3 +74,12 @@ export function updateRangeFromPosition (range, position) {
   const [start, end] = position;
   range.moveToBookmark({ start, end, containerElement: document.body });
 }
+
+export function omit(obj, ...keys) {
+  const keysToRemove = new Set(keys.flat());
+
+  return Object.fromEntries(
+    Object.entries(obj)
+      .filter(([k]) => !keysToRemove.has(k))
+  );
+}
