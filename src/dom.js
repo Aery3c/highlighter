@@ -252,3 +252,16 @@ export function isEmptyElement (node) {
   const childCount = node.childNodes.length;
   return node.nodeType === Node.ELEMENT_NODE && (childCount === 0) || (childCount === 1 && isEmptyElement(node.firstChild));
 }
+
+/**
+ *
+ * @param {Object} attrs
+ * @param {HTMLElement} el
+ */
+export function copyAttributesToElement (attrs, el) {
+  for (let attrName in attrs) {
+    if (Object.prototype.hasOwnProperty.call(attrs, attrName)) {
+      el.setAttribute(attrName, attrs[attrName]);
+    }
+  }
+}
