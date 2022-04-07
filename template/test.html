@@ -20,15 +20,10 @@
   <br>
   <button id="test-highlight">test-highlight</button>
   <script>
-    const highligter = new Highlighter()
+    const highligter = new Highlighter({});
 
     document.querySelector('#test-highlight').addEventListener('click', function() {
-      const highligts = highligter.highlightSelection({
-        containerElementId: 'main'
-      });
-
-      console.log(highligts);
-
+      highligter.paint();
     });
 
   </script>
