@@ -5,10 +5,12 @@ export default class CharacterRange {
    *
    * @param {number} start
    * @param {number} end
+   * @param {HTMLElement} containerElement
    */
-  constructor(start, end) {
+  constructor(start, end, containerElement) {
     this.start = start;
     this.end = end;
+    this.containerElement = containerElement;
   }
 
   /**
@@ -35,7 +37,7 @@ export default class CharacterRange {
    *
    */
   union (otherCharRange) {
-    return new CharacterRange(Math.min(this.start, otherCharRange.start), Math.max(this.end, otherCharRange.end));
+    return new CharacterRange(Math.min(this.start, otherCharRange.start), Math.max(this.end, otherCharRange.end), this.containerElement);
   }
 
   /**
@@ -60,7 +62,7 @@ export default class CharacterRange {
   static rangeToCharacterRange (range, containerElement) {
     /** @type {BookMark} */
     const { start, end } = range.getBookmark(containerElement);
-    return new CharacterRange(start, end);
+    return new CharacterRange(start, end, containerElement);
   }
 
   static characterRangeToRange (characterRange) {

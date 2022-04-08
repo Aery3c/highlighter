@@ -43,7 +43,7 @@ export default class Applier {
 
       // normalize mode
       if (this.normal) {
-        this.normalize(textNodes, range, true);
+        this.normalize(textNodes, range, false);
       }
     }
 
@@ -138,7 +138,7 @@ export default class Applier {
 
     textNodes.forEach(textNode => {
       // check preceding node need to merge
-      const precedingNode = this.getPreviousMergeableTextNode(textNode, isUndo);
+      const precedingNode = this.getPreviousMergeableTextNode(textNode, !isUndo);
       if (precedingNode) {
         if (!currentMerge) {
           currentMerge = new Merge(precedingNode);
@@ -161,10 +161,10 @@ export default class Applier {
       }
     });
 
-    const nextNode = this.getNextMergeableTextNode(lastNode, isUndo);
+    const nextNode = this.getNextMergeableTextNode(lastNode, !isUndo);
     if (nextNode) {
       if (!currentMerge) {
-        currentMerge = new Merge(nextNode);
+        currentMerge = new Merge(lastNode);
         merges.push(currentMerge);
       }
       currentMerge.textNodes.push(nextNode);

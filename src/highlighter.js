@@ -30,14 +30,43 @@ export default class Highlighter {
     return newHighlights;
   }
 
-  highlightSelection () {
+  /**
+   *
+   * @param {Selection} selection
+   * @param {Object} options
+   * @return {Highlight[]}
+   */
+  highlightSelection (selection, options = {}) {
+    const highlights = this.highlights, applier = this._applier;
+    selection = selection || window.getSelection();
+    const containerElement = options.containerElement || document.body;
+    const characterRanges = serializeSelection(selection, containerElement);
 
+    resizeWidthHighlights(characterRanges, highlights, applier);
+
+    const newHighlights = [];
+    highlights.forEach(ht => {
+      newHighlights.push(ht);
+      if (!ht.appliesd) {
+        ht.apply();
+      }
+    });
+
+    restoreSelection(selection, characterRanges);
+
+    return newHighlights;
   }
 }
 
-function serializeSelection (selection) {
+/**
+ *
+ * @param {Selection} selection
+ * @param {HTMLElement} containerElement
+ * @return {CharacterRange[]}
+ */
+function serializeSelection (selection, containerElement) {
   const ranges = selection.getAllRange();
-  return ranges.map(range => CharacterRange.rangeToCharacterRange(range, range.startContainer.ownerDocument.body));
+  return ranges.map(range => CharacterRange.rangeToCharacterRange(range, containerElement));
 }
 
 /**
@@ -71,9 +100,23 @@ function resizeWidthHighlights (characterRanges, highlights, applier) {
     highlights.push(new Highlight(cr, applier));
   });
 
-  // console.log(removeToHighligts, 'removeToHighligts');
-  // removeToHighligts.forEach(removeHt => {
-  //   removeHt.unapply();
-  // });
+  console.log(removeToHighligts, 'removeToHighligts');
+  removeToHighligts.forEach(removeHt => {
+    if (removeHt.appliesd) {
+      removeHt.unapply();
+    }
+  });
+}
 
+/**
+ *
+ * @param {Selection} selection
+ * @param {CharacterRange[]} characterRanges
+ */
+export function restoreSelection (selection, characterRanges) {
+  selection.removeAllRanges();
+  characterRanges.forEach(characterRange => {
+    const range = characterRange.getRange();
+    selection.addRange(range);
+  });
 }

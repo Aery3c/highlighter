@@ -22,19 +22,6 @@ export function createOptions (options, defaults) {
 
 /**
  *
- * @param {Selection} selection
- * @param {Serialized} serialized
- */
-export function restoreSelection (selection, serialized) {
-  selection.removeAllRanges();
-  serialized.forEach(({ characterRange }) => {
-    const range = characterRange.getRange();
-    selection.addRange(range);
-  });
-}
-
-/**
- *
  * @param {Range} range
  * @return {[number, number]}
  */
