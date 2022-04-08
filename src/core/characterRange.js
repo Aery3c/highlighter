@@ -5,12 +5,10 @@ export default class CharacterRange {
    *
    * @param {number} start
    * @param {number} end
-   * @param {HTMLElement | Node} containerElement
    */
-  constructor(start, end, containerElement) {
+  constructor(start, end) {
     this.start = start;
     this.end = end;
-    this.containerElement = containerElement;
   }
 
   /**
@@ -37,7 +35,7 @@ export default class CharacterRange {
    *
    */
   union (otherCharRange) {
-    return new CharacterRange(Math.min(this.start, otherCharRange.start), Math.max(this.end, otherCharRange.end), this.containerElement);
+    return new CharacterRange(Math.min(this.start, otherCharRange.start), Math.max(this.end, otherCharRange.end));
   }
 
   /**
@@ -62,7 +60,7 @@ export default class CharacterRange {
   static rangeToCharacterRange (range, containerElement) {
     /** @type {BookMark} */
     const { start, end } = range.getBookmark(containerElement);
-    return new CharacterRange(start, end, containerElement);
+    return new CharacterRange(start, end);
   }
 
   static characterRangeToRange (characterRange) {
@@ -71,4 +69,14 @@ export default class CharacterRange {
     return range;
   }
 
+  /**
+   *
+   * @param {Node} node
+   * @return {CharacterRange}
+   */
+  static nodeToCharacterRange (node) {
+    const range = document.createRange();
+    range.selectNodeContents(node);
+    return CharacterRange.rangeToCharacterRange(range, node.ownerDocument.body);
+  }
 }
