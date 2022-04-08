@@ -1,7 +1,4 @@
 'use strict'
-
-import CharacterRange from './core/characterRange';
-
 /** @typedef {{ characterRange: CharacterRange, isBackward: boolean }[]} Serialized  */
 
 /**
@@ -38,30 +35,11 @@ export function restoreSelection (selection, serialized) {
 
 /**
  *
- * @param {Selection} selection
- * @param {HTMLElement} containerElement
- * @return {{ characterRange: CharacterRange, isBackward: boolean }[]}
- */
-export function serializeSelection (selection, containerElement) {
-  const rangeInfos = [];
-  const ranges = selection.getAllRange();
-  ranges.forEach(range => {
-    rangeInfos.push({
-      characterRange: CharacterRange.rangeToCharacterRange(range, containerElement),
-      isBackward: selection.isBackward()
-    })
-  });
-
-  return rangeInfos;
-}
-
-/**
- *
  * @param {Range} range
  * @return {[number, number]}
  */
 export function getRangeBoundaries (range) {
-  const { start, end } = range.getBookmark(document.body);
+  const { start, end } = range.getBookmark(range.startContainer.ownerDocument.body);
   return [start, end];
 }
 
@@ -72,7 +50,7 @@ export function getRangeBoundaries (range) {
  */
 export function updateRangeFromPosition (range, position) {
   const [start, end] = position;
-  range.moveToBookmark({ start, end, containerElement: document.body });
+  range.moveToBookmark({ start, end, containerElement: range.startContainer.ownerDocument.body });
 }
 
 export function omit(obj, ...keys) {
