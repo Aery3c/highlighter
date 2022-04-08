@@ -1,17 +1,25 @@
 'use strict';
 
 export default class Highlight {
-  constructor(className, tagName, characterRange, containerElement, containerElementId) {
-    this.className = className;
-    this.tagName = tagName;
+  /**
+   *
+   * @param {CharacterRange} characterRange
+   * @param {Applier} applier
+   */
+  constructor(characterRange, applier) {
     this.characterRange = characterRange;
-    this.containerElement = containerElement;
-    this.containerElementId = containerElementId;
-    this.applied = false;
+    this._applier = applier;
+    this.appliesd = false;
   }
 
   apply () {
-    this.applied = true;
-    this.applyRange(this.characterRange.getRange());
+    this.appliesd = true;
+    this._applier.applyToRange(this.characterRange.getRange());
   }
+
+  unapply () {
+    this.appliesd = false;
+    this._applier.undoToRange(this.characterRange.getRange());
+  }
+
 }
