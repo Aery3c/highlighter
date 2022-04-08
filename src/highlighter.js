@@ -19,7 +19,7 @@ export default class Highlighter {
     // defalut use selection
     let characterRanges = serializeSelection(window.getSelection());
 
-    resizeWidthHighlights(characterRanges, highlights, applier);
+    resizeWithHighlights(characterRanges, highlights, applier);
 
     const newHighlights = [];
     highlights.forEach(ht => {
@@ -42,7 +42,7 @@ export default class Highlighter {
     const containerElement = options.containerElement || document.body;
     const characterRanges = serializeSelection(selection, containerElement);
 
-    resizeWidthHighlights(characterRanges, highlights, applier);
+    resizeWithHighlights(characterRanges, highlights, applier);
 
     const newHighlights = [];
     highlights.forEach(ht => {
@@ -75,7 +75,7 @@ function serializeSelection (selection, containerElement) {
  * @param {Highlight[]} highlights
  * @param {Applier} applier
  */
-function resizeWidthHighlights (characterRanges, highlights, applier) {
+function resizeWithHighlights (characterRanges, highlights, applier) {
 
   const removeToHighligts = [];
   characterRanges.forEach(cr => {
