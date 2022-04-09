@@ -28,7 +28,7 @@ export default class Merge {
     return this.firstTextNode.data;
   }
 
-  getNodeLength () {
+  getLength () {
     let len = 0;
     this.textNodes.forEach(textNode => {
       len += textNode.length;

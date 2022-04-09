@@ -18,7 +18,7 @@ export default class CharacterRange {
    * @param {CharacterRange} otherCharRange
    * @return {boolean}
    */
-  intersects (otherCharRange) {
+  isIntersects (otherCharRange) {
     return this.start < otherCharRange.end && this.end > otherCharRange.start;
   }
   /**
@@ -28,6 +28,10 @@ export default class CharacterRange {
    */
   isContiguousWith (otherCharRange) {
     return this.start === otherCharRange.end || this.end === otherCharRange.start
+  }
+
+  isEqual (otherCharRange) {
+    return this.start === otherCharRange.start && this.end === otherCharRange.end;
   }
 
   /**

@@ -14,26 +14,14 @@ export default class Highlighter {
    * @param {Selection | Range | Node | Node[]} [thing]
    * @return {Highlight[]}
    */
-  paint (thing) {
-    const highlights = this.highlights, applier = this._applier;
-    // defalut use selection
-    let characterRanges = serializeSelection(window.getSelection());
+  highlight (thing) {
 
-    resizeWithHighlights(characterRanges, highlights, applier);
-
-    const newHighlights = [];
-    highlights.forEach(ht => {
-      newHighlights.push(ht);
-      ht.apply();
-    });
-
-    return newHighlights;
   }
 
   /**
    *
-   * @param {Selection} selection
-   * @param {Object} options
+   * @param {Selection} [selection]
+   * @param {Object} [options]
    * @return {Highlight[]}
    */
   highlightSelection (selection, options = {}) {
@@ -42,15 +30,7 @@ export default class Highlighter {
     const containerElement = options.containerElement || document.body;
     const characterRanges = serializeSelection(selection, containerElement);
 
-    resizeWithHighlights(characterRanges, highlights, applier);
-
-    const newHighlights = [];
-    highlights.forEach(ht => {
-      newHighlights.push(ht);
-      if (!ht.appliesd) {
-        ht.apply();
-      }
-    });
+    const newHighlights = highlightCharacterRange(characterRanges, highlights, applier);
 
     restoreSelection(selection, characterRanges);
 
@@ -69,14 +49,7 @@ function serializeSelection (selection, containerElement) {
   return ranges.map(range => CharacterRange.rangeToCharacterRange(range, containerElement));
 }
 
-/**
- *
- * @param {CharacterRange[]} characterRanges
- * @param {Highlight[]} highlights
- * @param {Applier} applier
- */
-function resizeWithHighlights (characterRanges, highlights, applier) {
-
+function highlightCharacterRange (characterRanges, highlights, applier) {
   const removeToHighligts = [];
   characterRanges.forEach(cr => {
     if (cr.start === cr.end) {
@@ -88,7 +61,7 @@ function resizeWithHighlights (characterRanges, highlights, applier) {
     for (let i = 0, ht; (ht = highlights[i]); ++i) {
       const htcr = ht.characterRange;
 
-      if (cr.intersects(htcr) || cr.isContiguousWith(htcr)) {
+      if (cr.isIntersects(htcr) || cr.isContiguousWith(htcr)) {
         // 如果字符范围和高亮范围产生交集和相连
         cr = cr.union(htcr);
         removeToHighligts.push(ht);
@@ -100,11 +73,19 @@ function resizeWithHighlights (characterRanges, highlights, applier) {
     highlights.push(new Highlight(cr, applier));
   });
 
-  console.log(removeToHighligts, 'removeToHighligts');
+  // off
   removeToHighligts.forEach(removeHt => {
     if (removeHt.appliesd) {
       removeHt.unapply();
     }
+  });
+
+  // on
+  return highlights.map(ht => {
+    if (!ht.appliesd) {
+      ht.apply();
+    }
+    return ht;
   });
 }
 

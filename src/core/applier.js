@@ -153,7 +153,7 @@ export default class Applier {
 
         if (lastNode === textNode) {
           rangeEndNode = currentMerge.textNodes[0];
-          rangeEndOffset = currentMerge.getNodeLength();
+          rangeEndOffset = currentMerge.getLength();
         }
 
       } else {
