@@ -48,3 +48,15 @@ export function omit(obj, ...keys) {
       .filter(([k]) => !keysToRemove.has(k))
   );
 }
+
+export function range(start = 0, end = 0, step = 1, fromRight) {
+  let index = -1
+  let length = Math.max(Math.ceil((end - start) / (step || 1)), 0)
+  const result = new Array(length)
+
+  while (length--) {
+    result[fromRight ? length : ++index] = start
+    start += step
+  }
+  return result
+}

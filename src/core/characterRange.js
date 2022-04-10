@@ -16,6 +16,14 @@ export default class CharacterRange {
   /**
    *
    * @param {CharacterRange} otherCharRange
+   * @return {CharacterRange}
+   */
+  intersection (otherCharRange) {
+    return new CharacterRange(Math.max(this.start, otherCharRange.start), Math.min(this.end, otherCharRange.end), this.containerElement);
+  }
+  /**
+   *
+   * @param {CharacterRange} otherCharRange
    * @return {boolean}
    */
   isIntersects (otherCharRange) {

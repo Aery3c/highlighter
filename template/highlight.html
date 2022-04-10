@@ -12,8 +12,7 @@
   <script src="../src/core/merge.js"></script>
 </head>
 
-<body>
-<div class="post_body" id="post_body"><p>新手德州扑克玩家刚上桌往往有些手足无措，对牌桌上的一切感到好奇又拘谨。最尴尬的就是一些大鲨鱼在牌桌上高谈阔论，各种专业术语侃侃而来，萌新们只能一脸懵比，努力保持微笑。<br></p>
+<body><div class="post_body" id="post_body"><p>新手德州扑克玩家刚上桌往往有些手足无措，对牌桌上的一切感到好奇又拘谨。最尴尬的就是一些大鲨鱼在牌桌上高谈阔论，各种专业术语侃侃而来，萌新们只能一脸懵比，努力保持微笑。<br></p>
   <p>其实游学者只能说，你们这些萌新还是图样图森破了，你们以为这些高谈阔论的玩家都一定是高手吗？</p>
   <p>其实只需要5分钟的时间，就可以把一个萌新包装成一个德扑“高手”。怎么样，酷不酷，想不想学？</p>
   <p>好，言归正传，我们马上进行专（装）业（逼）大讲堂：</p>
@@ -48,16 +47,24 @@
   <script>
     const Highlight = Highlighter.Highlight;
     const CharacterRange = Highlighter.CharacterRange;
+    const Applier = Highlighter.Applier;
+    const range = Highlighter.utils.range;
 
+    console.log(range(0, 1+1));
 
+    const highlight = new Highlight(
+      new CharacterRange(0, 6, document.body),
+      new Applier()
+    );
+
+    highlight.apply();
     document.querySelector('#apply').addEventListener('click', function() {
-      const sel = window.getSelection();
-      const [range] = sel.getAllRange();
-      const highlight = new Highlight('highlight', 'tagName', CharacterRange.rangeToCharacterRange(range, document.body));
-      if (!highlight.applied) {
-        highlight.apply();
-      } else {
-        highlight.unapply();
+      // 选中范围
+      const cr = new CharacterRange(0, 3, document.body);
+      const htcr = highlight.characterRange;
+
+      if (cr.isIntersects(htcr)) {
+        console.log(cr.intersection(htcr));
       }
     });
 
