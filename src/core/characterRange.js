@@ -26,7 +26,7 @@ export default class CharacterRange {
    * @param {CharacterRange} otherCharRange
    * @return {boolean}
    */
-  isContiguousWith (otherCharRange) {
+  isJoint (otherCharRange) {
     return this.start === otherCharRange.end || this.end === otherCharRange.start
   }
 

@@ -23,7 +23,8 @@
     const highligter = new Highlighter({});
 
     document.querySelector('#test-highlight').addEventListener('click', function() {
-      highligter.highlightSelection();
+      const highlights = highligter.highlightSelection();
+      console.log(highlights);
     });
 
   </script>

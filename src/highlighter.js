@@ -36,6 +36,15 @@ export default class Highlighter {
 
     return newHighlights;
   }
+
+  /**
+   *
+   * @param {Selection} selection
+   */
+  unhighlightSelection (selection) {
+    selection = selection || window.getSelection();
+
+  }
 }
 
 /**
@@ -53,24 +62,32 @@ function highlightCharacterRange (characterRanges, highlights, applier) {
   const removeToHighligts = [];
   characterRanges.forEach(cr => {
     if (cr.start === cr.end) {
-      // igone empty range
+      // ignore empty range
       return false;
     }
 
+    let isRangeSame = false;
     // compare each range with the existing highlight range
     for (let i = 0, ht; (ht = highlights[i]); ++i) {
       const htcr = ht.characterRange;
 
-      if (cr.isIntersects(htcr) || cr.isContiguousWith(htcr)) {
-        // 如果字符范围和高亮范围产生交集和相连
+      if (cr.isEqual(htcr)) {
+        // ignore same range
+        isRangeSame = true;
+        continue;
+      }
+
+      if (cr.isIntersects(htcr) || cr.isJoint(htcr)) {
+        // range intersect joint
         cr = cr.union(htcr);
         removeToHighligts.push(ht);
-        highlights.splice(i, 1);
-        i--;
+        highlights.splice(i--, 1);
       }
     }
 
-    highlights.push(new Highlight(cr, applier));
+    if (!isRangeSame) {
+      highlights.push(new Highlight(cr, applier));
+    }
   });
 
   // off
@@ -89,12 +106,16 @@ function highlightCharacterRange (characterRanges, highlights, applier) {
   });
 }
 
+function unhighlightCharacterRange () {
+
+}
+
 /**
  *
  * @param {Selection} selection
  * @param {CharacterRange[]} characterRanges
  */
-export function restoreSelection (selection, characterRanges) {
+function restoreSelection (selection, characterRanges) {
   selection.removeAllRanges();
   characterRanges.forEach(characterRange => {
     const range = characterRange.getRange();
