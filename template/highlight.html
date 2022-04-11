@@ -50,22 +50,40 @@
     const Applier = Highlighter.Applier;
     const range = Highlighter.utils.range;
 
-    console.log(range(0, 1+1));
-
     const highlight = new Highlight(
-      new CharacterRange(0, 6, document.body),
+      new CharacterRange(1, 6, document.body),
       new Applier()
     );
 
     highlight.apply();
     document.querySelector('#apply').addEventListener('click', function() {
       // 选中范围
-      const cr = new CharacterRange(0, 3, document.body);
-      const htcr = highlight.characterRange;
+      let cr = new CharacterRange(2, 3, document.body);
+      let htcr = highlight.characterRange;
 
+
+      let removeToHighlights = []; highlights = []
       if (cr.isIntersects(htcr)) {
-        console.log(cr.intersection(htcr));
+
+        let remove = false;
+        htcr.complementarySet(htcr.intersection(cr)).forEach(a => {
+          highlights.push(new Highlight(a, new Applier()));
+          remove = true;
+        });
+
+        if (remove) {
+          removeToHighlights.push(highlight);
+        }
       }
+
+      removeToHighlights.forEach(removeHt => {
+        removeHt.unapply();
+      });
+
+      highlights.forEach(ht => {
+        ht.apply();
+      });
+
     });
 
 
