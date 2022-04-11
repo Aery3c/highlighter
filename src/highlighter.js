@@ -58,6 +58,13 @@ function serializeSelection (selection, containerElement) {
   return ranges.map(range => CharacterRange.rangeToCharacterRange(range, containerElement));
 }
 
+/**
+ *
+ * @param {CharacterRange[]} characterRanges
+ * @param {Highlight[]} highlights
+ * @param {Applier} applier
+ * @return {Highlight[]}
+ */
 function highlightCharacterRange (characterRanges, highlights, applier) {
   const removeToHighligts = [];
   characterRanges.forEach(cr => {
@@ -106,7 +113,13 @@ function highlightCharacterRange (characterRanges, highlights, applier) {
   });
 }
 
-function unhighlightCharacterRange () {
+/**
+ *
+ * @param {CharacterRange[]} characterRanges
+ * @param  highlights
+ * @param applier
+ */
+function unhighlightCharacterRange (characterRanges, highlights, applier) {
 
 }
 
