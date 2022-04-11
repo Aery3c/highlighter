@@ -58,17 +58,17 @@ export default class CharacterRange {
    * @return {CharacterRange[]}
    */
   complementarySet (subCharRange) {
-    const CharRangeArr = [];
+    const charSet = [];
 
     if (this.start < subCharRange.start) {
-      CharRangeArr.push(new CharacterRange(this.start, subCharRange.start, this.containerElement));
+      charSet.push(new CharacterRange(this.start, subCharRange.start, this.containerElement));
     }
 
     if (this.end > subCharRange.end) {
-      CharRangeArr.push(new CharacterRange(subCharRange.end, this.end, this.containerElement));
+      charSet.push(new CharacterRange(subCharRange.end, this.end, this.containerElement));
     }
 
-    return CharRangeArr;
+    return charSet;
   }
 
 

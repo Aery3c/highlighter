@@ -40,8 +40,9 @@ export default class Highlighter {
   /**
    *
    * @param {Selection} selection
+   * @param {Object} [options]
    */
-  unhighlightSelection (selection) {
+  unhighlightSelection (selection, options) {
     selection = selection || window.getSelection();
 
   }
