@@ -21,14 +21,13 @@ export default class Highlighter {
   /**
    *
    * @param {Selection} [selection]
-   * @param {Object} [options]
    * @return {Highlight[]}
    */
-  highlightSelection (selection, options = {}) {
+  highlightSelection (selection) {
     const highlights = this.highlights, applier = this._applier;
     selection = selection || window.getSelection();
-    const containerElement = options.containerElement || document.body;
-    const characterRanges = serializeSelection(selection, containerElement);
+
+    const characterRanges = serializeSelection(selection);
 
     const newHighlights = highlightCharacterRange(characterRanges, highlights, applier);
 
@@ -40,9 +39,8 @@ export default class Highlighter {
   /**
    *
    * @param {Selection} selection
-   * @param {Object} [options]
    */
-  unhighlightSelection (selection, options) {
+  unhighlightSelection (selection) {
     selection = selection || window.getSelection();
 
   }
@@ -51,12 +49,11 @@ export default class Highlighter {
 /**
  *
  * @param {Selection} selection
- * @param {HTMLElement} containerElement
  * @return {CharacterRange[]}
  */
-function serializeSelection (selection, containerElement) {
+function serializeSelection (selection) {
   const ranges = selection.getAllRange();
-  return ranges.map(range => CharacterRange.rangeToCharacterRange(range, containerElement));
+  return ranges.map(range => CharacterRange.rangeToCharacterRange(range));
 }
 
 /**
