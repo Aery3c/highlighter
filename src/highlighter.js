@@ -14,7 +14,7 @@ export default class Highlighter {
    * @param {Selection | Range | Node | Node[]} [thing]
    * @return {Highlight[]}
    */
-  highlight (thing) {
+  highlight () {
 
   }
 
@@ -40,9 +40,13 @@ export default class Highlighter {
    *
    * @param {Selection} selection
    */
-  unhighlightSelection (selection) {
-    selection = selection || window.getSelection();
+  unhighlightSelection () {
+    // const highlights = this.highlights, applier = this._applier;
+    // selection = selection || window.getSelection();
+    //
+    // const characterRanges = serializeSelection(selection);
 
+    // unhighlightCharacterRange(characterRanges, highlights, applier);
   }
 }
 
@@ -114,12 +118,12 @@ function highlightCharacterRange (characterRanges, highlights, applier) {
 /**
  *
  * @param {CharacterRange[]} characterRanges
- * @param  highlights
+ * @param highlights
  * @param applier
  */
-function unhighlightCharacterRange (characterRanges, highlights, applier) {
-
-}
+// function unhighlightCharacterRange (characterRanges, highlights, applier) {
+//
+// }
 
 /**
  *
