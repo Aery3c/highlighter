@@ -5,12 +5,10 @@ export default class CharacterRange {
    *
    * @param {number} start
    * @param {number} end
-   * @param {HTMLElement} containerElement
    */
-  constructor(start, end, containerElement) {
+  constructor(start, end) {
     this.start = start;
     this.end = end;
-    this.containerElement = containerElement;
   }
 
   /**
@@ -19,7 +17,7 @@ export default class CharacterRange {
    * @return {CharacterRange}
    */
   intersection (otherCharRange) {
-    return new CharacterRange(Math.max(this.start, otherCharRange.start), Math.min(this.end, otherCharRange.end), this.containerElement);
+    return new CharacterRange(Math.max(this.start, otherCharRange.start), Math.min(this.end, otherCharRange.end));
   }
   /**
    *
@@ -49,7 +47,7 @@ export default class CharacterRange {
    *
    */
   union (otherCharRange) {
-    return new CharacterRange(Math.min(this.start, otherCharRange.start), Math.max(this.end, otherCharRange.end), this.containerElement);
+    return new CharacterRange(Math.min(this.start, otherCharRange.start), Math.max(this.end, otherCharRange.end));
   }
 
   /**
@@ -61,17 +59,15 @@ export default class CharacterRange {
     const charSet = [];
 
     if (this.start < subCharRange.start) {
-      charSet.push(new CharacterRange(this.start, subCharRange.start, this.containerElement));
+      charSet.push(new CharacterRange(this.start, subCharRange.start));
     }
 
     if (this.end > subCharRange.end) {
-      charSet.push(new CharacterRange(subCharRange.end, this.end, this.containerElement));
+      charSet.push(new CharacterRange(subCharRange.end, this.end));
     }
 
     return charSet;
   }
-
-
 
   /**
    *
@@ -88,19 +84,19 @@ export default class CharacterRange {
   /**
    *
    * @param {Range} range
-   * @param {HTMLElement} containerElement
    * @return {CharacterRange}
    */
 
-  static rangeToCharacterRange (range, containerElement) {
+  static rangeToCharacterRange (range) {
     /** @type {BookMark} */
-    const { start, end } = range.getBookmark(containerElement);
-    return new CharacterRange(start, end, containerElement);
+    const { start, end } = range.getBookmark(document.body);
+    return new CharacterRange(start, end);
   }
 
   static characterRangeToRange (characterRange) {
     const range = document.createRange();
-    range.moveToBookmark(characterRange);
+    const { start, end } = characterRange;
+    range.moveToBookmark({ start, end, containerElement: document.body });
     return range;
   }
 
@@ -112,6 +108,6 @@ export default class CharacterRange {
   static nodeToCharacterRange (node) {
     const range = document.createRange();
     range.selectNodeContents(node);
-    return CharacterRange.rangeToCharacterRange(range, node.ownerDocument.body);
+    return CharacterRange.rangeToCharacterRange(range);
   }
 }
