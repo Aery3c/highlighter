@@ -3,6 +3,7 @@
 const clearConsole = require('./clearConsole');
 const formatWebpackMessages = require('./formatWebpackMessages');
 const chalk = require('chalk');
+const prepareUrls = require('../utils/prepareUrls');
 
 const isInteractive = process.stdout.isTTY;
 
@@ -11,8 +12,6 @@ function printInstructions() {
   console.log(`You can now view ${chalk.bold('highlighter')} in the browser.`);
   console.log();
 }
-
-printInstructions();
 
 function createCompiler ({ config, webpack }) {
 

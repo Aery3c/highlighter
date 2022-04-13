@@ -10,9 +10,9 @@
     "dev": "node scripts/dev.js"
   },
   "devDependencies": {
+    "address": "^1.1.2",
     "chalk": "4.1.2",
     "eslint": "^8.11.0",
-    "eslint-formatter-mo": "^1.1.1",
     "eslint-webpack-plugin": "^3.1.1",
     "html-webpack-plugin": "^5.5.0",
     "webpack": "^5.70.0",

@@ -57,7 +57,7 @@ module.exports = function (webpackEnv) {
       ...createHtmlWebpackPlugin(isEnvDevelopment),
       new ESLintPlugin({
         failOnWarning: false,
-        formatter: require.resolve('eslint-formatter-mo'),
+        // formatter: require.resolve('eslint-formatter-mo'),
         quiet: true
       })
     ]

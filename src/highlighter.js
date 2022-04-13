@@ -24,12 +24,11 @@ export default class Highlighter {
    * @return {Highlight[]}
    */
   highlightSelection (selection) {
-    const highlights = this.highlights, applier = this._applier;
-    selection = selection || window.getSelection();
+    selection = getSelection(selection);
 
     const characterRanges = serializeSelection(selection);
 
-    const newHighlights = highlightCharacterRange(characterRanges, highlights, applier);
+    const newHighlights = highlightCharacterRange(characterRanges, this.highlights, this._applier);
 
     restoreSelection(selection, characterRanges);
 
@@ -40,13 +39,8 @@ export default class Highlighter {
    *
    * @param {Selection} selection
    */
-  unhighlightSelection () {
-    // const highlights = this.highlights, applier = this._applier;
-    // selection = selection || window.getSelection();
-    //
-    // const characterRanges = serializeSelection(selection);
-
-    // unhighlightCharacterRange(characterRanges, highlights, applier);
+  unhighlightSelection (selection) {
+    selection = getSelection(selection);
   }
 }
 
@@ -136,4 +130,9 @@ function restoreSelection (selection, characterRanges) {
     const range = characterRange.getRange();
     selection.addRange(range);
   });
+}
+
+function getSelection (selection) {
+  return (selection instanceof Selection && selection)
+  || window.getSelection();
 }
