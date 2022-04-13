@@ -10,7 +10,7 @@ const shouldUseSourceMap = process.env.GENERATE_SOURCEMAP !== 'false';
 function createHtmlWebpackPlugin(isEnvDevelopment) {
   const results = [];
   if (isEnvDevelopment) {
-    let files = fs.readdirSync(paths.templateDir);
+    let files = fs.readdirSync(paths.templateDir).filter(filename => /\.html$/.test(filename));
     files.forEach(filename => {
       results.push(
         new HtmlWebpackPlugin({
@@ -58,7 +58,7 @@ module.exports = function (webpackEnv) {
       new ESLintPlugin({
         failOnWarning: false,
         formatter: require.resolve('eslint-formatter-mo'),
-        // quiet: true
+        quiet: true
       })
     ]
   }
