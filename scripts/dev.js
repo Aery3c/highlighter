@@ -2,6 +2,8 @@
 'use strict'
 
 const webpack = require('webpack');
+const paths = require('./config/paths');
+const fs = require('fs');
 const WebpackDevServer = require('webpack-dev-server');
 const chalk = require('chalk');
 const clearConsole = require('./utils/clearConsole');
@@ -19,11 +21,16 @@ const compiler = createCompiler({
 const devServer = new WebpackDevServer({
   hot: true,
   compress: true,
-  // open: ['/dist/demos/'],
-  static: './',
+  static: {
+    directory: paths.appBuild,
+    serveIndex: true,
+  },
   port: 3000,
   devMiddleware: {
-    writeToDisk: true
+    writeToDisk: true,
+  },
+  client: {
+    progress: true
   }
 }, compiler);
 
@@ -37,6 +44,10 @@ devServer.startCallback(() => {
   ['SIGINT', 'SIGTERM'].forEach(function (sig) {
     process.on(sig, function () {
       devServer.close();
+      fs.rmdirSync(paths.appBuild, { recursive: true });
+      console.log();
+      console.log(chalk.green(`rmdir to ${paths.appBuild}`));
+      console.log();
       process.exit();
     });
   });
