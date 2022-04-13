@@ -12,9 +12,18 @@ function printInstructions() {
   console.log();
 }
 
+printInstructions();
+
 function createCompiler ({ config, webpack }) {
 
   const compiler = webpack(config);
+
+  compiler.hooks.invalid.tap('invalid', () => {
+    if (isInteractive) {
+      clearConsole();
+    }
+    console.log('Compiling...');
+  });
 
   compiler.hooks.done.tap('done', async stats => {
     if (isInteractive) {
