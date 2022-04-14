@@ -54,6 +54,21 @@ module.exports = function (webpackEnv) {
       },
       globalObject: 'this'
     },
+    module: {
+      rules: [
+        {
+          test: /\.js$/,
+          exclude: /node_modules/,
+          use: {
+            loader: 'babel-loader',
+            options: {
+              presets: ['@babel/preset-env'],
+              plugins: ['@babel/plugin-transform-runtime']
+            }
+          }
+        }
+      ]
+    },
     plugins: [
       ...createHtmlWebpackPlugin(isEnvDevelopment),
       new ESLintPlugin({
