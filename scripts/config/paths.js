@@ -11,5 +11,6 @@ module.exports = {
   appSrc: resolveApp('src'),
   templateDir: resolveApp('template'),
   yarnLockFile: resolveApp('yarn.lock'),
-  appPackageJson: resolveApp('package.json')
+  appPackageJson: resolveApp('package.json'),
+  eslintPath: resolveApp('.eslintrc.js')
 }
