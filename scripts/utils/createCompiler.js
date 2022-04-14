@@ -1,16 +1,37 @@
 'use strict'
 
 const clearConsole = require('react-dev-utils/clearConsole');
-const formatWebpackMessages = require('react-dev-utils/formatWebpackMessages');
 const chalk = require('chalk');
+const getCompileTime = require('./getCompileTime');
+const output = require('friendly-errors-webpack-plugin/src/output');
 
 const isInteractive = process.stdout.isTTY;
 
-function printInstructions() {
+function printInstructions(appName, urls, useYarn) {
   console.log();
-  console.log(`You can now view ${chalk.bold('highlighter')} in the browser.`);
+  console.log(`You can now view ${chalk.bold(appName)} in the browser.`);
+  console.log();
+
+  if (urls.lanUrlForTerminal) {
+    console.log(
+      `  ${chalk.bold('Local:')}            ${urls.localUrlForTerminal}`
+    );
+    console.log(
+      `  ${chalk.bold('On Your Network:')}  ${urls.lanUrlForTerminal}`
+    );
+  } else {
+    console.log(`  ${urls.localUrlForTerminal}`);
+  }
+
+  console.log();
+  console.log('Note that the development build is not optimized.');
+  console.log(
+    `To create a production build, use ` +
+    `${chalk.cyan(`${useYarn ? 'yarn' : 'npm run'} build`)}.`
+  );
   console.log();
 }
+
 
 function createCompiler ({ appName, config, urls, useYarn, webpack }) {
 
@@ -28,55 +49,28 @@ function createCompiler ({ appName, config, urls, useYarn, webpack }) {
       clearConsole();
     }
 
-    // We have switched off the default webpack output in WebpackDevServer
-    // options so we are going to "massage" the warnings and errors and present
-    // them in a readable focused way.
-    // We only construct the warnings and errors for speed:
-    // https://github.com/facebook/create-react-app/issues/4492#issuecomment-421959548
-    const statsData = stats.toJson({
-      all: false,
-      warnings: true,
-      errors: true,
-    });
+    const hasErrors = stats.hasErrors();
+    const hasWarnings = stats.hasWarnings();
 
-    const messages = formatWebpackMessages(statsData);
-    const isSuccessful = !messages.errors.length && !messages.warnings.length;
+    const isSuccessful = !hasErrors && !hasWarnings;
+
     if (isSuccessful) {
-      console.log(chalk.green('Compiled successfully!'));
+      const time = getCompileTime(stats);
+      output.title('success', 'DONE', 'Compiled successfully in ' + time + 'ms');
     }
 
-    if (isInteractive) {
-      printInstructions();
+    if (isSuccessful) {
+      printInstructions(appName, urls, useYarn);
     }
 
-    // If errors exist, only show errors.
-    if (messages.errors.length) {
-      // Only keep the first error. Others are often indicative
-      // of the same problem, but confuse the reader with noise.
-      if (messages.errors.length > 1) {
-        messages.errors.length = 1;
-      }
-      console.log(chalk.red('Failed to compile.\n'));
-      // console.log(messages.errors.join('\n\n'));
+    if (hasErrors) {
+      output.title('error', 'ERROR', 'Failed to compile.\n');
       return;
     }
 
-    // Show warnings if no errors were found.
-    if (messages.warnings.length) {
-      console.log(chalk.yellow('Compiled with warnings.\n'));
-      // console.log(messages.warnings.join('\n\n'));
-
-      // Teach some ESLint tricks.
-      console.log(
-        '\nSearch for the ' +
-        chalk.underline(chalk.yellow('keywords')) +
-        ' to learn more about each warning.'
-      );
-      console.log(
-        'To ignore, add ' +
-        chalk.cyan('// eslint-disable-next-line') +
-        ' to the line before.\n'
-      );
+    if (hasWarnings) {
+      output.title('warnings', 'WARNINGS', 'Compiled with warnings.\n');
+      return;
     }
 
   });
