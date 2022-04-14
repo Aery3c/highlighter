@@ -5,8 +5,8 @@ const webpack = require('webpack');
 const WebpackDevServer = require('webpack-dev-server');
 const fs = require('fs');
 const paths = require('./config/paths');
-const chalk = require('chalk');
 const { choosePort, prepareUrls } = require('react-dev-utils/WebpackDevServerUtils');
+const output = require('friendly-errors-webpack-plugin/src/output');
 const openBrowser = require('react-dev-utils/openBrowser');
 const clearConsole = require('react-dev-utils/clearConsole');
 const configFactory = require('./config/webpack.config');
@@ -54,7 +54,7 @@ choosePort(HOST, DEFAULT_PORT)
         clearConsole();
       }
 
-      console.log(chalk.cyan('Starting the development server...\n'));
+      output.note('Starting the development server...\n');
       openBrowser(urls.localUrlForBrowser);
 
       ['SIGINT', 'SIGTERM'].forEach(function (sig) {
@@ -62,7 +62,7 @@ choosePort(HOST, DEFAULT_PORT)
           devServer.close();
           fs.rmdirSync(paths.appBuild, { recursive: true });
           console.log();
-          console.log(chalk.green(`rmdir to ${paths.appBuild}`));
+          output.info(`rmdir to ${paths.appBuild}`);
           console.log();
           process.exit();
         });
