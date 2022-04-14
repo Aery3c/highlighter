@@ -1,9 +1,8 @@
 'use strict'
 
-const clearConsole = require('./clearConsole');
-const formatWebpackMessages = require('./formatWebpackMessages');
+const clearConsole = require('react-dev-utils/clearConsole');
+const formatWebpackMessages = require('react-dev-utils/formatWebpackMessages');
 const chalk = require('chalk');
-const prepareUrls = require('../utils/prepareUrls');
 
 const isInteractive = process.stdout.isTTY;
 
@@ -13,7 +12,7 @@ function printInstructions() {
   console.log();
 }
 
-function createCompiler ({ config, webpack }) {
+function createCompiler ({ appName, config, urls, useYarn, webpack }) {
 
   const compiler = webpack(config);
 
