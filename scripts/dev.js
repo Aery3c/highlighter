@@ -34,8 +34,9 @@ choosePort(HOST, DEFAULT_PORT)
       config,
       urls,
       useYarn,
-      webpack
-    })
+      useTypeScript: false,
+      webpack,
+    });
 
     const serverConfig = {
       ...createDevServerConfig(),
@@ -43,7 +44,7 @@ choosePort(HOST, DEFAULT_PORT)
         directory: paths.appBuild,
         serveIndex: true,
       },
-      port,
+      port
     }
 
     const devServer = new WebpackDevServer(serverConfig, compiler);
