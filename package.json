@@ -4,7 +4,7 @@
   "description": "A nice highlighter",
   "main": "index.js",
   "repository": "git@github.com:Aery3c/highlighter.git",
-  "author": "Aery3c <294725131@qq.com>",
+  "author": "Aery3c <aery3c@gmail.com>",
   "license": "MIT",
   "scripts": {
     "dev": "node scripts/dev.js"
