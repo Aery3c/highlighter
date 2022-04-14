@@ -44,7 +44,11 @@ export default class Highlighter {
 
     const characterRanges = serializeSelection(selection);
 
-    unhighlightCharacterRange(characterRanges, this.highlights, this._applier);
+    const newHighlights = unhighlightCharacterRange(characterRanges, this.highlights, this._applier);
+
+    restoreSelection(selection, characterRanges);
+
+    return newHighlights;
   }
 }
 
@@ -126,13 +130,35 @@ function unhighlightCharacterRange (characterRanges, highlights, applier) {
       return false;
     }
 
-    highlights.forEach(ht => {
-      const htcr = ht.characterRange;
+    let highlight, i, removeToHighlights = [];
+    for (i = 0; (highlight = highlights[i]); ++i) {
+      const htcr = highlight.characterRange;
       if (cr.isIntersects(htcr)) {
-        // todo
+        // isIntersects
+        const intersect = cr.intersection(htcr);
+        const complements = htcr.complementarySet(intersect);
+        complements.forEach(complement => {
+          // add complement
+          highlights.push(new Highlight(complement, applier));
+        });
+        removeToHighlights.push(highlight);
+        highlights.splice(i--, 1);
+      }
+    }
+
+    // off
+    removeToHighlights.forEach(removeHt => {
+      if (removeHt.appliesd) {
+        removeHt.unapply();
       }
     });
 
+    // on
+    return highlights.map(ht => {
+      if (!ht.appliesd) {
+        ht.apply();
+      }
+    })
   });
 }
 
