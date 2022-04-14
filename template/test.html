@@ -18,13 +18,18 @@
     exception is thrown if the two Ranges have different <a href="ranges.html#td-root-container"><em>root
       container</em></a>s.</p>
   <br>
-  <button id="test-highlight">test-highlight</button>
+  <button id="test-highlightSelection">test-highlightSelection</button>
+  <button id="test-unhighlightSelection">test-unhighlightSelection</button>
   <script>
     const highligter = new Highlighter({});
 
-    document.querySelector('#test-highlight').addEventListener('click', function() {
+    document.querySelector('#test-highlightSelection').addEventListener('click', function() {
       const highlights = highligter.highlightSelection();
       console.log(highlights);
+    });
+
+    document.querySelector('#test-unhighlightSelection').addEventListener('click', function() {
+      highligter.unhighlightSelection();
     });
 
   </script>

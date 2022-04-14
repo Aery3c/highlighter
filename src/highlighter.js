@@ -37,10 +37,14 @@ export default class Highlighter {
 
   /**
    *
-   * @param {Selection} selection
+   * @param {Selection} [selection]
    */
   unhighlightSelection (selection) {
     selection = getSelection(selection);
+
+    const characterRanges = serializeSelection(selection);
+
+    unhighlightCharacterRange(characterRanges, this.highlights, this._applier);
   }
 }
 
@@ -115,9 +119,22 @@ function highlightCharacterRange (characterRanges, highlights, applier) {
  * @param highlights
  * @param applier
  */
-// function unhighlightCharacterRange (characterRanges, highlights, applier) {
-//
-// }
+function unhighlightCharacterRange (characterRanges, highlights, applier) {
+  characterRanges.forEach(cr => {
+    if (cr.start === cr.end) {
+      // ignore empty range
+      return false;
+    }
+
+    highlights.forEach(ht => {
+      const htcr = ht.characterRange;
+      if (cr.isIntersects(htcr)) {
+        // todo
+      }
+    });
+
+  });
+}
 
 /**
  *
