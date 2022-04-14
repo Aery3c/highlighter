@@ -5,6 +5,7 @@ const paths = require('./paths');
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ESLintPlugin = require('eslint-webpack-plugin');
+const ProgressBarPlugin = require('progress-bar-webpack-plugin');
 const shouldUseSourceMap = process.env.GENERATE_SOURCEMAP !== 'false';
 
 function createHtmlWebpackPlugin(isEnvDevelopment) {
@@ -59,7 +60,8 @@ module.exports = function (webpackEnv) {
         failOnWarning: false,
         // formatter: require.resolve('eslint-formatter-mo'),
         quiet: true
-      })
+      }),
+      new ProgressBarPlugin()
     ]
   }
 }
