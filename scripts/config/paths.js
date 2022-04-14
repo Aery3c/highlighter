@@ -9,6 +9,7 @@ module.exports = {
   appBuild: resolveApp('build'),
   appIndexJs: resolveApp('src/index'),
   appSrc: resolveApp('src'),
-  templateDir: resolveApp('template')
+  templateDir: resolveApp('template'),
+  yarnLockFile: resolveApp('yarn.lock'),
+  appPackageJson: resolveApp('package.json')
 }
-
