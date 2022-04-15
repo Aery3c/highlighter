@@ -6,7 +6,23 @@
   <title><%= htmlWebpackPlugin.options.title %></title>
   <style>
     .highlight {
-      background-color: yellow;
+      background-color: gray;
+    }
+    .operations {
+        position: fixed;
+        left: 0;
+        border: 1px solid #000;
+        top: 0;
+        width: 300px;
+        height: 300px;
+    }
+
+    .operations > .top {
+        margin-bottom: 50px;
+    }
+
+    .post_body {
+        padding-left: 300px;
     }
   </style>
   <script src="../src/core/merge.js"></script>
@@ -41,51 +57,34 @@
   <p>欢迎大家关注游学者的：</p>
   <p>扑克人社区专栏： http://www.pokerren.com/u/331</p>
   <p>The Mathematics of Poker 翻译： http://www.pokerren.com/Search/index?key=The+Mathematics&amp;type=article</p>
-  <button id="apply">Highlight.apply</button>
+
+  <div class="operations">
+    <div class="top">
+      <button onclick="applyToRangeYellow()">yellow.applyToRange</button>
+      <button onclick="undoToRangeYellow()">yellow.undoToRange</button>
+    </div>
+
+    <div class="bottom">
+      <button>gray.applyToRange</button>
+      <button>gray.undoToRange</button>
+    </div>
+  </div>
 </div>
 </body>
-  <script>
-    const Highlight = Highlighter.Highlight;
-    const CharacterRange = Highlighter.CharacterRange;
-    const Applier = Highlighter.Applier;
-    const range = Highlighter.utils.range;
+<script>
 
-    const highlight = new Highlight(
-      new CharacterRange(1, 6, document.body),
-      new Applier()
-    );
+  const applierA = new Highlighter.Applier({ className: 'HighlighterA', elAttribute: { id: 'A', style: 'background-color: yellow' } });
+  const applierB = new Highlighter.Applier({ className: 'HighlighterB', elAttribute: { id: 'B', style: 'background-color: gray' } })
 
-    highlight.apply();
-    document.querySelector('#apply').addEventListener('click', function() {
-      // 选中范围
-      let cr = new CharacterRange(2, 3, document.body);
-      let htcr = highlight.characterRange;
+  function applyToRangeYellow () {
 
+  }
 
-      let removeToHighlights = []; highlights = []
-      if (cr.isIntersects(htcr)) {
+  function undoToRangeYellow () {
 
-        let remove = false;
-        htcr.complementarySet(htcr.intersection(cr)).forEach(a => {
-          highlights.push(new Highlight(a, new Applier()));
-          remove = true;
-        });
+  }
 
-        if (remove) {
-          removeToHighlights.push(highlight);
-        }
-      }
+  
 
-      removeToHighlights.forEach(removeHt => {
-        removeHt.unapply();
-      });
-
-      highlights.forEach(ht => {
-        ht.apply();
-      });
-
-    });
-
-
-  </script>
+</script>
 </html>
