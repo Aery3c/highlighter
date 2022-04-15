@@ -1,3 +1,12 @@
+/**
+ * @license MIT
+ *
+ * Includes https://github.com/timdown/rangy/blob/master/lib/rangy-classapplier.js
+ *
+ * add, remove className on Range
+ * 给range添加、删除指定的类名
+ *
+ */
 'use strict';
 
 import { getRangeBoundaries, updateRangeFromPosition, omit } from '../utils';
@@ -15,7 +24,7 @@ export default class Applier {
   }
 
   /**
-   *
+   * add className to then range
    * @param {Range} range
    */
   applyToRange (range) {
@@ -33,7 +42,7 @@ export default class Applier {
     if (textNodes.length) {
       textNodes.forEach(textNode => {
         // forEach textNodes and applyTextNode
-        if (!this.getSelfOrAncestorWithClass(textNode)) {
+        if (!getSelfOrAncestorWithClass(textNode, this.className)) {
           this.applyTextNode(textNode);
         }
       });
@@ -51,7 +60,7 @@ export default class Applier {
   }
 
   /**
-   *
+   * remove className to the range
    * @param {Range} range
    */
   undoToRange (range) {
@@ -63,11 +72,11 @@ export default class Applier {
     const lastTextNode = textNodes[textNodes.length - 1];
 
     if (textNodes.length) {
-      this.splitAncestorWithClass(range);
+      splitAncestorWithClass(range, this.className);
       textNodes.forEach(textNode => {
-        let ancestorWithClass = this.getSelfOrAncestorWithClass(textNode);
+        let ancestorWithClass = getSelfOrAncestorWithClass(textNode, this.className);
         if (ancestorWithClass) {
-          this.undoToAncestor(ancestorWithClass);
+          undoToAncestor(ancestorWithClass);
         }
       });
       range.setStartAndEnd(textNodes[0], 0, lastTextNode, lastTextNode.length);
@@ -82,24 +91,16 @@ export default class Applier {
 
   /**
    *
-   * @param {Node} ancestor
-   */
-  undoToAncestor (ancestor) {
-    moveChildren(ancestor, ancestor.parentNode, true);
-  }
-
-  /**
-   *
    * @param {Range} range
    * @return {boolean}
    */
   isAppliedToRange (range) {
     if (range.collapsed && range.toString() === '') {
-      return !!this.getSelfOrAncestorWithClass(range.commonAncestorContainer);
+      return !!getSelfOrAncestorWithClass(range.commonAncestorContainer, this.className);
     } else {
       const textNodes = range.getEffectiveTextNodes();
       for (let i = 0, textNode; (textNode = textNodes[i]); ++i) {
-        if (!this.getSelfOrAncestorWithClass(textNode)) {
+        if (!getSelfOrAncestorWithClass(textNode, this.className)) {
           return false;
         }
       }
@@ -212,44 +213,55 @@ export default class Applier {
     return copyAttributesToElement(attrs, el);
   }
 
-  /**
-   *
-   * @param {Node} node
-   * @return {Node | null}
-   */
-  getSelfOrAncestorWithClass (node) {
-    while (node) {
-      if (this.hasClass(node, this.className)) {
-        return node;
-      }
-      node = node.parentNode;
+}
+
+/**
+ *
+ * @param {Node} ancestor
+ */
+function undoToAncestor (ancestor) {
+  moveChildren(ancestor, ancestor.parentNode, true);
+}
+
+/**
+ *
+ * @param {Node} node
+ * @param {string} className
+ * @return {Node|null}
+ */
+function getSelfOrAncestorWithClass (node, className) {
+  while (node) {
+    if (elementHasClass(node, className)) {
+      return node;
     }
-    return null;
+    node = node.parentNode;
   }
+  return null;
+}
 
-  /**
-   *
-   * @param {Range} range
-   */
-  splitAncestorWithClass (range) {
-    [{ node: range.endContainer, offset: range.endOffset }, { node: range.startContainer, offset: range.startOffset }]
-      .forEach(({ node, offset }) => {
-        const ancestorWithClass = this.getSelfOrAncestorWithClass(node);
-        if (ancestorWithClass) {
-          splitNodeAt(ancestorWithClass, node, offset);
-        }
-      });
-  }
+/**
+ *
+ * @param {Range} range
+ * @param {string} className
+ */
+function splitAncestorWithClass (range, className) {
+  [{ node: range.endContainer, offset: range.endOffset }, { node: range.startContainer, offset: range.startOffset }]
+    .forEach(({ node, offset }) => {
+      const ancestorWithClass = getSelfOrAncestorWithClass(node, className);
+      if (ancestorWithClass) {
+        splitNodeAt(ancestorWithClass, node, offset);
+      }
+    });
+}
 
-  /**
-   *
-   * @param {Node | HTMLElement} node
-   * @param {string} className
-   * @return {boolean}
-   */
-  hasClass (node, className) {
-    return node.nodeType === Node.ELEMENT_NODE && hasClass(node, className);
-  }
+/**
+ *
+ * @param {Node | HTMLElement} node
+ * @param {string} className
+ * @return {boolean}
+ */
+function elementHasClass (node, className) {
+  return node.nodeType === Node.ELEMENT_NODE && hasClass(node, className);
 }
 
 /**
