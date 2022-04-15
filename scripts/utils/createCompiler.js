@@ -9,7 +9,7 @@ const isInteractive = process.stdout.isTTY;
 
 function printInstructions(appName, urls, useYarn) {
   console.log();
-  console.log(`You can now view ${chalk.bold(appName)} in the browser.`);
+  console.log(`You can now view ${chalk.bold(appName + ' demos')} in the browser.`);
   console.log();
 
   if (urls.lanUrlForTerminal) {
