@@ -1,37 +1,26 @@
 'use strict'
 
-const fs = require('fs');
 const paths = require('./paths');
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ESLintPlugin = require('eslint-webpack-plugin');
 const ProgressBarPlugin = require('progress-bar-webpack-plugin');
 const shouldUseSourceMap = process.env.GENERATE_SOURCEMAP !== 'false';
-
-function createHtmlWebpackPlugin(isEnvDevelopment) {
-  const results = [];
-  if (isEnvDevelopment) {
-    let files = fs.readdirSync(paths.templateDir).filter(filename => /\.html$/.test(filename));
-    files.forEach(filename => {
-      results.push(
-        new HtmlWebpackPlugin({
-          title: filename.split('.')[0],
-          filename: `demos/${filename}`,
-          template: path.resolve(paths.templateDir, filename),
-          publicPath: '../',
-          scriptLoading: 'blocking',
-          inject: 'head',
-        })
-      )
-    });
-  }
-
-  return results;
-}
+const finder = require('../utils/finder');
 
 module.exports = function (webpackEnv) {
   const isEnvDevelopment = webpackEnv === 'development';
   const isEnvProduction = webpackEnv === 'production';
+
+  const plugins = [];
+
+  if (isEnvDevelopment) {
+    const htmlPaths = finder(paths.templateDir, 'html');
+    htmlPaths.forEach(p => {
+      const filename = path.parse(p).base;
+      plugins.push(new HtmlWebpackPlugin({ ...createHtmlOptions(filename, p) }));
+    });
+  }
 
   return {
     stats: 'errors-warnings',
@@ -42,7 +31,7 @@ module.exports = function (webpackEnv) {
         : false
       : isEnvDevelopment && 'cheap-module-source-map',
     bail: isEnvProduction,
-    entry: paths.appIndexJs,
+    entry: isEnvDevelopment ? {} : paths.appIndexJs,
     output: {
       path: paths.appBuild,
       filename: isEnvProduction ? 'highlighter.build.js' : isEnvDevelopment && 'highlighter.dev.js',
@@ -70,13 +59,23 @@ module.exports = function (webpackEnv) {
       ]
     },
     plugins: [
-      ...createHtmlWebpackPlugin(isEnvDevelopment),
       new ESLintPlugin({
         failOnWarning: false,
-        // formatter: require.resolve('eslint-formatter-mo'),
         quiet: true
       }),
-      new ProgressBarPlugin()
+      new ProgressBarPlugin(),
+      ...plugins
     ]
+  }
+}
+
+function createHtmlOptions (filename, path) {
+  return {
+    title: filename.split('.')[0],
+    filename: `demos/${filename}`,
+    template: path,
+    publicPath: '../',
+    scriptLoading: 'blocking',
+    inject: 'head',
   }
 }
