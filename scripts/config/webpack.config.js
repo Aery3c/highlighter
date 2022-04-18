@@ -22,6 +22,20 @@ module.exports = function (webpackEnv) {
     });
   }
 
+  const entry = {
+    highlighter: {
+      import: paths.appIndexJs,
+      library: {
+        name: 'Highlighter',
+        type: 'umd',
+        export: 'default',
+      },
+    },
+  };
+  if (isEnvDevelopment) {
+    Object.assign(entry, { ...createEntry() })
+  }
+
   return {
     stats: 'errors-warnings',
     mode: isEnvProduction ? 'production' : isEnvDevelopment && 'development',
@@ -31,16 +45,10 @@ module.exports = function (webpackEnv) {
         : false
       : isEnvDevelopment && 'cheap-module-source-map',
     bail: isEnvProduction,
-    entry: isEnvDevelopment ? {} : paths.appIndexJs,
+    entry,
     output: {
       path: paths.appBuild,
-      filename: isEnvProduction ? 'highlighter.build.js' : isEnvDevelopment && 'highlighter.dev.js',
-      publicPath: '/',
-      library: {
-        name: 'Highlighter',
-        type: 'umd',
-        export: 'default',
-      },
+      filename: isEnvProduction ? 'highlighter.build.js' : isEnvDevelopment && '[name].dev.js',
       globalObject: 'this'
     },
     module: {
@@ -70,12 +78,23 @@ module.exports = function (webpackEnv) {
 }
 
 function createHtmlOptions (filename, path) {
+  const name = filename.split('.')[0];
   return {
-    title: filename.split('.')[0],
+    title: name,
     filename: `demos/${filename}`,
     template: path,
     publicPath: '../',
     scriptLoading: 'blocking',
     inject: 'head',
+    chunks: [name, 'highlighter']
   }
+}
+
+function createEntry () {
+  const jsPaths = finder(paths.templateDir, 'js');
+  const entry = {};
+  jsPaths.forEach(js => {
+    entry.applier = js;
+  });
+  return entry;
 }
