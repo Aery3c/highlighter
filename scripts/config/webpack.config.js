@@ -15,10 +15,10 @@ module.exports = function (webpackEnv) {
   const plugins = [];
 
   if (isEnvDevelopment) {
-    const htmlPaths = finder(paths.templateDir, 'html');
-    htmlPaths.forEach(p => {
-      const filename = path.parse(p).base;
-      plugins.push(new HtmlWebpackPlugin({ ...createHtmlOptions(filename, p) }));
+    const htmls = finder(paths.templateDir, 'html');
+    htmls.forEach(html => {
+      const filename = path.parse(html).base;
+      plugins.push(new HtmlWebpackPlugin({ ...createHtmlOptions(filename, html) }));
     });
   }
 
@@ -91,10 +91,10 @@ function createHtmlOptions (filename, path) {
 }
 
 function createEntry () {
-  const jsPaths = finder(paths.templateDir, 'js');
+  const jsArr = finder(paths.templateDir, 'js');
   const entry = {};
-  jsPaths.forEach(js => {
-    entry.applier = js;
+  jsArr.forEach(js => {
+    entry[path.parse(js).base.split('.')[0]] = js;
   });
   return entry;
 }
