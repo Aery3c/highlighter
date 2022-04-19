@@ -13,27 +13,30 @@ module.exports = function (webpackEnv) {
   const isEnvProduction = webpackEnv === 'production';
 
   const plugins = [];
-
+  const entry = {};
+  const resolve = {};
+  entry.highlighter = {
+    import: paths.appIndexJs,
+    library: {
+      name: 'Highlighter',
+      type: 'umd',
+      export: 'default',
+    },
+  }
   if (isEnvDevelopment) {
     const htmls = finder(paths.templateDir, 'html');
+    // add html-webpack-plugin
     htmls.forEach(html => {
       const filename = path.parse(html).base;
       plugins.push(new HtmlWebpackPlugin({ ...createHtmlOptions(filename, html) }));
     });
-  }
 
-  const entry = {
-    highlighter: {
-      import: paths.appIndexJs,
-      library: {
-        name: 'Highlighter',
-        type: 'umd',
-        export: 'default',
-      },
-    },
-  };
-  if (isEnvDevelopment) {
+    // add entry file
     Object.assign(entry, { ...createEntry() })
+
+    resolve.alias = {
+      '@': paths.appSrc
+    }
   }
 
   return {
@@ -54,15 +57,27 @@ module.exports = function (webpackEnv) {
     module: {
       rules: [
         {
-          test: /\.js$/,
-          exclude: /node_modules/,
-          use: {
-            loader: 'babel-loader',
-            options: {
-              presets: ['@babel/preset-env'],
-              plugins: ['@babel/plugin-transform-runtime']
-            }
-          }
+          oneOf: [
+            {
+              test: /\.js$/,
+              exclude: /node_modules/,
+              use: {
+                loader: 'babel-loader',
+                options: {
+                  presets: ['@babel/preset-env'],
+                  plugins: ['@babel/plugin-transform-runtime']
+                }
+              }
+            },
+            {
+              test: /\.s[ac]ss$/i,
+              use: [
+                'style-loader',
+                'css-loader',
+                'sass-loader',
+              ],
+            },
+          ]
         }
       ]
     },
@@ -73,7 +88,8 @@ module.exports = function (webpackEnv) {
       }),
       new ProgressBarPlugin(),
       ...plugins
-    ]
+    ],
+    resolve
   }
 }
 
@@ -85,8 +101,9 @@ function createHtmlOptions (filename, path) {
     template: path,
     publicPath: '../',
     scriptLoading: 'blocking',
-    inject: 'head',
-    chunks: [name, 'highlighter']
+    inject: 'body',
+    // chunks: [name, 'highlighter']
+    chunks: [name]
   }
 }
 
