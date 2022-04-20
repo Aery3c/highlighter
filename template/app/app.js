@@ -2,34 +2,51 @@
 
 import { createPopper } from '@popperjs/core';
 import Highlighter from '@/index';
+import { getElement, generateGetBoundingClientRect } from './utils';
 import './app.scss';
 
 (function() {
+  const contentElement = getElement('.book_content'), popperElement = getElement('.book_context_menu');
+  const popWidth = -popperElement.clientWidth;
 
-  function overflow () {
-    return new DOMRect(0, -100, 0, 0)
+  const virtualElement = {};
+
+  function setPosition (x = 0, y = 0) {
+    virtualElement.getBoundingClientRect = () => generateGetBoundingClientRect(x, y);
   }
 
-  const virtualElement = {
-    getBoundingClientRect: () => overflow()
-  };
+  setPosition(popWidth, 0);
 
-  const instance = createPopper(virtualElement, document.querySelector('.book_context_menu'), {
-    placement: 'bottom-start'
+  const instance = createPopper(virtualElement, popperElement, {
+    placement: 'bottom-start',
+    modifiers: [{
+      name: 'eventListeners',
+      options: {
+        scroll: false
+      }
+    }]
   });
 
-  document.querySelector('.book_content').addEventListener('mouseup', (event) => {
-    console.log(event);
+  [['mouseup', flew], ['mousedown', eject]].forEach(([event, func]) => {
+    contentElement.addEventListener(event, func, false);
+  });
 
-    const range = window.getSelection().getRangeAt(0);
-    if (!range.collapsed) {
-      virtualElement.getBoundingClientRect = () => range.getBoundingClientRect();
+  function flew (event) {
+    const sel = window.getSelection();
+    const range = sel.getRangeAt(0);
+    if (!range.collapsed && range.toString() !== '') {
+      const { x, y } = event;
+      setPosition(x, y);
     } else {
-      virtualElement.getBoundingClientRect = () => overflow();
+      setPosition(popWidth, 0);
     }
 
-    instance.update();
+    instance.forceUpdate();
+  }
 
-  }, false);
+  function eject () {
+    setPosition(popWidth, 0);
+    instance.forceUpdate();
+  }
 
 })();

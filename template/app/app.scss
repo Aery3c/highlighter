@@ -43,6 +43,7 @@ body {
 
     /* menu */
     .book_context_menu {
+      position: absolute;
       @include menu;
       .book_content_menu_item {
         display: flex;
