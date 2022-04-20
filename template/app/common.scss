@@ -6,3 +6,33 @@
   line-height: 1.4;
   text-align: left;
 }
+
+@mixin menu {
+  box-sizing: border-box;
+  width: 256px;
+  margin: 0;
+  font-variant: tabular-nums;
+  font-feature-settings: 'tnum';
+  padding: 0;
+  color: #000000d9;
+  font-size: 14px;
+  line-height: 0;
+  text-align: left;
+  list-style: none;
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, .06);
+  border-radius: 4px;
+  outline: none;
+  box-shadow: 0 3px 6px -4px #0000001f, 0 6px 16px #00000014, 0 9px 28px 8px #0000000d;
+  transition: background .3s,width .3s cubic-bezier(.2,0,0,1) 0s;
+}
+
+@mixin menu_item {
+  height: 40px;
+  margin-top: 4px;
+  margin-bottom: 4px;
+  padding: 0 16px;
+  overflow: hidden;
+  line-height: 40px;
+  text-overflow: ellipsis;
+}
