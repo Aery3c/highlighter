@@ -2,11 +2,11 @@
 
 const paths = require('./paths');
 const path = require('path');
+const fs = require('fs');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ESLintPlugin = require('eslint-webpack-plugin');
 const ProgressBarPlugin = require('progress-bar-webpack-plugin');
 const shouldUseSourceMap = process.env.GENERATE_SOURCEMAP !== 'false';
-const finder = require('../utils/finder');
 
 module.exports = function (webpackEnv) {
   const isEnvDevelopment = webpackEnv === 'development';
@@ -24,15 +24,23 @@ module.exports = function (webpackEnv) {
     },
   }
   if (isEnvDevelopment) {
-    const htmls = finder(paths.templateDir, 'html');
-    // add html-webpack-plugin
-    htmls.forEach(html => {
-      const filename = path.parse(html).base;
-      plugins.push(new HtmlWebpackPlugin({ ...createHtmlOptions(filename, html) }));
-    });
+    const dirs = [];
+    const files = fs.readdirSync(paths.templateDir);
 
-    // add entry file
-    Object.assign(entry, { ...createEntry() })
+    files.forEach(name => {
+      const fp = path.join(paths.templateDir, name);
+      const stats = fs.statSync(fp);
+      if (stats.isDirectory()) {
+        dirs.push(fp);
+      }
+    });
+    // add html-webpack-plugin
+    dirs.forEach(dir => {
+      const name = path.parse(dir).name;
+      plugins.push(new HtmlWebpackPlugin({ ...createHtmlOptions(`${name}.html`, path.join(dir, `${name}.html`)) }));
+      // add entry file
+      Object.assign(entry, { [name]: path.join(dir, name) })
+    });
 
     resolve.alias = {
       '@': paths.appSrc
@@ -105,13 +113,4 @@ function createHtmlOptions (filename, path) {
     // chunks: [name, 'highlighter']
     chunks: [name]
   }
-}
-
-function createEntry () {
-  const jsArr = finder(paths.templateDir, 'js');
-  const entry = {};
-  jsArr.forEach(js => {
-    entry[path.parse(js).base.split('.')[0]] = js;
-  });
-  return entry;
 }
