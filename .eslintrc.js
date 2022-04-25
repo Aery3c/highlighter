@@ -11,7 +11,7 @@ module.exports = {
   },
   "rules": {
     "no-debugger": "off",
-    "no-unused-vars": 1,
+    "no-unused-vars": [1, { 'argsIgnorePattern': '_' }],
     "no-empty": "off"
   }
 }
