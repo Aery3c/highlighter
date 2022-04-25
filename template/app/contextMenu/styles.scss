@@ -1,6 +1,6 @@
 @charset "UTF-8";
 
-@mixin menu {
+@mixin context_menu {
   box-sizing: border-box;
   width: 256px;
   margin: 0;
@@ -20,7 +20,7 @@
   transition: background .3s,width .3s cubic-bezier(.2,0,0,1) 0s;
 }
 
-@mixin menu_item {
+@mixin context_menu_item {
   height: 40px;
   margin-top: 4px;
   margin-bottom: 4px;
@@ -28,29 +28,60 @@
   overflow: hidden;
   line-height: 40px;
   text-overflow: ellipsis;
+  cursor: pointer;
 }
 
+@mixin context_menu_item_icon {
+  display: inline-block;
+  color: inherit;
+  font-style: normal;
+  line-height: 0;
+  text-align: center;
+  text-transform: none;
+  vertical-align: -0.125em;
+  text-rendering: optimizelegibility;
+  -webkit-font-smoothing: antialiased;
+  & + span {
+    margin-left: 10px;
+    opacity: 1;
+    transition: opacity .3s cubic-bezier(.645,.045,.355,1),margin .3s,color .3s;
+  }
+}
+
+@mixin context_menu_item_content {
+  flex: auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 
 /* menu */
-.book_context_menu {
+.context_menu {
   position: absolute;
   left: -256px;
-  @include menu;
-  .book_context_menu_item {
+  @include context_menu;
+  .context_menu_item {
     display: flex;
     align-items: center;
     transition: border-color .3s,background .3s,padding .1s cubic-bezier(.215,.61,.355,1);
     padding-left: 24px;
-    @include menu_item;
-    .book_context_menu_item_content {
-      flex: auto;
-      min-width: 0;
-      overflow: hidden;
-      text-overflow: ellipsis;
+    @include context_menu_item;
+    .context_menu_item_icon {
+      @include context_menu_item_icon;
+    }
+    .context_menu_item_content {
+      @include context_menu_item_content;
     }
   }
-  .book_context_submenu {
-    @include menu_item;
-    padding-bottom: .02px;
+  .context_submenu {
+    @include context_menu;
+    box-shadow: none;
+    border: none;
+    border-radius: 0;
+    width: 100%;
+    .context_submenu_title {
+      @include context_menu_item;
+      padding-bottom: .02px;
+    }
   }
 }

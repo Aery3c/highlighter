@@ -3,14 +3,10 @@
 import { createPopper } from '@popperjs/core';
 import './styles.scss';
 
-function getElement (selector) {
-  return document.querySelector(selector);
-}
-
 const pos = 0; // init position
 
 const bookContent = getElement('.book_content');
-const referToElement = getElement('.book_context_menu');
+const menu = getElement('.context_menu');
 
 const generateGetBoundingClientRect = (x = 0, y = 0) => new DOMRect(x, y, 0, 0);
 const virtualElement = {
@@ -19,7 +15,7 @@ const virtualElement = {
 
 const popper = createPopper(
   virtualElement,
-  referToElement,
+  menu,
   {
     placement: 'bottom-start',
     modifiers: [{ name: 'eventListeners', options: { scroll: false } }]
@@ -28,7 +24,7 @@ const popper = createPopper(
 
 const selection = window.getSelection();
 
-bookContent.addEventListener('mouseup', event => {
+bookContent?.addEventListener('mouseup', event => {
   const ranges = selection.getAllRange();
   const range = ranges[ranges.length - 1];
 
@@ -47,3 +43,17 @@ document.addEventListener('mousedown', _ => {
   popper.forceUpdate();
 }, false);
 
+const menuItems = menu.children;
+['mouseover', 'mouseout'].forEach(event => {
+  // for (let entry of menuItems.entries()) {
+  //   console.log(entry);
+  // }
+});
+/**
+ *
+ * @param {string} selector
+ * @returns {Element | null}
+ */
+function getElement (selector) {
+  return document.querySelector(selector);
+}
