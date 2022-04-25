@@ -1,5 +1,13 @@
 @charset "UTF-8";
-@import './common.scss';
+
+@mixin book_content_title {
+  position: relative;
+  margin-top: 1em;
+  margin-bottom: 1pc;
+  font-weight: 700;
+  line-height: 1.4;
+  text-align: left;
+}
 
 body {
   line-height: 1.42857;
@@ -38,19 +46,6 @@ body {
         p {
           margin: 0 0 1.2em;
         }
-      }
-    }
-
-    /* menu */
-    .book_context_menu {
-      position: absolute;
-      @include menu;
-      .book_content_menu_item {
-        display: flex;
-        align-items: center;
-        transition: border-color .3s,background .3s,padding .1s cubic-bezier(.215,.61,.355,1);
-        padding-left: 24px;
-        @include menu_item;
       }
     }
 
