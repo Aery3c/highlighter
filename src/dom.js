@@ -265,3 +265,13 @@ export function copyAttributesToElement (attrs, el) {
     }
   }
 }
+
+/**
+ *
+ * @param {HTMLElement} el
+ * @param {string} className
+ * @return {boolean}
+ */
+export function toggleClass (el, className) {
+  return el.classList.toggle(className);
+}

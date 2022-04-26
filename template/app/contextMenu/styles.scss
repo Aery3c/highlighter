@@ -31,6 +31,12 @@
   cursor: pointer;
 }
 
+@mixin anticon {
+  min-width: 14px;
+  font-size: 14px;
+  transition: font-size .15s cubic-bezier(.215,.61,.355,1),margin .3s cubic-bezier(.645,.045,.355,1),color .3s;
+}
+
 @mixin context_menu_item_icon {
   display: inline-block;
   color: inherit;
@@ -41,10 +47,9 @@
   vertical-align: -0.125em;
   text-rendering: optimizelegibility;
   -webkit-font-smoothing: antialiased;
+  @include anticon;
   & + span {
     margin-left: 10px;
-    opacity: 1;
-    transition: opacity .3s cubic-bezier(.645,.045,.355,1),margin .3s,color .3s;
   }
 }
 
@@ -53,6 +58,7 @@
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
+  @include anticon;
 }
 
 /* menu */
@@ -72,6 +78,9 @@
     .context_menu_item_content {
       @include context_menu_item_content;
     }
+  }
+  .context_menu_item_active {
+    color: #1890ff;
   }
   .context_submenu {
     @include context_menu;

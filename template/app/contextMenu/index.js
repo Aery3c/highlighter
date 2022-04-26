@@ -1,6 +1,7 @@
 'use strict'
 
 import { createPopper } from '@popperjs/core';
+import { toggleClass } from '@/dom';
 import './styles.scss';
 
 const pos = 0; // init position
@@ -43,11 +44,10 @@ document.addEventListener('mousedown', _ => {
   popper.forceUpdate();
 }, false);
 
-const menuItems = menu.children;
 ['mouseover', 'mouseout'].forEach(event => {
-  // for (let entry of menuItems.entries()) {
-  //   console.log(entry);
-  // }
+  Array.from(menu.children).forEach(el => {
+    el.addEventListener(event, () => toggleClass(el, 'context_menu_item_active') , false);
+  });
 });
 /**
  *

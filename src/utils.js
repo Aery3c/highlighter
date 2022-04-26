@@ -49,7 +49,7 @@ export function omit(obj, ...keys) {
   );
 }
 
-export function range(start = 0, end = 0, step = 1, fromRight) {
+export function range (start = 0, end = 0, step = 1, fromRight) {
   let index = -1
   let length = Math.max(Math.ceil((end - start) / (step || 1)), 0)
   const result = new Array(length)
@@ -59,4 +59,10 @@ export function range(start = 0, end = 0, step = 1, fromRight) {
     start += step
   }
   return result
+}
+
+const rnothtmlwhite = /[^\x20\t\r\n\f]+/g;
+export function stripAndCollapse( value ) {
+  const tokens = value.match( rnothtmlwhite ) || [];
+  return tokens.join(' ');
 }

@@ -14,7 +14,6 @@ module.exports = function (webpackEnv) {
 
   const plugins = [];
   const entry = {};
-  const resolve = {};
   entry.highlighter = {
     import: paths.appIndexJs,
     library: {
@@ -41,10 +40,6 @@ module.exports = function (webpackEnv) {
       // add entry file
       Object.assign(entry, { [name]: path.join(dir, name) })
     });
-
-    resolve.alias = {
-      '@': paths.appSrc
-    }
   }
 
   return {
@@ -97,7 +92,11 @@ module.exports = function (webpackEnv) {
       new ProgressBarPlugin(),
       ...plugins
     ],
-    resolve
+    resolve: {
+      alias: {
+        '@': paths.appSrc
+      }
+    }
   }
 }
 
