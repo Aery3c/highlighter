@@ -17,8 +17,8 @@ export default class Applier {
   constructor (options = {}) {
     this.className = options.className || 'highlight';
     this.tagName = options.tagName?.toLowerCase() || 'span';
-    this.normal = options.normal || true;
-    this.removeEmptyElement = options.removeEmptyElement || true;
+    this.normal = options.normal ?? true;
+    this.removeEmptyElement = options.removeEmptyElement ?? false;
     this.elProperty = options.elProperty || {};
     this.elAttribute = options.elAttribute || {};
   }

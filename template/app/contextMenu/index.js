@@ -2,13 +2,13 @@
 
 import '@/core/selection';
 import { createPopper } from '@popperjs/core';
-import { toggleClass, addClass } from '@/dom';
+import { toggleClass, addClass, removeClass } from '@/dom';
 import './styles.scss';
 
 /**
  *
  * @param {string} selector
- * @param {{ name: string; click: (e: Event) => void }[]} items
+ * @param {{ name: string; click: (e: MouseEvent) => void }[]} items
  * @returns {Element}
  */
 export default (selector, items) => {
@@ -29,7 +29,15 @@ export default (selector, items) => {
       <span class="context_menu_item_content">${item.name}</span>
     `;
 
-    li.addEventListener('click', item.click,);
+    li.addEventListener('click', (e) => {
+      item.click(e);
+      virtualElement.getBoundingClientRect = () => generateGetBoundingClientRect(pos, 0);
+      popper.forceUpdate();
+    });
+
+    ['mousedown', 'mouseup'].forEach(event => {
+      li.addEventListener(event, e => e.stopPropagation());
+    });
 
     ['mouseover', 'mouseout'].forEach(event => {
       li.addEventListener(event, () => toggleClass(li, 'context_menu_item_active'));
@@ -44,7 +52,7 @@ export default (selector, items) => {
 
   bookContent.appendChild(fragment);
 
-  const pos = 0; // init position
+  const pos = -312; // init position
 
   const generateGetBoundingClientRect = (x = 0, y = 0) => new DOMRect(x, y, 0, 0);
   const virtualElement = {
@@ -67,6 +75,7 @@ export default (selector, items) => {
     const range = ranges[ranges.length - 1];
 
     if (!range.collapsed && range.toString() !== '') {
+      addClass(menu, 'context_menu_fadeIn');
       const { x, y } = event;
       // flew in
       virtualElement.getBoundingClientRect = () => generateGetBoundingClientRect(x, y);
@@ -75,14 +84,12 @@ export default (selector, items) => {
     popper.forceUpdate();
   });
 
-  document.body.addEventListener('mousedown', _ => {
-    if (!selection.rangeCount && selection.isCollapsed) {
-      // // prevent click selection flew in
-      // selection.removeAllRanges();
-      // eject
-      virtualElement.getBoundingClientRect = () => generateGetBoundingClientRect(pos, 0);
-      popper.forceUpdate();
-    }
+  document.addEventListener('mousedown', _ => {
+    removeClass(menu, 'context_menu_fadeIn');
+    // prevent click selection flew in
+    selection.removeAllRanges();
+    virtualElement.getBoundingClientRect = () => generateGetBoundingClientRect(pos, 0);
+    popper.forceUpdate();
   });
 
   /**

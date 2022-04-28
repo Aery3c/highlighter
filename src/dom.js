@@ -275,3 +275,13 @@ export function copyAttributesToElement (attrs, el) {
 export function toggleClass (el, className) {
   return el.classList.toggle(className);
 }
+
+/**
+ *
+ * @param {HTMLElement} el
+ * @param {string} className
+ * @returns {void}
+ */
+export function removeClass (el, className) {
+  return el.classList.remove(className);
+}

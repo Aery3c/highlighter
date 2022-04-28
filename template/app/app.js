@@ -4,20 +4,22 @@ import Highlighter from "@/index";
 import createContextMenu from './contextMenu';
 import './app.scss';
 
-const higlighter = new Highlighter({});
+const higlighter = new Highlighter();
 
 createContextMenu(
   '.book',
-  [{
-    name: 'highlighter',
-    click: () => {
-      console.log('run this');
-      const highlights = higlighter.highlightSelection();
-      console.log(highlights);
+  [
+    {
+      name: 'highlightSelection',
+      click: () => {
+        higlighter.highlightSelection();
+      }
+    },
+    {
+      name: 'unhighlightSelection',
+      click: () => {
+        higlighter.unhighlightSelection();
+      }
     }
-  }]
+  ]
 );
-
-document.addEventListener('selectstart', function () {
-  console.log('selectstart');
-});
