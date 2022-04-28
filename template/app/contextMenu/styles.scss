@@ -1,6 +1,8 @@
 @charset "UTF-8";
 
 @mixin context_menu {
+  position: absolute;
+  z-index: 1000;
   box-sizing: border-box;
   width: 256px;
   margin: 0;
@@ -63,7 +65,6 @@
 
 /* menu */
 .context_menu {
-  position: absolute;
   left: -256px;
   @include context_menu;
   .context_menu_item {
