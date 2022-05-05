@@ -12,13 +12,14 @@ createContextMenu(
     {
       name: 'highlightSelection',
       click: () => {
-        higlighter.highlightSelection();
+        const highlights = higlighter.highlightSelection();
+        console.log(highlights);
       }
     },
     {
       name: 'unhighlightSelection',
       click: () => {
-        higlighter.unhighlightSelection();
+        const highlights = higlighter.unhighlightSelection();
       }
     }
   ]
