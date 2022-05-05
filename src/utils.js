@@ -60,9 +60,3 @@ export function range (start = 0, end = 0, step = 1, fromRight) {
   }
   return result
 }
-
-const rnothtmlwhite = /[^\x20\t\r\n\f]+/g;
-export function stripAndCollapse( value ) {
-  const tokens = value.match( rnothtmlwhite ) || [];
-  return tokens.join(' ');
-}
