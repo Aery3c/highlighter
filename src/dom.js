@@ -1,6 +1,9 @@
 'use strict'
 
 import RangeIterator from './core/rangeIterator';
+
+export * from './attributes/classes';
+
 /**
  *
  * @param {string} id
@@ -93,25 +96,6 @@ export function getNodeLength (node) {
     default:
       return node.childNodes.length;
   }
-}
-
-/**
- *
- * @param {HTMLElement} el
- * @param {string} className
- */
-export function addClass (el, className) {
-  el.classList.add(className);
-}
-
-/**
- *
- * @param {HTMLElement} el
- * @param {string} className
- * @return {boolean}
- */
-export function hasClass (el, className) {
-  return el.classList.contains(className);
 }
 
 /**
@@ -264,24 +248,4 @@ export function copyAttributesToElement (attrs, el) {
       el.setAttribute(attrName, attrs[attrName]);
     }
   }
-}
-
-/**
- *
- * @param {HTMLElement} el
- * @param {string} className
- * @return {boolean}
- */
-export function toggleClass (el, className) {
-  return el.classList.toggle(className);
-}
-
-/**
- *
- * @param {HTMLElement} el
- * @param {string} className
- * @returns {void}
- */
-export function removeClass (el, className) {
-  return el.classList.remove(className);
 }
