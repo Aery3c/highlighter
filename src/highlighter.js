@@ -50,6 +50,19 @@ export default class Highlighter {
 
     return newHighlights;
   }
+
+  update () {
+    this.highlights.forEach(ht => {
+      const cr = ht.characterRange;
+      const bigRange = cr.getRange().cloneRange();
+      bigRange.setStart(document.body, 0);
+
+      const text = bigRange.toString().slice(cr.start, cr.end);
+      if (text !== ht.value) {
+        console.log('dom change');
+      }
+    });
+  }
 }
 
 /**

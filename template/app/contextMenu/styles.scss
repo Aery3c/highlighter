@@ -86,8 +86,9 @@
       @include context_menu_item_content;
     }
   }
-  .context_menu_item_active {
+  .context_menu_item_selected {
     color: #1890ff;
+    background-color: #e6f7ff;
   }
   .context_submenu {
     @include context_menu;

@@ -6,6 +6,12 @@ import './app.scss';
 
 const higlighter = new Highlighter();
 
+function insertText () {
+  const el = document.querySelector('.book_content');
+  const firstTextNode = el.firstChild.nextSibling.firstChild;
+  firstTextNode.insertData(0, 'insert');
+}
+
 createContextMenu(
   '.book',
   [
@@ -13,7 +19,8 @@ createContextMenu(
       name: 'highlightSelection',
       click: () => {
         const highlights = higlighter.highlightSelection();
-        console.log(highlights);
+        // insertText();
+        higlighter.update();
       }
     },
     {
