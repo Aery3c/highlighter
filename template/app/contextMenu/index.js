@@ -40,7 +40,7 @@ export default (selector, items) => {
     });
 
     ['mouseover', 'mouseout'].forEach(event => {
-      li.addEventListener(event, () => toggleClass(li, 'context_menu_item_active'));
+      li.addEventListener(event, () => toggleClass(li, 'context_menu_item_selected'));
     });
 
     menu.appendChild(li);
