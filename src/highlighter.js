@@ -3,19 +3,12 @@
 import CharacterRange from './core/characterRange';
 import Applier from './core/applier';
 import Highlight from './core/highlight';
+import { findClosest } from './utils';
 
 export default class Highlighter {
   constructor(options = {}) {
     this.highlights = [];
     this._applier = new Applier(options);
-  }
-
-  /**
-   * @param {Selection | Range | Node | Node[]} [thing]
-   * @return {Highlight[]}
-   */
-  highlight () {
-
   }
 
   /**
@@ -52,17 +45,59 @@ export default class Highlighter {
   }
 
   update () {
-    this.highlights.forEach(ht => {
-      const cr = ht.characterRange;
-      const bigRange = cr.getRange().cloneRange();
-      bigRange.setStart(document.body, 0);
+    // todo
+    const remove = [], highlights = this.highlights;
+    for (let i = 0, ht; (ht = highlights[i]); ++i) {
+      const markText = ht.value;
+      const points = search(document.body.textContent, markText);
+      if (points.length) {
+        const offset = ht.characterRange.start;
 
-      const text = bigRange.toString().slice(cr.start, cr.end);
-      if (text !== ht.value) {
-        console.log('dom change');
+        const start = findClosest(offset, points);
+
+        if (start !== offset) {
+          remove.push(ht);
+          highlights.push(new Highlight(new CharacterRange(start, start + markText.length), this._applier));
+          highlights.splice(i--, 1);
+        }
+      } else {
+        highlights.splice(i--, 1);
+      }
+
+    }
+
+    remove.forEach(rh => {
+      if (rh.appliesd) {
+        rh.unapply();
       }
     });
+
+    highlights.forEach(ht => {
+      if (!ht.appliesd) {
+        ht.apply();
+      }
+    });
+    
   }
+
+  inspect () {
+
+  }
+}
+
+/**
+ * @param {string} fullText
+ * @param {string} str
+ * @return {number[]}
+ */
+function search (fullText, str) {
+  let nums = [], pos = fullText.indexOf(str);
+  while (pos !== -1) {
+    nums.push(pos);
+    pos = fullText.indexOf(str, pos + 1);
+  }
+
+  return nums
 }
 
 /**
