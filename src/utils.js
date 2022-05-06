@@ -60,3 +60,22 @@ export function range (start = 0, end = 0, step = 1, fromRight) {
   }
   return result
 }
+
+/**
+ *
+ * @param {number} needle
+ * @param {number[]} haystack
+ * @returns {number}
+ */
+export function findClosest (needle, haystack) {
+  return haystack.reduce((a, b) => {
+    let aDiff = Math.abs(a - needle);
+    let bDiff = Math.abs(b - needle);
+
+    if (aDiff === bDiff) {
+      return a > b ? a : b;
+    } else {
+      return bDiff < aDiff ? b : a;
+    }
+  });
+}
