@@ -13,7 +13,6 @@ createContextMenu(
       name: 'highlightSelection',
       click: () => {
         const highlights = higlighter.highlightSelection();
-        higlighter.update();
       }
     },
     {
@@ -29,6 +28,7 @@ createContextMenu(
         const [range] = sel.getAllRange();
         range.deleteContents();
         higlighter.update();
+        higlighter.inspect();
       }
     },
     {
@@ -37,6 +37,7 @@ createContextMenu(
         const [range] = window.getSelection().getAllRange();
         range.insertNode(new Text('insertNode'));
         higlighter.update();
+        higlighter.inspect();
       }
     }
   ]

@@ -3,7 +3,6 @@
 import CharacterRange from './core/characterRange';
 import Applier from './core/applier';
 import Highlight from './core/highlight';
-import { findClosest } from './utils';
 
 export default class Highlighter {
   constructor(options = {}) {
@@ -45,59 +44,44 @@ export default class Highlighter {
   }
 
   update () {
-    // todo
-    const remove = [], highlights = this.highlights;
-    for (let i = 0, ht; (ht = highlights[i]); ++i) {
-      const markText = ht.value;
-      const points = search(document.body.textContent, markText);
-      if (points.length) {
-        const offset = ht.characterRange.start;
-
-        const start = findClosest(offset, points);
-
-        if (start !== offset) {
-          remove.push(ht);
-          highlights.push(new Highlight(new CharacterRange(start, start + markText.length), this._applier));
-          highlights.splice(i--, 1);
-        }
-      } else {
-        highlights.splice(i--, 1);
-      }
-
-    }
-
-    remove.forEach(rh => {
-      if (rh.appliesd) {
-        rh.unapply();
-      }
-    });
-
-    highlights.forEach(ht => {
-      if (!ht.appliesd) {
-        ht.apply();
-      }
-    });
-    
+    this.highlights.forEach(ht => ht.update());
   }
 
   inspect () {
-
+    // todo
+    const rangeStyle = [
+      'background: rgb(254, 232, 195)',
+      'color: rgb(51, 51, 51)',
+      'border: 1px solid #ccc',
+      'border-radius: 4px',
+      'padding: 4px 0'
+    ].join(';');
+    // console.clear();
+    this.highlights.forEach(highlight => {
+      const range = document.createRange();
+      range.moveToBookmark({
+        start: highlight.characterRange.start,
+        end: highlight.characterRange.end,
+        containerElement: document.body
+      });
+      const markText = highlight.characterRange.toString();
+      const paragraphText = range.commonAncestorContainer.textContent;
+      const start = paragraphText.indexOf(markText);
+      const end = markText.length;
+      console.log('{');
+      console.log('  commonAncestor:', range.commonAncestorContainer);
+      console.log(`  paragraphText: ${paragraphText.slice(0, start)}`
+        + ' %c'
+        + paragraphText.slice(start, start + end),
+        rangeStyle,
+        paragraphText.slice(start + end)
+      );
+      console.log(`  markText: %c${markText}`, rangeStyle);
+      console.log(`  characterRange: { start: ${highlight.characterRange.start}, end: ${highlight.characterRange.end} }`);
+      console.log(`  appliesd:`, highlight.appliesd);
+      console.log('}');
+    });
   }
-}
-
-/**
- * @param {string} fullText
- * @param {string} str
- * @return {number[]}
- */
-function search (fullText, str) {
-  let nums = [], pos = fullText.indexOf(str);
-  while (pos !== -1) {
-    nums.push(pos);
-    pos = fullText.indexOf(str, pos + 1);
-  }
-
-  return nums
 }
 
 /**

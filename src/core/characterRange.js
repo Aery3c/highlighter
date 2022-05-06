@@ -69,6 +69,14 @@ export default class CharacterRange {
     return charSet;
   }
 
+  setStart (offset) {
+    this.start = offset;
+  }
+
+  setEnd (offset) {
+    this.end = offset;
+  }
+
   /**
    *
    * @return {Range}
