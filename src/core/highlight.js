@@ -8,7 +8,7 @@ export default class Highlight {
    */
   constructor(characterRange, applier) {
     this.characterRange = characterRange;
-    this.value = characterRange.getRange().toString();
+    this.value = characterRange.toString();
     this.appliesd = false;
     this._applier = applier;
   }
@@ -21,6 +21,10 @@ export default class Highlight {
   unapply () {
     this.appliesd = false;
     this._applier.undoToRange(this.characterRange.getRange());
+  }
+
+  move () {
+
   }
 
 }
