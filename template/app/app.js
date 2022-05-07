@@ -4,7 +4,7 @@ import Highlighter from "@/index";
 import createContextMenu from './contextMenu';
 import './app.scss';
 
-const higlighter = new Highlighter();
+const highlighter = new Highlighter();
 
 createContextMenu(
   '.book',
@@ -12,13 +12,14 @@ createContextMenu(
     {
       name: 'highlightSelection',
       click: () => {
-        const highlights = higlighter.highlightSelection();
+        const highlights = highlighter.highlightSelection();
+        highlighter.inspect();
       }
     },
     {
       name: 'unhighlightSelection',
       click: () => {
-        const highlights = higlighter.unhighlightSelection();
+        const highlights = highlighter.unhighlightSelection();
       }
     },
     {
@@ -27,8 +28,8 @@ createContextMenu(
         const sel = window.getSelection();
         const [range] = sel.getAllRange();
         range.deleteContents();
-        higlighter.update();
-        higlighter.inspect();
+        highlighter.inspect();
+        highlighter.update();
       }
     },
     {
@@ -36,8 +37,7 @@ createContextMenu(
       click: () => {
         const [range] = window.getSelection().getAllRange();
         range.insertNode(new Text('insertNode'));
-        higlighter.update();
-        higlighter.inspect();
+        highlighter.inspect();
       }
     }
   ]
