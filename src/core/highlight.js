@@ -41,14 +41,30 @@ export default class Highlight {
         charRange.setStart(pos);
         charRange.setEnd(pos + markText.length);
       }
-    }
 
-    this.restart();
+      if (charRange.toString() !== markText) {
+        console.log('remove self!!!');
+      }
+
+      // this.restart();
+    }
   }
 
   restart () {
     this.unapply();
     this.apply();
+  }
+
+  inspect () {
+    const charRange = this.characterRange, appliesd = this.appliesd, markText = this.value;
+    const range = charRange.getRange(), characterText = charRange.toString();
+    console.log('{');
+    console.log('  commonAncestor:', range.commonAncestorContainer);
+    console.log(`  markText: %c${markText}`, consoleStyle);
+    console.log(`  characterText: ${characterText}`);
+    console.log(`  characterRange: { start: ${charRange.start}, end: ${charRange.end} }`);
+    console.log(`  appliesd:`, appliesd);
+    console.log('}');
   }
 
 }
@@ -68,6 +84,10 @@ function find (fullText, str) {
   return nums
 }
 
-function check (fullText, str) {
-
-}
+const consoleStyle = [
+  'background: rgb(254, 232, 195)',
+  'color: rgb(51, 51, 51)',
+  'border: 1px solid #ccc',
+  'border-radius: 4px',
+  'padding: 4px 0'
+].join(';');
