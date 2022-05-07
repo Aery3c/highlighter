@@ -48,39 +48,7 @@ export default class Highlighter {
   }
 
   inspect () {
-    // todo
-    const rangeStyle = [
-      'background: rgb(254, 232, 195)',
-      'color: rgb(51, 51, 51)',
-      'border: 1px solid #ccc',
-      'border-radius: 4px',
-      'padding: 4px 0'
-    ].join(';');
-    // console.clear();
-    this.highlights.forEach(highlight => {
-      const range = document.createRange();
-      range.moveToBookmark({
-        start: highlight.characterRange.start,
-        end: highlight.characterRange.end,
-        containerElement: document.body
-      });
-      const markText = highlight.characterRange.toString();
-      const paragraphText = range.commonAncestorContainer.textContent;
-      const start = paragraphText.indexOf(markText);
-      const end = markText.length;
-      console.log('{');
-      console.log('  commonAncestor:', range.commonAncestorContainer);
-      console.log(`  paragraphText: ${paragraphText.slice(0, start)}`
-        + ' %c'
-        + paragraphText.slice(start, start + end),
-        rangeStyle,
-        paragraphText.slice(start + end)
-      );
-      console.log(`  markText: %c${markText}`, rangeStyle);
-      console.log(`  characterRange: { start: ${highlight.characterRange.start}, end: ${highlight.characterRange.end} }`);
-      console.log(`  appliesd:`, highlight.appliesd);
-      console.log('}');
-    });
+    this.highlights.forEach(ht => ht.inspect());
   }
 }
 
