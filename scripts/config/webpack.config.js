@@ -6,6 +6,8 @@ const fs = require('fs');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ESLintPlugin = require('eslint-webpack-plugin');
 const ProgressBarPlugin = require('progress-bar-webpack-plugin');
+const CircularDependencyPlugin = require('circular-dependency-plugin')
+
 const shouldUseSourceMap = process.env.GENERATE_SOURCEMAP !== 'false';
 
 module.exports = function (webpackEnv) {
@@ -90,6 +92,19 @@ module.exports = function (webpackEnv) {
         quiet: true
       }),
       new ProgressBarPlugin(),
+      new CircularDependencyPlugin({
+        // exclude detection of files based on a RegExp
+        exclude: /node_modules/,
+        // include specific files based on a RegExp
+        include: /src/,
+        // add errors to webpack instead of warnings
+        failOnError: true,
+        // allow import cycles that include an asyncronous import,
+        // e.g. via import(/* webpackMode: "weak" */ './file.js')
+        allowAsyncCycles: false,
+        // set the current working directory for displaying module paths
+        cwd: process.cwd(),
+      }),
       ...plugins
     ],
     resolve: {
