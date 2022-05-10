@@ -1,10 +1,11 @@
 'use strict'
 
-import Highlighter from "@/index";
+import { createHighlighter, createApplier } from '@/index';
 import createContextMenu from './contextMenu';
 import './app.scss';
 
-const highlighter = new Highlighter();
+const highlighter = createHighlighter('highlight', {});
+const applier = createApplier();
 
 createContextMenu(
   '.book',
@@ -38,6 +39,13 @@ createContextMenu(
         const [range] = window.getSelection().getAllRange();
         range.insertNode(new Text('insertNode'));
         highlighter.inspect();
+      }
+    },
+    {
+      name: 'applyToRange',
+      click: () => {
+        const [range] = window.getSelection().getAllRange();
+        applier.applyToRange(range);
       }
     }
   ]

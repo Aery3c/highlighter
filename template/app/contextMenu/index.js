@@ -1,10 +1,10 @@
 'use strict'
 
-import '@/core/selection';
 import { createPopper } from '@popperjs/core';
-import { toggleClass, addClass, removeClass } from '@/dom';
+import { dom } from '@/index';
 import './styles.scss';
 
+const { addClass, toggleClass, removeClass } = dom;
 /**
  *
  * @param {string} selector

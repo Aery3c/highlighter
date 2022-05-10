@@ -1,16 +1,15 @@
-import './core/range';
-import './core/selection';
-import Highlighter from './highlighter';
-import Highlight from './core/highlight';
-import CharacterRange from './core/characterRange';
-import Applier from './core/applier';
-import * as utils from './utils';
-import * as dom from './dom';
+'use strict'
 
-Highlighter.utils = utils;
-Highlighter.dom = dom;
-Highlighter.Highlight = Highlight;
-Highlighter.CharacterRange = CharacterRange;
-Highlighter.Applier = Applier;
+import core from '@/core';
+import dom from '@/dom';
+import utils from '@/utils';
+import createHighlighter from '@/createHighlighter';
+import createApplier from '@/createApplier';
 
-export default Highlighter
+export {
+  createApplier,
+  createHighlighter,
+  dom,
+  utils
+}
+export default core;
