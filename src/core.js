@@ -83,8 +83,19 @@ core.extend({
 
 /** Range extend */
 extend(Range.prototype, {
+  /**
+   *
+   * @param {NodeIterator.whatToShow} whatToShow
+   * @param {NodeIterator.filter} [filter]
+   * @returns {Node[]}
+   */
   getNodes: function (whatToShow, filter) {
-
+    let nodes = [], it = core.createRangeIterator(this, whatToShow, filter), node;
+    console.log(it);
+    // while ((node = it.next().value)) {
+    //   nodes.push(node);
+    // }
+    // return nodes;
   },
 
   splitBoundaries: function () {

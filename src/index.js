@@ -6,11 +6,13 @@ import utils from '@/utils';
 import createHighlighter from '@/createHighlighter';
 import createApplier from '@/createApplier';
 import createCharacterRange from '@/createCharacterRange';
+import createRangeIterator from '@/createRangeIterator';
 
 export {
   createApplier,
   createHighlighter,
   createCharacterRange,
+  createRangeIterator,
   dom,
   utils
 }
