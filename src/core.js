@@ -83,13 +83,34 @@ core.extend({
 
 /** Range extend */
 extend(Range.prototype, {
-  getNodes: function () {},
-  getEffectiveTextNodes: function () {},
-  splitBoundaries: function () {},
+  getNodes: function (whatToShow, filter) {
+
+  },
+
+  splitBoundaries: function () {
+    let [sc, so, ec, eo] = [this.startContainer, this.startOffset, this.endContainer, this.endOffset];
+    const startSameEnd = (sc === ec);
+    if (core.dom.isCharacterDataNode(ec) && eo > 0 && eo < ec.length) {
+      ec.splitText(eo);
+    }
+
+    if (core.dom.isCharacterDataNode(sc) && so > 0 && so < sc.length) {
+      sc = sc.splitText(so);
+      if (startSameEnd) {
+        eo -= so;
+        ec = sc;
+      } else if (ec === sc.parentNode && eo < core.dom.getNodeIndex(ec)) {
+        eo++;
+      }
+      so = 0;
+    }
+
+    this.setStartAndEnd(sc, so, ec, eo);
+  },
   /**
    *
    * @param {HTMLElement} [containerElement]
-   * @return {{ start: number; end: number; containerElement: HTMLElement }}
+   * @return {CharacterRange}
    */
   getBookmark: function (containerElement = document.body) {
     const cloneRange = this.cloneRange();
@@ -104,23 +125,50 @@ extend(Range.prototype, {
       start = cloneRange.toString().length;
       end = start + range.toString().length
     }
-    return {
-      start,
-      end,
-      containerElement
-    }
-  },
-  setStartAndEnd: function () {},
-  intersectionRange: function () {
-
+    return core.createCharacterRange(start, end, containerElement);
   },
   /**
    *
+   * @param sc
+   * @param so
+   * @param ec
+   * @param eo
+   */
+  setStartAndEnd: function (sc, so, ec, eo) {
+    this.setStart(sc, so);
+    this.setEnd(ec, eo);
+  },
+
+  /**
+   * 返回该range和另一个range产生交集的部分, 如果没有返回null
+   * @param {Range} otherRange
+   * @returns {null|Range}
+   */
+  intersectionRange: function (otherRange) {
+    if (this.isIntersect(otherRange)) {
+      const range = this.cloneRange();
+      if (range.compareBoundaryPoints(otherRange.START_TO_START, otherRange) === -1) {
+        range.setStart(otherRange.startContainer, otherRange.startOffset);
+      }
+
+      if (range.compareBoundaryPoints(otherRange.END_TO_END, otherRange) === 1) {
+        range.setEnd(otherRange.endContainer, otherRange.endOffset);
+      }
+
+      return range;
+    }
+
+    return null;
+  },
+  /**
+   * range如果与otherRange产生交集, 返回true, 否则返回false
    * @param {Range} otherRange
    * @return {boolean}
    */
   isIntersect: function (otherRange) {
+    // range.s < otherRange.e;
     const start = this.compareBoundaryPoints(otherRange.END_TO_START, otherRange);
+    // range.e > otherRange.s;
     const end = this.compareBoundaryPoints(otherRange.START_TO_END, otherRange);
 
     return start < 0 && end > 0;

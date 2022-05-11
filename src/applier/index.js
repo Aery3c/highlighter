@@ -16,6 +16,7 @@ export default class Applier {
   constructor(className = 'highlight', options = {}) {
     this.className = className;
     this.tagName = options.tagName?.toLowerCase() || 'span';
+    this.removeEmptyElement = options.removeEmptyElement ?? false;
   }
 
   /**
@@ -24,8 +25,14 @@ export default class Applier {
    * @param {Range} range
    */
   applyToRange (range) {
-    const pos = getRangeBoundaries(range);
-    console.log(pos)
+    // 获取range边界的点
+    const points = getRangeBoundaries(range);
+
+    // 分割边界
+    range.splitBoundaries();
+
+    // 从range上获取所有的有效文本节点
+    const textNodes = getEffectiveTextNodes(range);
   }
 
 }
@@ -35,6 +42,15 @@ export default class Applier {
  * @param {Range} range
  */
 function getRangeBoundaries (range) {
-  const pos = range.getBookmark();
-  return [...pos];
+  const characterRange = range.getBookmark();
+  return [characterRange.start, characterRange.end];
+}
+
+/**
+ *
+ * @param {Range} range
+ * @return {Text[]}
+ */
+function getEffectiveTextNodes (range) {
+  range.getNodes();
 }
