@@ -83,8 +83,22 @@ export function hasClass (el, value) {
   return classNames.indexOf(value) > -1;
 }
 
+/**
+ *
+ * @param {HTMLElement} el
+ * @param {string} value
+ */
 export function addClass (el, value) {
-  el.classList.add(value);
+
+  let classNames = classesToArray(value);
+
+  if (classNames.length) {
+    if (classListSupport) {
+      el.classList.add(...classNames);
+    } else {
+
+    }
+  }
 }
 
 /**
