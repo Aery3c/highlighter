@@ -1,6 +1,8 @@
 'use strict'
 
-const rnothtmlwhite = /[^\x20\t\r\n\f]+/g;
+import rnothtmlwhite from '@/utils/rnothtmlwhite';
+import core from '@/core';
+
 const classListSupport = !(typeof document.createElement('span').classList !== 'undefined');
 const classNameSupport = !(typeof document.createElement('span').className !== 'undefined');
 
@@ -17,16 +19,6 @@ function classesToArray (value) {
     return value.match(rnothtmlwhite) || [];
   }
   return [];
-}
-
-/**
- * 去掉字符串首尾空白
- * @param {string} value
- * @returns {string}
- */
-function stripAndCollapse( value ) {
-  const tokens = value.match(rnothtmlwhite) || [];
-  return tokens.join(' ');
 }
 
 /**
@@ -107,14 +99,14 @@ export function addClass (el, value) {
       el.classList.add(...classNames);
     } else {
       curClass = getClass(el);
-      cur = ' ' + stripAndCollapse(value) + ' ';
+      cur = ' ' + core.utils.stripAndCollapse(value) + ' ';
       classNames.forEach(className => {
         if (cur.indexOf(' ' + className + ' ') < 0) {
           cur += className + ' ';
         }
       });
 
-      final = stripAndCollapse(cur);
+      final = core.utils.stripAndCollapse(cur);
       if (curClass !== final) {
         if (classNameSupport) {
           el.className = final;
@@ -152,7 +144,7 @@ export function removeClass (el, value) {
         }
       });
 
-      final = stripAndCollapse(cur);
+      final = core.utils.stripAndCollapse(cur);
       if (curClass !== final) {
         if (classNameSupport) {
           el.className = final;

@@ -1,8 +1,11 @@
 'use strict'
 
 import core from '@/core';
+import stripAndCollapse from './stripAndCollapse';
 
-const utils = {};
+const utils = {
+  stripAndCollapse
+};
 
 core.extend({
   utils,
