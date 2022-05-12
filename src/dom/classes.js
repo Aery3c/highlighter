@@ -20,7 +20,7 @@ function classesToArray (value) {
 }
 
 /**
- *
+ * 去掉字符串首尾空白
  * @param {string} value
  * @returns {string}
  */
@@ -90,13 +90,28 @@ export function hasClass (el, value) {
  */
 export function addClass (el, value) {
 
-  let classNames = classesToArray(value);
+  let classNames = classesToArray(value), curClass, cur, final;
 
-  if (classNames.length) {
+  if (classNames.length && el.nodeType === Node.ELEMENT_NODE) {
     if (classListSupport) {
       el.classList.add(...classNames);
     } else {
+      curClass = getClass(el);
+      cur = ' ' + stripAndCollapse(value) + ' ';
+      classNames.forEach(className => {
+        if (cur.indexOf(' ' + className + ' ') < 0) {
+          cur += className + ' ';
+        }
+      });
 
+      final = stripAndCollapse(cur);
+      if (curClass !== final) {
+        if (classNameSupport) {
+          el.className = final;
+        } else {
+          el.setAttribute('class', final);
+        }
+      }
     }
   }
 }

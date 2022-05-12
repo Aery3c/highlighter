@@ -19,3 +19,16 @@ export function getClosestAncestorIn (node, ancestor) {
 
   return null;
 }
+
+/**
+ *
+ * @param {string} selector
+ * @returns {HTMLElement}
+ */
+export function gBEI (selector) {
+  if (document.querySelector) {
+    return document.querySelector(selector);
+  }
+
+  return document.getElementById(selector.match(/[^#]+/).join(''));
+}
