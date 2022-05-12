@@ -37,7 +37,7 @@ function stripAndCollapse( value ) {
 export function toggleClass (el, value) {
   const classNames = classesToArray(value);
 
-  if (classNames.length) {
+  if (classNames.length && el.nodeType === Node.ELEMENT_NODE) {
     classNames.forEach(className => {
       if (classListSupport) {
         el.classList.toggle(className);
@@ -62,6 +62,11 @@ export function toggleClass (el, value) {
  * @return {string}
  */
 export function getClass (el) {
+
+  if (el.nodeType !== Node.ELEMENT_NODE) {
+    return '';
+  }
+
   if (classNameSupport) {
     return el.className;
   }
@@ -76,6 +81,11 @@ export function getClass (el) {
  * @return {boolean}
  */
 export function hasClass (el, value) {
+
+  if (el.nodeType !== Node.ELEMENT_NODE) {
+    return false;
+  }
+
   if (classListSupport) {
     return el.classList.contains(value);
   }
@@ -119,8 +129,37 @@ export function addClass (el, value) {
 /**
  *
  * @param {HTMLElement} el
- * @param {string} value
+ * @param {string} [value]
  */
 export function removeClass (el, value) {
-  el.classList.remove(value);
+
+  let classNames = classesToArray(value), curClass, cur, final,
+    isElement = (el.nodeType === Node.ELEMENT_NODE);
+
+  if (arguments.length < 2 && isElement) {
+    return el.removeAttribute('class');
+  }
+
+  if (classNames.length && isElement) {
+    if (classListSupport) {
+      el.classList.remove(...classNames);
+    } else {
+      curClass = getClass(el);
+      cur = ' ' + getClass(el) + '';
+      classNames.forEach(className => {
+        while (cur.indexOf(' ' + className + ' ') > -1) {
+          cur = cur.replace(' ' + className + ' ', ' ');
+        }
+      });
+
+      final = stripAndCollapse(cur);
+      if (curClass !== final) {
+        if (classNameSupport) {
+          el.className = final;
+        } else {
+          el.setAttribute('class', final);
+        }
+      }
+    }
+  }
 }
