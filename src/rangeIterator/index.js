@@ -6,8 +6,8 @@ export default class RangeIterator {
   /**
    * @see https://developer.mozilla.org/en-US/docs/Web/API/NodeIterator
    * @param {Range} range
-   * @param {NodeIterator.whatToShow} whatToShow
-   * @param {NodeIterator.filter} [filter]
+   * @param {number} whatToShow
+   * @param {((node: Node) => number) | {acceptNode(node: Node): number}} [filter]
    */
   constructor (range, whatToShow, filter) {
     this.range = range;

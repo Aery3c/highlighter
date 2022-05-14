@@ -11,6 +11,7 @@ import RangeIterator from '@/rangeIterator';
  * @return {Generator}
  */
 function createRangeIterator (range, whatToShow, filter) {
+  whatToShow = whatToShow || NodeFilter.SHOW_ALL;
   return new RangeIterator(range, whatToShow, filter).generator();
 }
 
