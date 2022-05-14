@@ -2,6 +2,7 @@
 
 import rnothtmlwhite from '@/utils/rnothtmlwhite';
 import core from '@/core';
+import stripAndCollapse from "@/utils/stripAndCollapse";
 
 const classListSupport = !(typeof document.createElement('span').classList !== 'undefined');
 const classNameSupport = !(typeof document.createElement('span').className !== 'undefined');
@@ -99,14 +100,15 @@ export function addClass (el, value) {
       el.classList.add(...classNames);
     } else {
       curClass = getClass(el);
-      cur = ' ' + core.utils.stripAndCollapse(value) + ' ';
+      cur = ' ' + core.utils.stripAndCollapse(curClass) + ' ';
       classNames.forEach(className => {
         if (cur.indexOf(' ' + className + ' ') < 0) {
-          cur += className + ' ';
+          cur += className + ' '
         }
       });
 
       final = core.utils.stripAndCollapse(cur);
+
       if (curClass !== final) {
         if (classNameSupport) {
           el.className = final;
@@ -137,7 +139,7 @@ export function removeClass (el, value) {
       el.classList.remove(...classNames);
     } else {
       curClass = getClass(el);
-      cur = ' ' + getClass(el) + '';
+      cur = ' ' + stripAndCollapse(curClass) + ' ';
       classNames.forEach(className => {
         while (cur.indexOf(' ' + className + ' ') > -1) {
           cur = cur.replace(' ' + className + ' ', ' ');

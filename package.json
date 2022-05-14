@@ -7,7 +7,8 @@
   "author": "Aery3c <aery3c@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "dev": "node scripts/dev.js"
+    "dev": "node scripts/dev.js",
+    "build": "node scripts/build.js"
   },
   "devDependencies": {
     "@babel/core": "^7.17.9",

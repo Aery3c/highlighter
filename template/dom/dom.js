@@ -1,15 +1,27 @@
 import { dom } from '@/index';
 
-const { gBEI, addClass, removeClass } = dom;
+const { gBEI } = dom;
 
 const testEl = gBEI('#p');
 
-gBEI('#addClass').addEventListener('click', function () {
-  addClass(testEl, 'addClass1 addClass2');
-});
+const ids = [
+  ['#addClass', addClass],
+  ['#removeClass', removeClass],
+  ['#toggleClass', toggleClass]
+];
 
-gBEI('#removeClass').addEventListener('click', function () {
-  // removeClass(testEl); // remove class attr
-  // removeClass(testEl, 'addClass1'); // remove part
-  // removeClass(testEl, 'a addClass1'); // remove nonexistent and part
+function addClass () {
+  dom.addClass(testEl, 'Class1 Class2');
+}
+
+function removeClass () {
+  dom.removeClass(testEl, 'Class1');
+}
+
+function toggleClass () {
+  dom.toggleClass(testEl, 'Class1');
+}
+
+ids.forEach(([id, listener]) => {
+  gBEI(id).addEventListener('click', listener);
 });
