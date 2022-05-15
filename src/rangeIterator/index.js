@@ -18,8 +18,10 @@ export default class RangeIterator {
     const root = range.commonAncestorContainer;
     if (!range.collapsed) {
       if (sc === ec) {
+        // range具有相同的边界点
         this._current = this._last = sc;
       } else {
+        // 将边界点对齐
         this._current = (root === sc && !core.dom.isCharacterDataNode(sc))
           ? sc.childNodes[so] : core.dom.getClosestAncestorIn(sc, root);
 

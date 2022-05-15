@@ -16,7 +16,8 @@ function createRangeIterator (range, whatToShow, filter) {
 }
 
 core.extend({
-  createRangeIterator
+  createRangeIterator,
+  RangeIterator
 });
 
 export default createRangeIterator;
