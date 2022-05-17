@@ -26,12 +26,33 @@ export default class RangeIterator {
           ? sc.childNodes[so] : core.dom.getClosestAncestorIn(sc, root);
 
         this._last = (root === ec && !core.dom.isCharacterDataNode(ec))
-          ? ec.childNodes[eo] : core.dom.getClosestAncestorIn(ec, root);
+          ? ec.childNodes[eo - 1] : core.dom.getClosestAncestorIn(ec, root);
       }
     }
   }
 
   *generator () {
     // todo
+    while (this._current) {
+      let nit, rit, node;
+      nit = document.createNodeIterator(this._current, this.whatToShow, this.filter);
+      while ((node = nit.nextNode())) {
+        yield node;
+      }
+      this._current = this._current !== this._last ? this._current.nextSibling : null;
+    }
   }
+}
+
+/**
+ *
+ * 如果node不是TEXT_NODE且node是range边界节点的祖先节点, 返回true, 否则false
+ * @param {Node} node
+ * @param {Range} range
+ */
+function isNonTextPartiallySelected (node, range) {
+  return node.nodeType !== Node.TEXT_NODE && (
+    core.dom.isAncestorOf(node, range.startContainer) ||
+      core.dom.isAncestorOf(node, range.endContainer)
+  );
 }

@@ -21,7 +21,7 @@ export function getClosestAncestorIn (node, ancestor) {
 }
 
 /**
- *
+ * 传入id 获取dom元素
  * @param {string} selector
  * @returns {HTMLElement}
  */

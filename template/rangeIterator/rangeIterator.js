@@ -24,17 +24,19 @@ console.log(rit3);
 
 // range 具有不同边界点，start = elementNode, end = textNode;
 const range4 = document.createRange();
-range4.setStartAndEnd(gBEI('#_2rhmJa'), 0, gBEI('#p4-h4').firstChild, 5);
+console.log(gBEI('#p4-h4'));
+range4.setStartAndEnd(gBEI('#p1').firstChild, 5, gBEI('#p4-h4'), 3);
+console.log(range4);
 const rit4 = new core.RangeIterator(range4, NodeFilter.SHOW_ALL);
 console.log(rit4);
 window.getSelection().addRange(range4);
 
-const nit = document.createNodeIterator(rit4.range.commonAncestorContainer);
-let node;
-while ((node = nit.nextNode())) {
+// const nit = document.createNodeIterator(rit4._current);
+// console.log(nit.nextNode());
+let node, g = rit4.generator();
+while ((node = g.next().value)) {
   console.log(node);
 }
-console.log(node);
 
 
 
