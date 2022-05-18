@@ -9,9 +9,9 @@ export default class RangeIterator {
    * @param {number} whatToShow
    * @param {((node: Node) => number) | {acceptNode(node: Node): number}} [filter]
    */
-  constructor (range, whatToShow, filter) {
+  constructor (range, whatToShow = NodeFilter.SHOW_ALL, filter) {
     this.range = range;
-    this.whatToShow = whatToShow || NodeFilter.SHOW_ALL;
+    this.whatToShow = whatToShow;
     this.filter = filter;
 
     const [sc, so, ec, eo] = [range.startContainer, range.startOffset, range.endContainer, range.endOffset];
@@ -31,13 +31,44 @@ export default class RangeIterator {
     }
   }
 
+  /**
+   * @return {Generator}
+   */
+  getSubtreeIterator () {
+    const range = document.createRange();
+    const current = this._current;
+    let sc = current, so = 0, ec = current, eo = core.dom.getNodeLength(current);
+
+    if (core.dom.isAncestorOf(current, this.range.startContainer)) {
+      sc = this.range.startContainer;
+      so = this.range.startOffset;
+    }
+
+    if (core.dom.isAncestorOf(current, this.range.endContainer)) {
+      ec = this.range.endContainer;
+      eo = this.range.endOffset;
+    }
+
+    range.setStartAndEnd(sc, so, ec, eo);
+
+    return new RangeIterator(range, this.whatToShow, this.filter).generator();
+  }
+
   *generator () {
     // todo
     while (this._current) {
       let nit, rit, node;
-      nit = document.createNodeIterator(this._current, this.whatToShow, this.filter);
-      while ((node = nit.nextNode())) {
-        yield node;
+
+      if (isNonTextPartiallySelected(this._current, this.range)) {
+        rit = this.getSubtreeIterator();
+        while ((node = rit.next().value)) {
+          yield node;
+        }
+      } else {
+        nit = document.createNodeIterator(this._current, this.whatToShow, this.filter);
+        while ((node = nit.nextNode())) {
+          yield node;
+        }
       }
       this._current = this._current !== this._last ? this._current.nextSibling : null;
     }

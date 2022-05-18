@@ -10,8 +10,7 @@ import RangeIterator from '@/rangeIterator';
  * @param {((node: Node) => number) | {acceptNode(node: Node): number}} [filter]
  * @return {Generator}
  */
-function createRangeIterator (range, whatToShow, filter) {
-  whatToShow = whatToShow || NodeFilter.SHOW_ALL;
+function createRangeIterator (range, whatToShow = NodeFilter.SHOW_ALL, filter) {
   return new RangeIterator(range, whatToShow, filter).generator();
 }
 
