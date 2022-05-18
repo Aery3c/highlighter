@@ -55,7 +55,6 @@ export default class RangeIterator {
   }
 
   *generator () {
-    // todo
     while (this._current) {
       let nit, rit, node;
 

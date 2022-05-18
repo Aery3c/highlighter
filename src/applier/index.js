@@ -52,5 +52,7 @@ function getRangeBoundaries (range) {
  * @return {Text[]}
  */
 function getEffectiveTextNodes (range) {
-  range.getNodes();
+  // todo;
+  const textNodes = range.getNodes(NodeFilter.SHOW_TEXT);
+  console.log(textNodes);
 }
