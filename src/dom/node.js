@@ -47,3 +47,13 @@ export function getNodeLength (node) {
       return 0;
   }
 }
+
+/**
+ * remove node
+ * @see https://developer.mozilla.org/zh-CN/docs/Web/API/Node/removeChild
+ * @param {Node} node
+ * @return {Node | any}
+ */
+export function removeNode (node) {
+  return node.parentNode.removeChild(node);
+}
