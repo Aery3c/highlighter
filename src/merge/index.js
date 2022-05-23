@@ -19,21 +19,27 @@ export default class Merge {
   }
 
   start () {
-    const parts = [];
+    if (this._textNodes.length) {
+      const parts = [];
 
-    this._textNodes.forEach((textNode, index) => {
-      const parentNode = textNode.parentNode;
-      if (index > 0) {
-        core.dom.removeNode(textNode);
-        if (!parentNode.hasChildNodes()) {
+      this._textNodes.forEach((textNode, index) => {
+        const parentNode = textNode.parentNode;
+        if (index > 0) {
+          // remove node
           core.dom.removeNode(textNode);
+          if (!parentNode.hasChildNodes()) {
+            core.dom.removeNode(textNode);
+          }
         }
-      }
-      parts.push(textNode.data);
-    });
+        // add to array
+        parts.push(textNode.data);
+      });
+    } else {
 
-
+    }
   }
+
+
 
   getLength () {
 

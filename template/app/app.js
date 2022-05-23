@@ -1,7 +1,7 @@
 'use strict'
 
 import { createHighlighter, createApplier } from '@/index';
-import createContextMenu from './contextMenu';
+import createContextMenu from '../common/contextMenu';
 import './app.scss';
 
 const highlighter = createHighlighter('highlight', {});

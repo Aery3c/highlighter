@@ -7,8 +7,8 @@ import './styles.scss';
 const { addClass, toggleClass, removeClass } = dom;
 /**
  *
- * @param {string} selector
- * @param {{ name: string; click: (e: MouseEvent) => void }[]} items
+ * @param {string} [selector]
+ * @param {{ name: string; click: (e: MouseEvent) => void }[]} [items]
  * @returns {Element}
  */
 export default (selector, items) => {
@@ -98,7 +98,7 @@ export default (selector, items) => {
    * @returns {Element | null}
    */
   function getElement (selector) {
-    return document.querySelector(selector);
+    return document.querySelector(selector) || document.body;
   }
 
   return menu;
