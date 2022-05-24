@@ -32,6 +32,10 @@ module.exports = function (webpackEnv) {
       const fp = path.join(paths.templateDir, name);
       const stats = fs.statSync(fp);
       if (stats.isDirectory()) {
+        if (name === 'common') {
+          // ignore common dir
+          return;
+        }
         dirs.push(fp);
       }
     });
@@ -109,7 +113,8 @@ module.exports = function (webpackEnv) {
     ],
     resolve: {
       alias: {
-        '@': paths.appSrc
+        '@': paths.appSrc,
+        '@dev': paths.templateDir
       }
     }
   }
