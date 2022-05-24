@@ -1,7 +1,4 @@
 /**
- * @license MIT
- *
- * Includes https://github.com/timdown/rangy/blob/master/lib/rangy-classapplier.js
  *
  * add, remove className on Range
  * 给range添加、删除指定的类名
@@ -10,6 +7,7 @@
 
 'use strict'
 import core from '@/core';
+import { getPrecedingMrTextNode, getNextMrTextNode } from './createAdjacentMergeableTextNodeGetter';
 
 export default class Applier {
 
@@ -46,6 +44,8 @@ export default class Applier {
 
       const lastTextNode = textNodes[textNodes.length - 1];
       range.setStartAndEnd(textNodes[0], 0, lastTextNode, lastTextNode.length);
+
+      normalize(textNodes, range, false);
     }
   }
 
@@ -73,7 +73,42 @@ export default class Applier {
     core.dom.addClass(el, this.className);
     return el;
   }
+}
 
+/**
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/Node/normalize
+ * 规范: range中没有相邻的applier节点
+ * @param {Text[] | Node[]} textNodes - 一个有序的文本节点队列, 这通常应该是从range中遍历出来的.
+ * @param {Range} range - Range对象
+ * @param {boolean} isUndo
+ */
+function normalize (textNodes, range, isUndo) {
+  let firstNode = textNodes[0], lastNode = textNodes[textNodes.length - 1];
+
+  let currentMerge = null, merges = [];
+
+  let rangeStartNode = firstNode, rangeEndNode = lastNode;
+  let rangeStartOffset = 0, rangeEndOffset = lastNode.length;
+
+  textNodes.forEach(textNode => {
+    const precedingNode = getPrecedingMrTextNode(textNode, !isUndo);
+    // 遍历每一个textNode, 找到他们的前面的可合并节点,
+    if (precedingNode) {
+      // 以precedingNode为首创建merge对象
+      if (currentMerge == null) {
+        currentMerge = core.createMerge();
+        currentMerge.add(precedingNode);
+        merges.push(currentMerge);
+      }
+      currentMerge.add(textNode);
+    } else {
+      // 重置当前merge对象, 建立新的合并
+      currentMerge = null;
+    }
+  });
+
+  // todo
+  // nextNode = getNextMrTextNode(lastNode);
 }
 
 /**

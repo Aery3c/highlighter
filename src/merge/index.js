@@ -9,10 +9,10 @@
 import core from '@/core';
 
 export default class Merge {
-  constructor() {
+  constructor () {
     /**
      *
-     * @type {*[]}
+     * @type {Text[]}
      * @private
      */
     this._textNodes = [];
@@ -39,7 +39,13 @@ export default class Merge {
     }
   }
 
-
+  /**
+   *
+   * @param {Text} textNode
+   */
+  add (textNode) {
+    this._textNodes.push(textNode);
+  }
 
   getLength () {
 
