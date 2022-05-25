@@ -7,14 +7,12 @@ import createHighlighter from '@/createHighlighter';
 import createApplier from '@/createApplier';
 import createCharacterRange from '@/createCharacterRange';
 import createRangeIterator from '@/createRangeIterator';
-import createMerge from '@/createMerge';
 
 export {
   createApplier,
   createHighlighter,
   createCharacterRange,
   createRangeIterator,
-  createMerge,
   dom,
   utils
 }
