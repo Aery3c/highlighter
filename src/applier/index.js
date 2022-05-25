@@ -8,6 +8,7 @@
 'use strict'
 import core from '@/core';
 import { getPrecedingMrTextNode, getNextMrTextNode } from './createAdjacentMergeableTextNodeGetter';
+import Merge from './merge';
 
 export default class Applier {
 
@@ -27,7 +28,7 @@ export default class Applier {
    */
   applyToRange (range) {
     // 获取range边界的点
-    const points = getRangeBoundaries(range);
+    // const points = getRangeBoundaries(range);
 
     // 分割边界
     range.splitBoundaries();
@@ -37,7 +38,7 @@ export default class Applier {
 
     if (textNodes.length) {
       textNodes.forEach(textNode => {
-        if (!getSelfOrAncestorWithClass(textNode, this.className)) {
+        if (!getSelfOrAncestorWithClass(textNode, this.className) && !isWhiteSpaceTextNode(textNode)) {
           this.applyToTextNode(textNode);
         }
       });
@@ -76,9 +77,18 @@ export default class Applier {
 }
 
 /**
+ *
+ * @param {Text} textNode
+ * @return {boolean}
+ */
+function isWhiteSpaceTextNode (textNode) {
+  return textNode && textNode.nodeType === Text.TEXT_NODE && core.utils.stripAndCollapse(textNode.data) === '';
+}
+
+/**
  * @see https://developer.mozilla.org/en-US/docs/Web/API/Node/normalize
  * 规范: range中没有相邻的applier节点
- * @param {Text[] | Node[]} textNodes - 一个有序的文本节点队列, 这通常应该是从range中遍历出来的.
+ * @param {Text[]} textNodes - 一个有序的文本节点队列, 这通常应该是从range中遍历出来的.
  * @param {Range} range - Range对象
  * @param {boolean} isUndo
  */
@@ -96,20 +106,44 @@ function normalize (textNodes, range, isUndo) {
     if (precedingNode) {
       // 以precedingNode为首创建merge对象
       if (currentMerge == null) {
-        currentMerge = core.createMerge();
-        currentMerge.add(precedingNode);
+        currentMerge = new Merge(precedingNode);
         merges.push(currentMerge);
       }
-      currentMerge.add(textNode);
+      currentMerge.textNodes.push(textNode);
+
+      if (rangeStartNode === textNode) {
+        rangeStartNode = currentMerge.textNodes[0];
+        rangeStartOffset = rangeStartNode.length;
+      }
+
+      if (rangeEndNode === textNode) {
+        rangeEndNode = currentMerge.textNodes[0];
+        rangeEndOffset = currentMerge.getLength();
+      }
+
     } else {
       // 重置当前merge对象, 建立新的合并
       currentMerge = null;
     }
   });
 
-  // todo
-  // nextNode = getNextMrTextNode(lastNode);
+  const nextNode = getNextMrTextNode(lastNode, !isUndo);
+  if (nextNode) {
+    if (currentMerge == null) {
+      currentMerge = new Merge(lastNode);
+      merges.push(currentMerge);
+    }
+    currentMerge.textNodes.push(nextNode);
+  }
+
+  if (merges.length) {
+    merges.forEach(merge => merge.start());
+
+    range.setStartAndEnd(rangeStartNode, rangeStartOffset, rangeEndNode, rangeEndOffset);
+  }
+
 }
+
 
 /**
  *
@@ -139,10 +173,11 @@ function getRangeBoundaries (range) {
 /**
  * range (prev/next) point (last/first)
  * @param {Range} range
- * @return {Node[]}
+ * @return {Text[]}
  */
 function getEffectiveTextNodes (range) {
 
+  /** @type {Text[]} */
   const textNodes = range.getNodes(NodeFilter.SHOW_TEXT);
   let start = 0, end = textNodes.length, node;
 
