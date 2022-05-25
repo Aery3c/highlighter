@@ -16,7 +16,7 @@ export default class Applier {
     this.className = className;
     this.tagName = options.tagName?.toLowerCase() || 'span';
     this.removeEmptyElement = options.removeEmptyElement ?? false;
-    this.elAttr = options.elAttr || {};
+    this.elAttrs = options.elAttrs || {};
     this.elProps = options.elProps || {};
   }
 
@@ -75,7 +75,31 @@ export default class Applier {
   createContainer () {
     const el = document.createElement(this.tagName);
     core.dom.addClass(el, this.className);
+    mapAttrsToElement(this.elAttrs, el);
+    mapPropsToElement(this.elProps, el);
     return el;
+  }
+}
+
+/**
+ *
+ * @param {Object} attrs
+ * @param {HTMLElement} el
+ */
+function mapAttrsToElement (attrs, el) {
+  for (let key in attrs) {
+    el.setAttribute(key, attrs[key]);
+  }
+}
+
+/**
+ *
+ * @param {Object} props
+ * @param {HTMLElement} el
+ */
+function mapPropsToElement (props, el) {
+  for (let key in props) {
+    el[key] = props[key];
   }
 }
 
