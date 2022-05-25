@@ -183,7 +183,32 @@ extend(Range.prototype, {
 
     return start < 0 && end > 0;
   },
-  moveToBookmark: function () {},
+  /**
+   * @param {CharacterRange} characterRange
+   */
+  moveToBookmark: function (characterRange) {
+    const {start, end, containerElement} = characterRange;
+    this.setStart(containerElement, 0);
+    this.collapse(true);
+
+    const nodeIterator = document.createNodeIterator(containerElement, NodeFilter.SHOW_TEXT);
+    let textNode, charIndex = 0, nextCharIndex;
+
+    let foundStart = false, foundEnd = false;
+    while (!foundEnd && (textNode = nodeIterator.nextNode())) {
+      nextCharIndex = charIndex + textNode.length;
+      if (!foundStart && start >= charIndex && start <= nextCharIndex) {
+        this.setStart(textNode, start - charIndex);
+        foundStart = true;
+      }
+
+      if (end >= charIndex && end <= nextCharIndex) {
+        this.setEnd(textNode, end - charIndex);
+        foundEnd = true;
+      }
+      charIndex = nextCharIndex;
+    }
+  },
   _removeEmptyElements: function () {},
 });
 

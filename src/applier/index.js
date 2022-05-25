@@ -27,8 +27,8 @@ export default class Applier {
    * @param {Range} range
    */
   applyToRange (range) {
-    // 获取range边界的点
-    // const points = getRangeBoundaries(range);
+    // 获取字符范围
+    const characterRange = range.getBookmark();
 
     // 分割边界
     range.splitBoundaries();
@@ -48,6 +48,9 @@ export default class Applier {
 
       normalize(textNodes, range, false);
     }
+    // dom change
+    // 从characterRange更新range
+    range.moveToBookmark(characterRange);
   }
 
   /**
@@ -77,7 +80,7 @@ export default class Applier {
 }
 
 /**
- *
+ * 如果textNode是空白字符, 返回true, 否则false
  * @param {Text} textNode
  * @return {boolean}
  */
@@ -144,7 +147,6 @@ function normalize (textNodes, range, isUndo) {
 
 }
 
-
 /**
  *
  * @param {Node | HTMLElement} node
@@ -159,15 +161,6 @@ function getSelfOrAncestorWithClass (node, className) {
     node = node.parentNode;
   }
   return null;
-}
-
-/**
- *
- * @param {Range} range
- */
-function getRangeBoundaries (range) {
-  const characterRange = range.getBookmark();
-  return [characterRange.start, characterRange.end];
 }
 
 /**
