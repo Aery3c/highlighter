@@ -1,5 +1,7 @@
 'use strict'
 
+import core from '@/core';
+
 /**
  * 获取node的父辈元素中, 距离ancestor最近的子元素
  *
@@ -31,4 +33,20 @@ export function gBEI (selector) {
   }
 
   return document.getElementById(selector.match(/[^#]+/).join(''));
+}
+
+/**
+ * 如果node或者node的祖先元素包含className, 返回这个元素, 否则返回null
+ * @param {Node | HTMLElement} node
+ * @param {string} className
+ * @return {null|Node}
+ */
+export function getSelfOrAncestorWithClass (node, className) {
+  while (node) {
+    if (core.dom.hasClass(node, className)) {
+      return node;
+    }
+    node = node.parentNode;
+  }
+  return null;
 }

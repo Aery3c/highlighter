@@ -47,6 +47,13 @@ createContextMenu(
         const [range] = window.getSelection().getAllRange();
         applier.applyToRange(range);
       }
+    },
+    {
+      name: 'undoToRange',
+      click: () => {
+        const [range] = window.getSelection().getAllRange();
+        applier.undoToRange(range);
+      }
     }
   ]
 );

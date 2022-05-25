@@ -2,9 +2,11 @@
 
 import core from '@/core';
 import stripAndCollapse from './stripAndCollapse';
+import isSplitPoint from './isSplitPoint';
 
 const utils = {
-  stripAndCollapse
+  stripAndCollapse,
+  isSplitPoint
 };
 
 core.extend({

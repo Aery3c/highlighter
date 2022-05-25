@@ -9,6 +9,7 @@
 import core from '@/core';
 import { getPrecedingMrTextNode, getNextMrTextNode } from './createAdjacentMergeableTextNodeGetter';
 import Merge from './merge';
+import { splitNodeAt } from './test';
 
 export default class Applier {
 
@@ -38,7 +39,7 @@ export default class Applier {
 
     if (textNodes.length) {
       textNodes.forEach(textNode => {
-        if (!getSelfOrAncestorWithClass(textNode, this.className) && !isWhiteSpaceTextNode(textNode)) {
+        if (!core.dom.getSelfOrAncestorWithClass(textNode, this.className) && !isWhiteSpaceTextNode(textNode)) {
           this.applyToTextNode(textNode);
         }
       });
@@ -51,6 +52,23 @@ export default class Applier {
     // dom change
     // 从characterRange更新range
     range.moveToBookmark(characterRange);
+  }
+
+  /**
+   * remove className to then range
+   * @param {Range} range
+   */
+  undoToRange (range) {
+    const characterRange = range.getBookmark();
+
+    // split boundaries
+    range.splitBoundaries();
+
+    const textNodes = getEffectiveTextNodes(range);
+
+    if (textNodes.length) {
+      splitAncestorWithClass(range, this.className);
+    }
   }
 
   /**
@@ -79,6 +97,21 @@ export default class Applier {
     mapPropsToElement(this.elProps, el);
     return el;
   }
+}
+
+/**
+ *
+ * @param {Range} range
+ * @param {string} className
+ */
+function splitAncestorWithClass (range, className) {
+  [{ node: range.endContainer, offset: range.endOffset }, { node: range.startContainer, offset: range.startOffset }]
+    .forEach(({ node, offset }) => {
+      const ancestorWithClass = core.dom.getSelfOrAncestorWithClass(node, className);
+      if (ancestorWithClass) {
+        splitNodeAt(ancestorWithClass, node, offset);
+      }
+    });
 }
 
 /**
@@ -169,22 +202,6 @@ function normalize (textNodes, range, isUndo) {
     range.setStartAndEnd(rangeStartNode, rangeStartOffset, rangeEndNode, rangeEndOffset);
   }
 
-}
-
-/**
- *
- * @param {Node | HTMLElement} node
- * @param {string} className
- * @return {null|Node}
- */
-function getSelfOrAncestorWithClass (node, className) {
-  while (node) {
-    if (core.dom.hasClass(node, className)) {
-      return node;
-    }
-    node = node.parentNode;
-  }
-  return null;
 }
 
 /**
