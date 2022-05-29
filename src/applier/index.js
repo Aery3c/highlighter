@@ -79,10 +79,16 @@ export default class Applier {
    */
   applyToTextNode (textNode) {
     const parentNode = textNode.parentNode;
-    if (parentNode && textNode.nodeType === Node.TEXT_NODE) {
-      const el = this.createContainer();
-      parentNode.insertBefore(el, textNode);
-      el.appendChild(textNode);
+    if (textNode.nodeType === Node.TEXT_NODE) {
+      if (parentNode.childNodes.length === 1) {
+        mapAttrsToElement(this.elAttrs, parentNode);
+        mapPropsToElement(this.elProps, parentNode);
+        core.dom.addClass(parentNode, this.className);
+      } else {
+        const el = this.createContainer();
+        parentNode.insertBefore(el, textNode);
+        el.appendChild(textNode);
+      }
     }
   }
 
@@ -117,7 +123,7 @@ function splitAncestorWithClass (range, className) {
 /**
  *
  * @param {Object} attrs
- * @param {HTMLElement} el
+ * @param {HTMLElement | Node} el
  */
 function mapAttrsToElement (attrs, el) {
   for (let key in attrs) {
@@ -128,7 +134,7 @@ function mapAttrsToElement (attrs, el) {
 /**
  *
  * @param {Object} props
- * @param {HTMLElement} el
+ * @param {HTMLElement | Node} el
  */
 function mapPropsToElement (props, el) {
   for (let key in props) {

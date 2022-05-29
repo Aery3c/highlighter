@@ -88,7 +88,7 @@ export function hasClass (el, value) {
 
 /**
  *
- * @param {HTMLElement} el
+ * @param {HTMLElement | Node} el
  * @param {string} value
  */
 export function addClass (el, value) {
