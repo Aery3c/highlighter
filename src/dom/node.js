@@ -57,3 +57,21 @@ export function getNodeLength (node) {
 export function removeNode (node) {
   return node.parentNode.removeChild(node);
 }
+
+/**
+ * 将node移动到parentNode
+ * @param {Node} node
+ * @param {Node} parentNode
+ * @param {number} index
+ */
+export function moveNode (node, parentNode, index) {
+  if (index === -1) {
+    index = parentNode.childNodes.length;
+  }
+
+  if (index === parentNode.childNodes.length) {
+    parentNode.appendChild(node);
+  } else {
+    parentNode.insertBefore(node, parentNode.childNodes[index]);
+  }
+}

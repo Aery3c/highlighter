@@ -9,7 +9,7 @@
 import core from '@/core';
 import { getPrecedingMrTextNode, getNextMrTextNode } from './createAdjacentMergeableTextNodeGetter';
 import Merge from './merge';
-import { splitNodeAt } from './test';
+import splitNodeAt from './splitNodeAt';
 
 export default class Applier {
 
@@ -56,6 +56,8 @@ export default class Applier {
 
   /**
    * remove className to then range
+   *
+   * 从range上删除指定的类
    * @param {Range} range
    */
   undoToRange (range) {
@@ -67,7 +69,14 @@ export default class Applier {
     const textNodes = getEffectiveTextNodes(range);
 
     if (textNodes.length) {
+      // split boundaries ancestor with class
       splitAncestorWithClass(range, this.className);
+      textNodes.forEach(textNode => {
+        let ancestorWithClass = core.dom.getSelfOrAncestorWithClass(textNode, this.className);
+        if (ancestorWithClass) {
+
+        }
+      });
     }
   }
 
@@ -90,6 +99,10 @@ export default class Applier {
         el.appendChild(textNode);
       }
     }
+  }
+
+  undoToAncestor (ancestor) {
+
   }
 
   /**
