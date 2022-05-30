@@ -22,9 +22,8 @@ export default class Applier {
   }
 
   /**
-   * add className to then range
+   * applies to then range
    *
-   * 给range添加指定的类名
    * @param {Range} range
    */
   applyToRange (range) {
@@ -55,15 +54,13 @@ export default class Applier {
   }
 
   /**
-   * remove className to then range
+   * undo applies to range
    *
-   * 从range上删除指定的类
    * @param {Range} range
    */
   undoToRange (range) {
     const characterRange = range.getBookmark();
 
-    // split boundaries
     range.splitBoundaries();
 
     const textNodes = getEffectiveTextNodes(range);
@@ -74,22 +71,25 @@ export default class Applier {
       textNodes.forEach(textNode => {
         let ancestorWithClass = core.dom.getSelfOrAncestorWithClass(textNode, this.className);
         if (ancestorWithClass) {
-
+          undoToAncestor(ancestorWithClass);
         }
       });
+
+      normalize(textNodes, range, true);
     }
+
+    range.moveToBookmark(characterRange);
   }
 
   /**
-   * add className to then textNode
+   * applies to then textNode
    *
-   * 给文本节点添加指定的类名
    * @param {Node} textNode
    */
   applyToTextNode (textNode) {
     const parentNode = textNode.parentNode;
     if (textNode.nodeType === Node.TEXT_NODE) {
-      if (parentNode.childNodes.length === 1) {
+      if (parentNode.childNodes.length === 1 && parentNode.nodeName.toLowerCase() === this.tagName) {
         mapAttrsToElement(this.elAttrs, parentNode);
         mapPropsToElement(this.elProps, parentNode);
         core.dom.addClass(parentNode, this.className);
@@ -99,10 +99,6 @@ export default class Applier {
         el.appendChild(textNode);
       }
     }
-  }
-
-  undoToAncestor (ancestor) {
-
   }
 
   /**
@@ -116,6 +112,28 @@ export default class Applier {
     mapPropsToElement(this.elProps, el);
     return el;
   }
+}
+
+/**
+ *
+ * @param {Node} ancestorWithClass
+ * @return {Node[]}
+ */
+function undoToAncestor (ancestorWithClass) {
+  let child, children = [],
+    parentNode = ancestorWithClass.parentNode,
+    index = core.dom.getNodeIndex(ancestorWithClass);
+
+  while ((child = ancestorWithClass.firstChild)) {
+    // move children to sibling
+    core.dom.moveNode(child, parentNode, index++);
+    children.push(child);
+  }
+
+  // remove self
+  core.dom.removeNode(ancestorWithClass);
+
+  return children;
 }
 
 /**

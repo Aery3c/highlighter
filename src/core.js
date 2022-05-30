@@ -87,7 +87,7 @@ extend(Range.prototype, {
    *
    * @param {number} [whatToShow]
    * @param {((node: Node) => number) | {acceptNode(node: Node): number}} [filter]
-   * @returns {Node[]}
+   * @returns {Node|Text|*[]}
    */
   getNodes: function (whatToShow, filter) {
     let nodes = [], it = core.createRangeIterator(this, whatToShow, filter), node;
