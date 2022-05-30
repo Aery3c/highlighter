@@ -8,7 +8,7 @@ const highlighter = createHighlighter('highlight', {
   elProps: {
     onclick: (e) => {
       const highlight = highlighter.getHighlightForNode(e.target);
-
+      highlighter.removeHighlights([highlight]);
     }
   }
 });

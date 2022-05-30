@@ -36,6 +36,8 @@ export default class Highlighter {
 
   /**
    * undo highlight in selection
+   *
+   * 从当前的选中撤销高亮
    * @param {Selection} [selection]
    * @return {Highlight[]}
    */
@@ -52,9 +54,9 @@ export default class Highlighter {
   }
 
   /**
-   *
+   * 根据node节点获取highlight对象
    * @param {Node} node
-   * @return {null}
+   * @return {Highlight | null}
    */
   getHighlightForNode (node) {
     for (let highlight of this.highlights) {
@@ -64,6 +66,32 @@ export default class Highlighter {
     }
 
     return null
+  }
+
+  /**
+   * remove highlight
+   *
+   * 删除高亮
+   * @param {Highlight[]} highlights
+   */
+  removeHighlights (highlights) {
+    if (Array.isArray(highlights) && highlights.length) {
+      let i = 0, highlight, len = this.highlights.length;
+      for (; i < len; ++i) {
+        highlight = this.highlights[i];
+        if (highlights.indexOf(highlight) > -1) {
+          highlight.unapply();
+          this.highlights.splice(i--, 1);
+        }
+      }
+    }
+  }
+
+  removeAllHighlight () {
+    for (let i = 0, highlight; (highlight = this.highlights[i]); ++i) {
+      highlight.unapply();
+      this.highlights.splice(i--, 1);
+    }
   }
 }
 
