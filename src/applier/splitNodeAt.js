@@ -20,15 +20,17 @@ export default function splitNodeAt (ancestor, descendant, descendantOffset) {
     }
     descendant = descendant.parentNode;
   }
+  // 必须保证节点被range分割, 否则会出现空的节点
+  if (core.utils.isSplitPoint(descendant, descendantOffset)) {
+    // clone empty node
+    let newNode = descendant.cloneNode(false);
 
-  // clone empty node
-  let newNode = descendant.cloneNode(false);
-
-  let child, newIndex = 0;
-  while ((child = descendant.childNodes[descendantOffset])) {
-    // move child to newNode
-    core.dom.moveNode(child, newNode, newIndex++);
+    let child, newIndex = 0;
+    while ((child = descendant.childNodes[descendantOffset])) {
+      // move child to newNode
+      core.dom.moveNode(child, newNode, newIndex++);
+    }
+    // move newNode to parentNode
+    core.dom.moveNode(newNode, descendant.parentNode, core.dom.getNodeIndex(descendant) + 1);
   }
-  // move newNode to parentNode
-  core.dom.moveNode(newNode, descendant.parentNode, core.dom.getNodeIndex(descendant) + 1);
 }
