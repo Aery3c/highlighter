@@ -1,5 +1,7 @@
 'use strict'
 
+import inspect from './inspect';
+
 export default class Highlight {
   /**
    *
@@ -28,5 +30,9 @@ export default class Highlight {
     const range = this.characterRange.toRange();
     this.applier.unApplies(range);
     this.applied = false;
+  }
+
+  inspect () {
+    inspect(this);
   }
 }
