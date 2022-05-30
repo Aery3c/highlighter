@@ -26,7 +26,7 @@ export default class Applier {
    *
    * @param {Range} range
    */
-  applyToRange (range) {
+  applies (range) {
     // 获取字符范围
     const characterRange = range.getBookmark();
 
@@ -39,7 +39,7 @@ export default class Applier {
     if (textNodes.length) {
       textNodes.forEach(textNode => {
         if (!core.dom.getSelfOrAncestorWithClass(textNode, this.className) && !isWhiteSpaceTextNode(textNode)) {
-          this.applyToTextNode(textNode);
+          this.appliesText(textNode);
         }
       });
 
@@ -58,7 +58,7 @@ export default class Applier {
    *
    * @param {Range} range
    */
-  undoToRange (range) {
+  unApplies (range) {
     const characterRange = range.getBookmark();
 
     range.splitBoundaries();
@@ -82,11 +82,11 @@ export default class Applier {
   }
 
   /**
-   *
+   * is applied to range
    * @param {Range} range
    * @return {boolean}
    */
-  isAppliedToRange (range) {
+  isApplied (range) {
     if (range.collapsed && range.toString() === '') {
       return !!core.dom.getSelfOrAncestorWithClass(range.commonAncestorContainer, this.className);
     } else {
@@ -105,7 +105,7 @@ export default class Applier {
    *
    * @param {Node} textNode
    */
-  applyToTextNode (textNode) {
+  appliesText (textNode) {
     const parentNode = textNode.parentNode;
     if (textNode.nodeType === Node.TEXT_NODE) {
       if (parentNode.childNodes.length === 1 && parentNode.nodeName.toLowerCase() === this.tagName) {

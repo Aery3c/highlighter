@@ -14,21 +14,21 @@ createContextMenu(
       name: 'applyToRange',
       click: () => {
         const [range] = window.getSelection().getAllRange();
-        applier.applyToRange(range);
+        applier.applies(range);
       }
     },
     {
       name: 'undoToRange',
       click: () => {
         const [range] = window.getSelection().getAllRange();
-        applier.undoToRange(range);
+        applier.unApplies(range);
       }
     },
     {
       name: 'isAppliedToRange',
       click: () => {
         const [range] = window.getSelection().getAllRange();
-        console.log(applier.isAppliedToRange(range), 'isAppliedToRange');
+        console.log(applier.isApplied(range), 'isAppliedToRange');
       }
     }
   ]
