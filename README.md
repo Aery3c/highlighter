@@ -1,6 +1,6 @@
-# highlighter
+# A light highlighter
 
-**highlighter是一个轻量、快速的javascript库，用于在web页面进行内容标记**
+**A light highlighter是一个轻量级的javascript库，用于在web页面进行内容标记**
 
 
 
