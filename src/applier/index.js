@@ -82,6 +82,25 @@ export default class Applier {
   }
 
   /**
+   *
+   * @param {Range} range
+   * @return {boolean}
+   */
+  isAppliedToRange (range) {
+    if (range.collapsed && range.toString() === '') {
+      return !!core.dom.getSelfOrAncestorWithClass(range.commonAncestorContainer, this.className);
+    } else {
+      const textNodes = getEffectiveTextNodes(range);
+      for (let i = 0, textNode; (textNode = textNodes[i]); ++i) {
+        if (!core.dom.getSelfOrAncestorWithClass(textNode, this.className) && !isWhiteSpaceTextNode(textNode)) {
+          return false;
+        }
+      }
+      return true;
+    }
+  }
+
+  /**
    * applies to then textNode
    *
    * @param {Node} textNode
