@@ -214,6 +214,10 @@ extend(Range.prototype, {
 
 /** Selection extend */
 extend(Selection.prototype, {
+  /**
+   *
+   * @return {Range[]}
+   */
   getAllRange: function () {
     const ranges = [];
     for (let i = 0; i < this.rangeCount; ++i) {
