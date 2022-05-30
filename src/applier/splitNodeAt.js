@@ -24,7 +24,9 @@ export default function splitNodeAt (ancestor, descendant, descendantOffset) {
   if (core.utils.isSplitPoint(descendant, descendantOffset)) {
     // clone empty node
     let newNode = descendant.cloneNode(false);
-
+    if (newNode.hasAttribute('id')) {
+      newNode.removeAttribute('id');
+    }
     let child, newIndex = 0;
     while ((child = descendant.childNodes[descendantOffset])) {
       // move child to newNode

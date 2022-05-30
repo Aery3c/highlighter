@@ -4,21 +4,35 @@ import { createHighlighter, createApplier } from '@/index';
 import createContextMenu from '../common/contextMenu';
 import './app.scss';
 
-const highlighter = createHighlighter('highlight', {});
+const highlighter = createHighlighter();
 const applier = createApplier();
 
 createContextMenu(
   '.book',
   [
     {
-      name: 'applyToRange',
+      name: 'highlightSelection',
+      click: () => {
+        const highlights = highlighter.highlightSelection();
+        console.log(highlights);
+      }
+    },
+    {
+      name: 'unhighlightSelection',
+      click: () => {
+        const highlights = highlighter.unhighlightSelection();
+        console.log(highlights);
+      }
+    },
+    {
+      name: 'appliesToRange',
       click: () => {
         const [range] = window.getSelection().getAllRange();
         applier.applies(range);
       }
     },
     {
-      name: 'undoToRange',
+      name: 'unAppliesToRange',
       click: () => {
         const [range] = window.getSelection().getAllRange();
         applier.unApplies(range);

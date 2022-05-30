@@ -81,12 +81,30 @@ class CharacterRange {
     return charSet;
   }
 
+  /**
+   *
+   * @param {number} offset
+   */
   setStart (offset) {
     this.start = offset;
   }
 
+  /**
+   *
+   * @param {number} offset
+   */
   setEnd (offset) {
     this.end = offset;
+  }
+
+  /**
+   * to range
+   * @return {Range}
+   */
+  toRange () {
+    const range = document.createRange();
+    range.moveToBookmark(this);
+    return range;
   }
 }
 
