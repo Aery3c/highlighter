@@ -10,6 +10,7 @@ export default class Highlighter {
    * @param {Applier} _applier
    */
   constructor(_applier) {
+    /** @type {Highlight[]} */
     this.highlights = [];
     this._applier = _applier;
   }
@@ -48,6 +49,21 @@ export default class Highlighter {
     restoreSelection(selection, characterRanges);
 
     return newHighlights;
+  }
+
+  /**
+   *
+   * @param {Node} node
+   * @return {null}
+   */
+  getHighlightForNode (node) {
+    for (let highlight of this.highlights) {
+      if (highlight.containsNode(node)) {
+        return highlight;
+      }
+    }
+
+    return null
   }
 }
 

@@ -1,11 +1,17 @@
 'use strict'
 
-import { createHighlighter, createApplier } from '@/index';
+import { createHighlighter } from '@/index';
 import createContextMenu from '../common/contextMenu';
 import './app.scss';
 
-const highlighter = createHighlighter();
-const applier = createApplier();
+const highlighter = createHighlighter('highlight', {
+  elProps: {
+    onclick: (e) => {
+      const highlight = highlighter.getHighlightForNode(e.target);
+
+    }
+  }
+});
 
 createContextMenu(
   '.book',
@@ -14,35 +20,16 @@ createContextMenu(
       name: 'highlightSelection',
       click: () => {
         const highlights = highlighter.highlightSelection();
-        console.log(highlights);
+        console.clear();
+        highlights.forEach(ht => ht.inspect());
       }
     },
     {
       name: 'unhighlightSelection',
       click: () => {
         const highlights = highlighter.unhighlightSelection();
-        console.log(highlights);
-      }
-    },
-    {
-      name: 'appliesToRange',
-      click: () => {
-        const [range] = window.getSelection().getAllRange();
-        applier.applies(range);
-      }
-    },
-    {
-      name: 'unAppliesToRange',
-      click: () => {
-        const [range] = window.getSelection().getAllRange();
-        applier.unApplies(range);
-      }
-    },
-    {
-      name: 'isAppliedToRange',
-      click: () => {
-        const [range] = window.getSelection().getAllRange();
-        console.log(applier.isApplied(range), 'isAppliedToRange');
+        console.clear();
+        highlights.forEach(ht => ht.inspect());
       }
     }
   ]

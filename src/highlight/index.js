@@ -32,6 +32,17 @@ export default class Highlight {
     this.applied = false;
   }
 
+  /**
+   *
+   * @param {Node} node
+   * @return {boolean}
+   */
+  containsNode (node) {
+    const range = document.createRange();
+    range.selectNodeContents(node);
+    return this.characterRange.contains(range.getBookmark());
+  }
+
   inspect () {
     inspect(this);
   }

@@ -63,6 +63,15 @@ class CharacterRange {
   }
 
   /**
+   * 如果范围包含另一个范围 返回true, 否则false
+   * @param {CharacterRange} otherCharRange
+   * @return {boolean}
+   */
+  contains (otherCharRange) {
+    return this.start <= otherCharRange.start && this.end >= otherCharRange.end;
+  }
+
+  /**
    * 补集, 返回一组新的range
    * @param {CharacterRange} subCharRange
    * @return {CharacterRange[]}
