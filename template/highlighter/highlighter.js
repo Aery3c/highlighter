@@ -4,11 +4,17 @@ const highlighter = createHighlighter();
 
 dom.gBEI('#highlightSelection').addEventListener('click', function () {
   const highlights = highlighter.highlightSelection();
-  console.log(highlights)
+  console.clear();
+  highlights.forEach(ht => {
+    ht.inspect();
+  })
 });
 
 dom.gBEI('#unhighlightSelection').addEventListener('click', function () {
   const highlights = highlighter.unhighlightSelection();
-  console.log(highlights)
+  console.clear();
+  highlights.forEach(ht => {
+    ht.inspect();
+  })
 });
 

@@ -21,5 +21,5 @@ const consoleStyle = [
   'color: rgb(51, 51, 51)',
   'border: 1px solid #ccc',
   'border-radius: 4px',
-  'padding: 4px 0'
+  'padding: 2px'
 ].join(';');
