@@ -1,5 +1,7 @@
 @charset "UTF-8";
 
+$nav_height: 5em;
+
 body {
   font-size: 62.5% !important;
   margin: 0;
@@ -14,6 +16,19 @@ body {
   display: flex;
   flex-direction: row;
   overflow-x: hidden;
+  .book_nav {
+    position: fixed;
+    z-index: 10;
+    width: 100%;
+    background: #fff;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, .8);
+    border-bottom: 1px solid #d9d9d9;
+    .book_nav_wrapper {
+      padding-top: 0;
+      padding-bottom: 0;
+      height: $nav_height;
+    }
+  }
   /* 侧边栏 */
   .book_aside_active {
     width: 350px !important;
@@ -24,7 +39,7 @@ body {
     width: 0;
     aside {
       width: 0;
-      height: 100vh;
+      height: calc(100vh - 6.3em);
       position: fixed;
       z-index: 1;
       .book_aside_wrapper_active {
@@ -32,12 +47,13 @@ body {
         opacity: 1 !important;
       }
       .book_aside_wrapper {
-        width: 350px;
-        height: 100%;
         position: fixed;
         left: 0;
         bottom: 0;
         top: 0;
+        width: 350px;
+        height: 100%;
+        margin-top: $nav_height;
         overflow: auto;
         transform: translateX(-318px);
         opacity: .1;
@@ -84,7 +100,7 @@ body {
   /* 主体内容 */
   .book_container {
     max-width: 718px;
-    margin: 20px auto;
+    margin: $nav_height auto;
     text-align: center;
     .book_container_title {
       line-height: 1.3;

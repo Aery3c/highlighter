@@ -8,8 +8,14 @@ import './app.scss';
 const highlighter = createHighlighter('highlight', {
   elProps: {
     onclick: (e) => {
-      // const highlight = highlighter.getHighlightForNode(e.target);
-      // highlighter.removeHighlights([highlight]);
+      if (window.confirm('remove highlight')) {
+        const highlight = highlighter.getHighlightForNode(e.target);
+        highlighter.removeHighlights([highlight]);
+        const event = new CustomEvent(UPDATE_MARKS, {
+          detail: highlighter.highlights
+        });
+        container.dispatchEvent(event);
+      }
     }
   },
   containerElement: document.querySelector('.book_container')
@@ -27,10 +33,10 @@ contextMenu('.book_container',
        * @see https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent/CustomEvent
        * @type {CustomEvent<unknown>}
        */
-      const markEvent = new CustomEvent(MARK_EVENT, {
+      const event = new CustomEvent(UPDATE_MARKS, {
         detail: highlights
       });
-      container.dispatchEvent(markEvent);
+      container.dispatchEvent(event);
       highlights.forEach(ht => ht.inspect());
     }
   },
@@ -38,10 +44,10 @@ contextMenu('.book_container',
     name: 'unhighlightSelection',
     click: () => {
       const highlights = highlighter.unhighlightSelection();
-      const markEvent = new CustomEvent(MARK_EVENT, {
+      const event = new CustomEvent(UPDATE_MARKS, {
         detail: highlights
       });
-      container.dispatchEvent(markEvent);
+      container.dispatchEvent(event);
       highlights.forEach(ht => ht.inspect());
     }
   }
@@ -55,8 +61,8 @@ container?.addEventListener('click', () => {
   dom.toggleClass(document.querySelector('.book_aside > aside'), 'book_aside_active');
 });
 
-const MARK_EVENT = 'mark';
-container?.addEventListener(MARK_EVENT, (e) => {
+const UPDATE_MARKS = 'UPDATE_MARKS';
+container?.addEventListener(UPDATE_MARKS, (e) => {
   const { detail: highlights } = e;
   if (container.hasChildNodes()) {
     // remove existing marks
