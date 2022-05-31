@@ -12,7 +12,7 @@ import Applier from '@/applier';
  */
 function createHighlighter (name = 'highlight', options = {}) {
   const applier = new Applier(name, options);
-  return new Highlighter(applier);
+  return new Highlighter(applier, options.containerElement);
 }
 
 core.extend({

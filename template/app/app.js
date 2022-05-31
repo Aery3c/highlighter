@@ -11,7 +11,8 @@ const highlighter = createHighlighter('highlight', {
       // const highlight = highlighter.getHighlightForNode(e.target);
       // highlighter.removeHighlights([highlight]);
     }
-  }
+  },
+  containerElement: document.querySelector('.book_container')
 });
 
 // create contextMenu
@@ -26,10 +27,10 @@ contextMenu('.book_container',
        * @see https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent/CustomEvent
        * @type {CustomEvent<unknown>}
        */
-      // const markEvent = new CustomEvent(MARK_EVENT, {
-      //   detail: highlights
-      // });
-      // container.dispatchEvent(markEvent);
+      const markEvent = new CustomEvent(MARK_EVENT, {
+        detail: highlights
+      });
+      container.dispatchEvent(markEvent);
       highlights.forEach(ht => ht.inspect());
     }
   },
@@ -37,10 +38,10 @@ contextMenu('.book_container',
     name: 'unhighlightSelection',
     click: () => {
       const highlights = highlighter.unhighlightSelection();
-      // const markEvent = new CustomEvent(MARK_EVENT, {
-      //   detail: highlights
-      // });
-      // container.dispatchEvent(markEvent);
+      const markEvent = new CustomEvent(MARK_EVENT, {
+        detail: highlights
+      });
+      container.dispatchEvent(markEvent);
       highlights.forEach(ht => ht.inspect());
     }
   }

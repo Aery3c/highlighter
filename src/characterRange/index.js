@@ -19,10 +19,13 @@ class CharacterRange {
   /**
    * 返回两段范围产生交集的部分, 返回一个新的范围
    * @param {CharacterRange} otherCharRange
-   * @return {CharacterRange}
+   * @return {CharacterRange | null}
    */
   intersection (otherCharRange) {
-    return new CharacterRange(Math.max(this.start, otherCharRange.start), Math.min(this.end, otherCharRange.end));
+    if (this.containerElement === otherCharRange.containerElement) {
+      return new CharacterRange(Math.max(this.start, otherCharRange.start), Math.min(this.end, otherCharRange.end), this.containerElement);
+    }
+    return null
   }
 
   /**
@@ -55,11 +58,15 @@ class CharacterRange {
   /**
    * 并集, 返回一个新的range
    * @param {CharacterRange} otherCharRange
-   * @return {CharacterRange}
+   * @return {CharacterRange | null}
    *
    */
   union (otherCharRange) {
-    return new CharacterRange(Math.min(this.start, otherCharRange.start), Math.max(this.end, otherCharRange.end));
+    if (this.containerElement === otherCharRange.containerElement) {
+      return new CharacterRange(Math.min(this.start, otherCharRange.start), Math.max(this.end, otherCharRange.end), this.containerElement);
+    }
+
+    return null
   }
 
   /**
@@ -79,14 +86,15 @@ class CharacterRange {
   complementarySet (subCharRange) {
     const charSet = [];
 
-    if (this.start < subCharRange.start) {
-      charSet.push(new CharacterRange(this.start, subCharRange.start));
-    }
+    if (this.containerElement === subCharRange.containerElement) {
+      if (this.start < subCharRange.start) {
+        charSet.push(new CharacterRange(this.start, subCharRange.start, this.containerElement));
+      }
 
-    if (this.end > subCharRange.end) {
-      charSet.push(new CharacterRange(subCharRange.end, this.end));
+      if (this.end > subCharRange.end) {
+        charSet.push(new CharacterRange(subCharRange.end, this.end, this.containerElement));
+      }
     }
-
     return charSet;
   }
 

@@ -19,7 +19,7 @@ export default class Applier {
     this.removeEmptyElement = options.removeEmptyElement ?? false;
     this.elAttrs = options.elAttrs || {};
     this.elProps = options.elProps || {};
-    // this.containerElement = options.containerElement || document.body;
+    this.containerElement = options.containerElement || document.body;
   }
 
   /**
@@ -29,7 +29,7 @@ export default class Applier {
    */
   applies (range) {
     // 获取字符范围
-    const characterRange = range.getBookmark();
+    const characterRange = range.getBookmark(this.containerElement);
 
     // 分割边界
     range.splitBoundaries();
@@ -60,7 +60,7 @@ export default class Applier {
    * @param {Range} range
    */
   unApplies (range) {
-    const characterRange = range.getBookmark();
+    const characterRange = range.getBookmark(this.containerElement);
 
     range.splitBoundaries();
 
