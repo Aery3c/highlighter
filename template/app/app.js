@@ -1,11 +1,11 @@
 'use strict'
 
-import { createHighlighter } from '@/index';
+import { createHighlighter, dom } from '@/index';
 import contextMenu from '@components/contextMenu';
 import './app.scss';
 
 // create contextMenu
-contextMenu('.book',
+contextMenu('.book_container',
 [
   {
     name: 'highlightSelection',
@@ -34,6 +34,15 @@ const highlighter = createHighlighter('highlight', {
     }
   }
 });
+
+// launch aside
+document.querySelector('.book_aside_wrapper')?.addEventListener('click', (e) => {
+  dom.toggleClass(e.target, 'book_aside_wrapper_active');
+  dom.toggleClass(document.querySelector('.book_aside'), 'book_aside_active');
+  dom.toggleClass(document.querySelector('.book_aside > aside'), 'book_aside_active');
+});
+
+
 
 
 
