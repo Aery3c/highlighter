@@ -90,7 +90,7 @@ function createMarkContainer (highlight) {
     e.stopPropagation();
     const range = highlight.characterRange.toRange();
     const rect = range.getBoundingClientRect();
-    window.scrollTo({ top: getScrollTop() + rect.y - (window.screen.height / 3), left: 0, behavior: 'smooth' });
+    window.scrollTo({ top: getScrollTop() + rect.y - (window.innerHeight / 2), left: 0, behavior: 'smooth' });
   });
   el.appendChild(child);
   return el;
@@ -100,6 +100,16 @@ function getScrollTop () {
   return window.scrollY || document.documentElement.scrollTop || document.body.scrollTop;
 }
 
+// set reader progress
+const progressEl = document.querySelector('.book_nav_progress > div');
+window.addEventListener('scroll', () => {
+  const totalH = document.body.scrollHeight || document.documentElement.scrollHeight
+  const clientH = window.innerHeight || document.documentElement.clientHeight
+  const scrollH = getScrollTop();
+  const validH = totalH - clientH
+  const result = (scrollH / validH * 100).toFixed(2) - 100;
+  progressEl.style.transform = `translateX(${result}%)`;
+});
 
 
 

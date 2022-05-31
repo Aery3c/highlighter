@@ -28,6 +28,21 @@ body {
       padding-bottom: 0;
       height: $nav_height;
     }
+    .book_nav_progress {
+      display: block;
+      width: 100%;
+      height: 2px;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 5;
+      div {
+        background-color: #008078;
+        height: 2px;
+        width: 100%;
+        transition: transform .1s linear;
+      }
+    }
   }
   /* 侧边栏 */
   .book_aside_active {
