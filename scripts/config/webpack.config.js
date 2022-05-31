@@ -32,8 +32,8 @@ module.exports = function (webpackEnv) {
       const fp = path.join(paths.templateDir, name);
       const stats = fs.statSync(fp);
       if (stats.isDirectory()) {
-        if (name === 'common') {
-          // ignore common dir
+        if (['common', 'components'].indexOf(name) > -1) {
+          // ignore these dirs
           return;
         }
         dirs.push(fp);
@@ -114,7 +114,7 @@ module.exports = function (webpackEnv) {
     resolve: {
       alias: {
         '@': paths.appSrc,
-        '@dev': paths.templateDir
+        '@components': path.join(paths.templateDir, './components'),
       }
     }
   }

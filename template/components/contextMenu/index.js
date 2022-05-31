@@ -74,7 +74,7 @@ export default (selector, items) => {
     const ranges = selection.getAllRange();
     const range = ranges[ranges.length - 1];
 
-    if (!range.collapsed && range.toString() !== '') {
+    if (range && !range.collapsed && range.toString() !== '') {
       addClass(menu, 'context_menu_fadeIn');
       const { x, y } = event;
       // flew in
