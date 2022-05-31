@@ -60,7 +60,7 @@ module.exports = function (webpackEnv) {
     entry,
     output: {
       path: paths.appBuild,
-      filename: isEnvProduction ? 'highlighter.build.js' : isEnvDevelopment && '[name].dev.js',
+      filename: isEnvProduction ? 'highlighter.js' : isEnvDevelopment && '[name].dev.js',
       globalObject: 'this'
     },
     module: {

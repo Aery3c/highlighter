@@ -2,7 +2,7 @@
   "name": "highlighter",
   "version": "1.0.0",
   "description": "A light highlighter",
-  "main": "index.js",
+  "main": "./build/highlighter.js",
   "repository": "git@github.com:Aery3c/highlighter.git",
   "author": "Aery3c <aery3c@gmail.com>",
   "license": "MIT",
