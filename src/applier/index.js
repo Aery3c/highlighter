@@ -19,6 +19,7 @@ export default class Applier {
     this.removeEmptyElement = options.removeEmptyElement ?? false;
     this.elAttrs = options.elAttrs || {};
     this.elProps = options.elProps || {};
+    // this.containerElement = options.containerElement || document.body;
   }
 
   /**
