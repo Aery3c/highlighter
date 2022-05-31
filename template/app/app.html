@@ -6,23 +6,40 @@
   <meta name="viewport"
         content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>学习扑克：什么是 GTO(游戏最佳策略)</title>
+  <title>highlighter app demo</title>
   <style type="text/css">
     .icon {
       width: 1em; height: 1em;
       vertical-align: -0.15em;
       fill: currentColor;
       overflow: hidden;
+      color: #666;
+    }
+    .icon:hover {
+      color: #1a1a1a;
     }
   </style>
-  <script src="https://at.alicdn.com/t/font_3346834_suewlq4e94.js"></script>
+  <script src="https://at.alicdn.com/t/font_3346834_0mmc13cels9.js"></script>
 </head>
 
 <body>
   <main class="book">
     <header class="book_nav">
       <div class="book_nav_wrapper">
-        <nav></nav>
+        <nav>
+          <h1>select text</h1>
+          <div></div>
+          <div class="book_nav_find">
+            <div class="book_nav_find_wrapper">
+              <input />
+            </div>
+            <button class="book_nav_find_search" data-tooltip="搜索文本">
+              <svg class="icon" aria-hidden="true">
+                <use xlink:href="#icon-search"></use>
+              </svg>
+            </button>
+          </div>
+        </nav>
       </div>
       <div class="book_nav_progress">
         <div></div>

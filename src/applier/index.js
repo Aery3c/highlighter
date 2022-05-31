@@ -72,7 +72,7 @@ export default class Applier {
       textNodes.forEach(textNode => {
         let ancestorWithClass = core.dom.getSelfOrAncestorWithClass(textNode, this.className);
         if (ancestorWithClass) {
-          undoToAncestor(ancestorWithClass);
+          undoToAncestor(ancestorWithClass, this.className);
         }
       });
 
@@ -137,23 +137,38 @@ export default class Applier {
 /**
  *
  * @param {Node} ancestorWithClass
+ * @param {string} className
  * @return {Node[]}
  */
-function undoToAncestor (ancestorWithClass) {
-  let child, children = [],
-    parentNode = ancestorWithClass.parentNode,
-    index = core.dom.getNodeIndex(ancestorWithClass);
+function undoToAncestor (ancestorWithClass, className) {
+  if (isRemovable(ancestorWithClass, className)) {
+    let child, children = [],
+      parentNode = ancestorWithClass.parentNode,
+      index = core.dom.getNodeIndex(ancestorWithClass);
 
-  while ((child = ancestorWithClass.firstChild)) {
-    // move children to sibling
-    core.dom.moveNode(child, parentNode, index++);
-    children.push(child);
+    while ((child = ancestorWithClass.firstChild)) {
+      // move children to sibling
+      core.dom.moveNode(child, parentNode, index++);
+      children.push(child);
+    }
+
+    // remove self
+    core.dom.removeNode(ancestorWithClass);
+
+    return children;
+  } else {
+    core.dom.removeClass(ancestorWithClass, className);
   }
+}
 
-  // remove self
-  core.dom.removeNode(ancestorWithClass);
-
-  return children;
+/**
+ *
+ * @param {HTMLElement | Node} ancestorWithClass
+ * @param {string} className
+ * @return {boolean}
+ */
+function isRemovable (ancestorWithClass, className) {
+  return core.dom.getClass(ancestorWithClass) === className;
 }
 
 /**

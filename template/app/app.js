@@ -1,9 +1,10 @@
 'use strict'
 
-import { createHighlighter, dom } from '@/index';
+import { createHighlighter, dom, utils, createCharacterRange, createApplier, createHighlight } from '@/index';
 import contextMenu from '@components/contextMenu';
 import './app.scss';
 
+const containerElement =  document.querySelector('.book_container');
 // create highlighter
 const highlighter = createHighlighter('highlight', {
   elProps: {
@@ -18,7 +19,7 @@ const highlighter = createHighlighter('highlight', {
       }
     }
   },
-  containerElement: document.querySelector('.book_container')
+  containerElement: containerElement
 });
 
 // create contextMenu
@@ -112,6 +113,56 @@ window.addEventListener('scroll', () => {
 });
 
 
+// input bind keyboard
+const inputEl = document.querySelector('.book_nav_find_wrapper > input');
+
+inputEl.addEventListener('keyup', debounce(() => {
+  findText(inputEl.value);
+}));
+
+// create new applier
+const applier = createApplier('find', {
+  containerElement
+});
+
+const highlights = []
+/**
+ * 搜索并高亮
+ * @param {string} text
+ */
+function findText (text) {
+  highlights.forEach(ht => ht.unapply());
+  highlights.length = 0;
+  text = utils.stripAndCollapse(text);
+  if (text !== '') {
+    const fullText = containerElement.textContent,
+      matchArr = [...fullText.matchAll(new RegExp(`${text}`, 'gi'))]
+
+    matchArr.forEach(({ index: point }) => {
+      highlights.push(createHighlight(createCharacterRange(point, point + text.length, containerElement), applier));
+    });
+
+    highlights.forEach(ht => ht.apply());
+  }
+}
+
+/**
+ * debounce for input
+ * @param callback
+ * @param delay
+ * @return {(function(): void)|*}
+ */
+function debounce (callback, delay = 1000) {
+  let timer = null;
+  return function () {
+    let self = this;
+    let args = arguments;
+    timer && clearTimeout(timer)
+    timer = setTimeout(function () {
+      callback.apply(self, args)
+    }, delay);
+  }
+}
 
 
 

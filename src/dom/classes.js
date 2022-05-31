@@ -122,7 +122,7 @@ export function addClass (el, value) {
 
 /**
  *
- * @param {HTMLElement} el
+ * @param {HTMLElement | Node} el
  * @param {string} [value]
  */
 export function removeClass (el, value) {
