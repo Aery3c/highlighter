@@ -49,8 +49,8 @@ contextMenu('.book_container',
 
 // launch aside
 const container = document.querySelector('.book_aside_wrapper');
-container?.addEventListener('click', (e) => {
-  dom.toggleClass(e.target, 'book_aside_wrapper_active');
+container?.addEventListener('click', () => {
+  dom.toggleClass(container, 'book_aside_wrapper_active');
   dom.toggleClass(document.querySelector('.book_aside'), 'book_aside_active');
   dom.toggleClass(document.querySelector('.book_aside > aside'), 'book_aside_active');
 });
@@ -61,12 +61,12 @@ container?.addEventListener(MARK_EVENT, (e) => {
   if (container.hasChildNodes()) {
     // remove existing marks
     let child;
-    while ((child = container.firstChild)) {
+    while ((child = container.querySelector('.book_aside_mark'))) {
       dom.removeNode(child);
     }
   }
   // add marks
-  highlights.forEach(ht => container.appendChild(createMarkContainer(ht)));
+  highlights.sort((a, b) => a.characterRange.start - b.characterRange.start).forEach(ht => container.appendChild(createMarkContainer(ht)));
 });
 
 /**
@@ -80,8 +80,18 @@ function createMarkContainer (highlight) {
   const child = document.createElement('button');
   dom.addClass(child, 'book_aside_mark_content');
   child.appendChild(document.createTextNode(highlight.characterRange.toRange().toString()));
+  child.addEventListener('click', function (e) {
+    e.stopPropagation();
+    const range = highlight.characterRange.toRange();
+    const rect = range.getBoundingClientRect();
+    window.scrollTo({ top: getScrollTop() + rect.y - (window.screen.height / 3), left: 0, behavior: 'smooth' });
+  });
   el.appendChild(child);
   return el;
+}
+
+function getScrollTop () {
+  return window.scrollY || document.documentElement.scrollTop || document.body.scrollTop;
 }
 
 

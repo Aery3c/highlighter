@@ -40,7 +40,7 @@ export default class Highlight {
   containsNode (node) {
     const range = document.createRange();
     range.selectNodeContents(node);
-    return this.characterRange.contains(range.getBookmark());
+    return this.characterRange.contains(range.getBookmark(this.characterRange.containerElement));
   }
 
   inspect () {
