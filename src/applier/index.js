@@ -20,7 +20,12 @@ export default class Applier {
     this.elAttrs = options.elAttrs || {};
     this.elProps = options.elProps || {};
     this.containerElement = options.containerElement || document.body;
+    this.onApplied = function () {};
+    if (options.onApplied && typeof options.onApplied === 'function') {
+      this.onApplied = options.onApplied;
+    }
   }
+
 
   /**
    * applies to then range
@@ -117,6 +122,7 @@ export default class Applier {
         const el = this.createContainer();
         parentNode.insertBefore(el, textNode);
         el.appendChild(textNode);
+        this.onApplied(el, this);
       }
     }
   }

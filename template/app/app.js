@@ -122,7 +122,16 @@ inputEl.addEventListener('keyup', debounce(() => {
 
 // create new applier
 const applier = createApplier('find', {
-  containerElement
+  containerElement,
+  onApplied: (el) => {
+    // trigger applies doing
+    // console.log(el);
+  }
+});
+
+document.addEventListener('click', () => {
+  highlights.forEach(ht => ht.unapply());
+  highlights.length = 0;
 });
 
 const highlights = []
@@ -142,7 +151,16 @@ function findText (text) {
       highlights.push(createHighlight(createCharacterRange(point, point + text.length, containerElement), applier));
     });
 
-    highlights.forEach(ht => ht.apply());
+    highlights.forEach((ht, index) => {
+      if (index === 0) {
+        const rect = ht.characterRange.toRange().getBoundingClientRect();
+        if (rect.bottom < 0 || rect.top > window.innerHeight) {
+          // 元素没有在视口内, 跳转~~~
+          window.scrollTo({ top: getScrollTop() + rect.y - (window.innerHeight / 2), left: 0, behavior: 'smooth' });
+        }
+      }
+      ht.apply()
+    });
   }
 }
 
