@@ -71,6 +71,16 @@ export default class Highlighter {
   }
 
   /**
+   *
+   * @return {Highlight[]}
+   */
+  getAllHighlight () {
+    const sortHighlight = [];
+    this.highlights.forEach(h => sortHighlight.push(h));
+    return sortHighlight.sort((a, b) => a.characterRange.start - b.characterRange.start);
+  }
+
+  /**
    * remove highlight
    *
    * 删除高亮
