@@ -130,19 +130,23 @@ function unhighlightCharacterRanges (characterRanges, highlights, applier) {
   });
 
   // off
+  const unHighlights = [];
   removeToHighlights.forEach(removeHt => {
     if (removeHt.applied) {
       removeHt.unapply();
+      unHighlights.push(removeHt);
     }
   });
 
   // on
-  return highlights.map(ht => {
+  highlights.forEach(ht => {
     if (!ht.applied) {
       ht.apply();
     }
     return ht;
   });
+
+  return unHighlights;
 }
 
 /**
@@ -192,12 +196,15 @@ function highlightCharacterRanges (characterRanges, highlights, applier) {
   });
 
   // on
-  return highlights.map(ht => {
+  const newHighlight = [];
+  highlights.forEach(ht => {
     if (!ht.applied) {
       ht.apply();
+      newHighlight.push(ht)
     }
-    return ht;
   });
+
+  return newHighlight;
 }
 
 /**
