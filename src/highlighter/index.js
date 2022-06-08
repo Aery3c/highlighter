@@ -56,6 +56,41 @@ export default class Highlighter {
   }
 
   /**
+   *
+   * @param {string} text
+   * @param {boolean} [scroll]
+   * @return {Highlight[]}
+   */
+  highlightAllText (text, scroll = true) {
+    const highlights = this.highlights;
+    text = core.utils.stripAndCollapse(text);
+    if (text !== '') {
+      const fullText = this.containerElement.textContent,
+        matchArr = [...fullText.matchAll(new RegExp(`${text}`, 'gi'))]
+
+      matchArr.forEach(({ index: point }) => {
+        highlights.push(core.createHighlight(core.createCharacterRange(point, point + text.length, this.containerElement), this._applier));
+      });
+    }
+
+    const newHighlights = [];
+    highlights.forEach((ht, index) => {
+      if (!ht.applied) {
+        if (index === 0 && scroll) {
+          const rect = ht.characterRange.toRange().getBoundingClientRect();
+          if (rect.bottom < 0 || rect.top > window.innerHeight) {
+            window.scrollTo({ top: window.pageYOffset + rect.y - (window.innerHeight / 2), left: 0, behavior: 'smooth' });
+          }
+        }
+        ht.apply();
+        newHighlights.push(ht);
+      }
+    });
+
+    return newHighlights;
+  }
+
+  /**
    * 根据node节点获取highlight对象
    * @param {Node} node
    * @return {Highlight | null}

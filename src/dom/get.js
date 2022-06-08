@@ -35,6 +35,10 @@ export function gBEI (selector) {
   return document.getElementById(selector.match(/[^#]+/).join(''));
 }
 
+export function gE (selector) {
+  return document.querySelector(selector);
+}
+
 /**
  * 如果node或者node的祖先元素包含className, 返回这个元素, 否则返回null
  * @param {Node | HTMLElement} node
