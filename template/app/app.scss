@@ -1,71 +1,16 @@
 @charset "UTF-8";
 
-$nav_height: 5em;
-
-@mixin icon_button {
-  border-width: initial;
-  border-style: none;
-  border-color: initial;
-  border-image: initial;
-  margin: 0;
-  padding: 0;
-  overflow: visible;
-  font-size: inherit;
-  background-color: transparent;
-  &:focus {
-    outline: none;
-  }
-  position: relative;
-  &[data-tooltip]:hover::before, &[data-tooltip]:hover::after {
-    transform: translate(-50%, 36px);
-    visibility: visible;
-    opacity: 1;
-  }
-  &[data-tooltip]::before, &[data-tooltip]::after {
-    position: absolute;
-    pointer-events: none;
-    left: 50%;
-    visibility: hidden;
-    opacity: 0;
-    transform: translate(-50%, 14px);
-    transform-style: preserve-3d;
-    z-index: 19;
-    transition: transform 200ms ease-in-out 200ms, opacity 150ms ease-out 250ms;
-  }
-
-  &[data-tooltip]::before {
-    white-space: nowrap;
-    bottom: 0;
-    background-color: rgb(0, 0, 0);
-    color: rgb(255, 255, 255);
-    content: attr(data-tooltip);
-    text-align: center;
-    font-size: 14px;
-    line-height: 1.2;
-    padding: 5px 10px 6px;
-    border-radius: 4px;
-  }
-  &[data-tooltip]::after {
-    bottom: 27px;
-    width: 0;
-    content: " ";
-    font-size: 0;
-    line-height: 0;
-    border-bottom: 5px solid rgb(0, 0, 0);
-    border-right: 5px solid transparent;
-    border-left: 5px solid transparent;
-  }
-}
+@import './common';
 
 body {
   font-size: 62.5% !important;
   margin: 0;
-  .highlight {
+  .carnation {
     background-color: rgb(254, 232, 195) !important;
     color: rgb(51, 51, 51) !important;
     cursor: pointer;
   }
-  .find {
+  .yellow {
     background-color: yellow;
   }
 }
@@ -73,142 +18,9 @@ body {
 .book {
   display: flex;
   flex-direction: row;
-  overflow-x: hidden;
-  .book_nav {
-    position: fixed;
-    z-index: 10;
-    width: 100%;
-    background: #fff;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, .1);
-    border-bottom: 1px solid #d9d9d9;
-    .book_nav_wrapper {
-      padding-top: 0;
-      padding-bottom: 0;
-      height: $nav_height;
-      nav {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        height: 100%;
-        padding: 0 2.5em;
-        .book_nav_find {
-          display: flex;
-          align-content: flex-end;
-          align-items: center;
-          .book_nav_find_wrapper {
-            display: block;
-            min-height: 2em;
-            width: 100%;
-            position: relative;
-            border-width: 1px;
-            border-bottom-style: solid;
-            border-color: rgb(0, 0, 0);
-            border-image: initial;
-            padding: 0.3em 0 0;
-            overflow: hidden;
-            input {
-              background-color: transparent;
-              line-height: 24px;
-              padding: 0;
-              border: none;
-              &:focus {
-                outline: none;
-              }
-            }
-          }
-          .book_nav_find_search {
-            @include icon_button;
-            .icon {
-              font-size: 2.5em;
-              cursor: pointer;
-            }
-          }
-        }
-      }
-    }
-    .book_nav_progress {
-      display: block;
-      width: 100%;
-      height: 2px;
-      position: absolute;
-      top: 0;
-      left: 0;
-      z-index: 5;
-      div {
-        background-color: #008078;
-        height: 2px;
-        width: 100%;
-        transition: transform .1s linear;
-      }
-    }
-  }
   /* 侧边栏 */
   .book_aside_active {
     width: 350px !important;
-  }
-  .book_aside {
-    position: relative;
-    transition: width .15s ease-in-out;
-    width: 0;
-    aside {
-      width: 0;
-      height: calc(100vh - 6.3em);
-      position: fixed;
-      z-index: 1;
-      .book_aside_wrapper_active {
-        transform: translateX(0) !important;
-        opacity: 1 !important;
-      }
-      .book_aside_wrapper {
-        position: fixed;
-        left: 0;
-        bottom: 0;
-        top: 0;
-        width: 350px;
-        height: 100%;
-        margin-top: $nav_height;
-        overflow: auto;
-        transform: translateX(-318px);
-        opacity: .1;
-        background-color: #d9d9d9;
-        border-right: 1px solid rgb(140, 140, 140);
-        box-shadow: 2px 0 4px 0 rgb(0 0 0 / 12%);
-        transition: all .15s ease-in-out;
-        &:hover {
-          opacity: 1;
-          cursor: pointer;
-        }
-        .book_aside_title {
-          padding: 25px 0px 2px 25px;
-          margin: 0;
-          line-height: 22px;
-        }
-        .book_aside_mark {
-          position: relative;
-          background-color: rgb(255, 255, 255);
-          margin: 10px 20px;
-          padding: 20px;
-          border-top: 4px solid rgb(252, 182, 67);
-          border-radius: 4px;
-          font-size: 1.6em;
-          .book_aside_mark_content {
-            border-width: initial;
-            border-style: none;
-            border-color: initial;
-            border-image: initial;
-            margin: 0;
-            padding: 0;
-            overflow: visible;
-            font-size: inherit;
-            background-color: transparent;
-            word-break: break-all;
-            text-align: left;
-            color: rgb(0, 0, 0);
-            cursor: pointer;
-          }
-        }
-      }
-    }
   }
   /* 主体内容 */
   .book_container {

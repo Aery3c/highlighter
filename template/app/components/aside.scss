@@ -1,0 +1,68 @@
+@charset "UTF-8";
+
+@import '../common';
+
+.book_aside {
+  position: relative;
+  transition: width .15s ease-in-out;
+  width: 0;
+  aside {
+    width: 0;
+    height: calc(100vh - 6.3em);
+    position: fixed;
+    z-index: 1;
+    .book_aside_wrapper_active {
+      transform: translateX(0) !important;
+      opacity: 1 !important;
+    }
+    .book_aside_wrapper {
+      position: fixed;
+      left: 0;
+      bottom: 0;
+      top: 0;
+      width: 350px;
+      height: 100%;
+      margin-top: $nav_height;
+      overflow: auto;
+      transform: translateX(-318px);
+      opacity: .1;
+      background-color: #d9d9d9;
+      border-right: 1px solid rgb(140, 140, 140);
+      box-shadow: 2px 0 4px 0 rgb(0 0 0 / 12%);
+      transition: all .15s ease-in-out;
+      &:hover {
+        opacity: 1;
+        cursor: pointer;
+      }
+      .book_aside_title {
+        padding: 25px 0px 2px 25px;
+        margin: 0;
+        line-height: 22px;
+      }
+      .book_aside_mark {
+        position: relative;
+        background-color: rgb(255, 255, 255);
+        margin: 10px 20px;
+        padding: 20px;
+        border-top: 4px solid rgb(252, 182, 67);
+        border-radius: 4px;
+        font-size: 1.6em;
+        .book_aside_mark_content {
+          border-width: initial;
+          border-style: none;
+          border-color: initial;
+          border-image: initial;
+          margin: 0;
+          padding: 0;
+          overflow: visible;
+          font-size: inherit;
+          background-color: transparent;
+          word-break: break-all;
+          text-align: left;
+          color: rgb(0, 0, 0);
+          cursor: pointer;
+        }
+      }
+    }
+  }
+}

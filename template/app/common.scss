@@ -1,0 +1,56 @@
+$nav_height: 5em;
+
+@mixin icon_button {
+  border-width: initial;
+  border-style: none;
+  border-color: initial;
+  border-image: initial;
+  margin: 0;
+  padding: 0;
+  overflow: visible;
+  font-size: inherit;
+  background-color: transparent;
+  &:focus {
+    outline: none;
+  }
+  position: relative;
+  &[data-tooltip]:hover::before, &[data-tooltip]:hover::after {
+    transform: translate(-50%, 36px);
+    visibility: visible;
+    opacity: 1;
+  }
+  &[data-tooltip]::before, &[data-tooltip]::after {
+    position: absolute;
+    pointer-events: none;
+    left: 50%;
+    visibility: hidden;
+    opacity: 0;
+    transform: translate(-50%, 14px);
+    transform-style: preserve-3d;
+    z-index: 19;
+    transition: transform 200ms ease-in-out 200ms, opacity 150ms ease-out 250ms;
+  }
+
+  &[data-tooltip]::before {
+    white-space: nowrap;
+    bottom: 0;
+    background-color: rgb(0, 0, 0);
+    color: rgb(255, 255, 255);
+    content: attr(data-tooltip);
+    text-align: center;
+    font-size: 14px;
+    line-height: 1.2;
+    padding: 5px 10px 6px;
+    border-radius: 4px;
+  }
+  &[data-tooltip]::after {
+    bottom: 27px;
+    width: 0;
+    content: " ";
+    font-size: 0;
+    line-height: 0;
+    border-bottom: 5px solid rgb(0, 0, 0);
+    border-right: 5px solid transparent;
+    border-left: 5px solid transparent;
+  }
+}
