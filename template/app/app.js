@@ -2,9 +2,12 @@
 
 import { dom, createHighlighter } from '@/index';
 import contextMenu from '@components/contextMenu';
-import { UPDATE_MARKS } from './event/event';
+import { UPDATE_MARKS, ADD_ANNOTATION } from './event/event';
 import './components/aside';
 import './components/nav';
+import './components/annotations';
+import './canvas/canvas';
+import { highlighterPink } from './pen';
 import './app.scss';
 
 const highlighterCarnation = createHighlighter('carnation', {
@@ -41,11 +44,19 @@ contextMenu(
     click: () => {
       highlighterCarnation.unhighlightSelection()
       const highlights = highlighterCarnation.getAllHighlight();
-      console.log(highlights);
       const event = new CustomEvent(UPDATE_MARKS, {
         detail: highlights
       });
       dom.gE('.book_aside_wrapper').dispatchEvent(event);
+    }
+  }, {
+    name: 'annotation',
+    click: () => {
+      const [highlight] = highlighterPink.highlightSelection();
+      const event = new CustomEvent(ADD_ANNOTATION, {
+        detail: highlight
+      });
+      dom.gE('.book_annotations').dispatchEvent(event);
     }
   }]
 )
