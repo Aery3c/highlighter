@@ -115,6 +115,17 @@ export default class Highlighter {
     return sortHighlight.sort((a, b) => a.characterRange.start - b.characterRange.start);
   }
 
+  addHighlight (highlight) {
+    if (highlight instanceof core.Highlight) {
+      this.highlights.push(highlight);
+      this.highlights.forEach(ht => {
+        if (!ht.applied) {
+          ht.apply();
+        }
+      });
+    }
+  }
+
   /**
    * remove highlight
    *
@@ -127,7 +138,9 @@ export default class Highlighter {
       for (; i < len; ++i) {
         highlight = this.highlights[i];
         if (highlights.indexOf(highlight) > -1) {
-          highlight.unapply();
+          if (highlight.applied) {
+            highlight.unapply();
+          }
           this.highlights.splice(i--, 1);
         }
       }
@@ -136,7 +149,9 @@ export default class Highlighter {
 
   removeAllHighlight () {
     for (let i = 0, highlight; (highlight = this.highlights[i]); ++i) {
-      highlight.unapply();
+      if (highlight.applied) {
+        highlight.unapply();
+      }
       this.highlights.splice(i--, 1);
     }
   }

@@ -14,7 +14,8 @@ function createHighlight (characterRange, applier) {
 }
 
 core.extend({
-  createHighlight
+  createHighlight,
+  Highlight
 })
 
 export default createHighlight;
