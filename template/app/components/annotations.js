@@ -8,8 +8,22 @@ import { highlighterPink } from '../pen';
 const container = dom.gE('.book_annotations');
 container.addEventListener(ADD_ANNOTATION, (e) => {
   const { detail: highlight } = e;
-  const [el, edit] = createCard(highlight);
-  container.appendChild(el);
+  const [elc, edit] = createCard(highlight);
+  const els = document.querySelectorAll('.book_annotations_card');
+
+  let isFlag = false;
+  for (let i = 0, el; i < els.length; ++i) {
+    el = els.item(i);
+    if (highlight.characterRange.start < +el.dataset.characterRange) {
+      isFlag = true;
+      container.insertBefore(elc, el);
+      break;
+    }
+  }
+  if (!isFlag) {
+    container.appendChild(elc);
+  }
+
   const range = document.createRange();
   range.selectNodeContents(edit);
   range.collapse(true);
@@ -22,7 +36,7 @@ container.addEventListener(ADD_ANNOTATION, (e) => {
 function createCard (curht) {
 
   const el = document.createElement('div');
-
+  el.dataset.characterRange = curht.characterRange.start.toString();
   el.addEventListener('mouseover', () => {
     const range = document.createRange();
     range.selectNodeContents(description);
@@ -71,11 +85,18 @@ function createCard (curht) {
     el.style.top = `${rangeRect.y + window.pageYOffset - (el.offsetHeight / 2)}px`;
     // 计算现在的位置, 上下必须隔离一个卡片的高度
     const els = document.querySelectorAll('.book_annotations_card');
-    const tops = [];
+
     els.forEach(el => {
-      tops.push(el.style.top);
+      const nextEl = el.nextSibling;
+      if (nextEl) {
+        const nextElTop = +nextEl.style.top.replace('px', '');
+        const elTop = +el.style.top.replace('px', '');
+        if (elTop + el.offsetHeight > nextElTop) {
+          nextEl.style.top = elTop + el.offsetHeight + 'px';
+        }
+      }
     });
-    console.log(tops);
+
     const elRect = el.getBoundingClientRect();
     const canvas = dom.gE('#canvas');
     if (canvas.getContext) {
@@ -106,12 +127,16 @@ function createCard (curht) {
 
   const actions = document.createElement('ul');
   dom.addClass(actions, 'book_annotations_card_actions');
-  ['action1', 'action2', 'remove'].forEach(item => {
+  ['', '', 'remove'].forEach(item => {
     const li = document.createElement('li');
     li.appendChild(document.createTextNode(item));
     if (item === 'remove') {
       li.addEventListener('click', function() {
-        console.log('remove');
+        highlighterPink.removeHighlights([curht]);
+        dom.removeNode(el);
+        const canvas = dom.gE('#canvas');
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
       });
     }
     actions.appendChild(li);
