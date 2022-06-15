@@ -3,10 +3,12 @@
 import core from '@/core';
 import stripAndCollapse from './stripAndCollapse';
 import isSplitPoint from './isSplitPoint';
+import toType from './toType';
 
 const utils = {
   stripAndCollapse,
-  isSplitPoint
+  isSplitPoint,
+  toType
 };
 
 core.extend({

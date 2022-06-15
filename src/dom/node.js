@@ -75,3 +75,7 @@ export function moveNode (node, parentNode, index) {
     parentNode.insertBefore(node, parentNode.childNodes[index]);
   }
 }
+
+export function isWindow (obj) {
+  return obj != null && obj === obj.window;
+}
