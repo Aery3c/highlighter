@@ -4,11 +4,13 @@ import core from '@/core';
 import stripAndCollapse from './stripAndCollapse';
 import isSplitPoint from './isSplitPoint';
 import toType from './toType';
+import isArrayLike from './isArrayLike';
 
 const utils = {
   stripAndCollapse,
   isSplitPoint,
-  toType
+  toType,
+  isArrayLike
 };
 
 core.extend({

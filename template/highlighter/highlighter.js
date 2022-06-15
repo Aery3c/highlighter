@@ -1,20 +1,34 @@
 import { dom, createHighlighter } from '@/index';
 
-const highlighter = createHighlighter();
 
-dom.gBEI('#highlightSelection').addEventListener('click', function () {
-  const highlights = highlighter.highlightSelection();
-  console.clear();
-  highlights.forEach(ht => {
-    ht.inspect();
-  })
+const pink = createHighlighter('pink', {
+  elProps: {
+    onclick: function () {
+      console.log(this);
+    },
+  }
+});
+const yellow = createHighlighter('yellow', {
+  elProps: {
+    onclick: function () {
+      console.log(this);
+    },
+  }
 });
 
-dom.gBEI('#unhighlightSelection').addEventListener('click', function () {
-  const highlights = highlighter.unhighlightSelection();
-  console.clear();
-  highlights.forEach(ht => {
-    ht.inspect();
-  })
+dom.gE('#pink').addEventListener('click', function () {
+  pink.highlightSelection();
+});
+
+dom.gE('#unPink').addEventListener('click', function () {
+  pink.unhighlightSelection();
+});
+
+dom.gE('#yellow').addEventListener('click', function () {
+  yellow.highlightSelection();
+});
+
+dom.gE('#unYellow').addEventListener('click', function () {
+  yellow.unhighlightSelection();
 });
 

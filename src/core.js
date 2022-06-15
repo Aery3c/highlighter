@@ -78,6 +78,27 @@ core.extend({
 
     Ctor = {}.hasOwnProperty.call( proto, 'constructor' ) && proto.constructor;
     return typeof Ctor === 'function' && {}.hasOwnProperty.toString.call( Ctor ) === {}.hasOwnProperty.toString.call(Object);
+  },
+
+  each: function (obj, callback) {
+    let length, i = 0;
+
+    if ( core.utils.isArrayLike( obj ) ) {
+      length = obj.length;
+      for ( ; i < length; i++ ) {
+        if ( callback.call( obj[ i ], i, obj[ i ] ) === false ) {
+          break;
+        }
+      }
+    } else {
+      for ( i in obj ) {
+        if ( callback.call( obj[ i ], i, obj[ i ] ) === false ) {
+          break;
+        }
+      }
+    }
+
+    return obj;
   }
 });
 

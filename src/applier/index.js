@@ -114,9 +114,11 @@ export default class Applier {
   appliesText (textNode) {
     const parentNode = textNode.parentNode;
     if (textNode.nodeType === Node.TEXT_NODE) {
-      if (parentNode.childNodes.length === 1 && parentNode.nodeName.toLowerCase() === this.tagName) {
-        mapAttrsToElement(this.elAttrs, parentNode);
-        mapPropsToElement(this.elProps, parentNode);
+      if (parentNode.childNodes.length === 1
+        && parentNode.nodeName.toLowerCase() === this.tagName
+        && elementHasProps(parentNode, this.elProps)
+        && elementHasAttrs(parentNode, this.elAttrs)
+      ) {
         core.dom.addClass(parentNode, this.className);
       } else {
         const el = this.createContainer();
@@ -192,15 +194,73 @@ function splitAncestorWithClass (range, className) {
     });
 }
 
+function hasAllClass (el, className) {
+  const classNames = core.dom.classesToArray(className);
+  let i = 0, len = classNames.length;
+  for (i; i < len; ++i) {
+    if (!core.dom.hasClass(el, classNames[i])) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+/**
+ *
+ * @param {HTMLElement | Node} el
+ * @param {Object} props
+ * @return {boolean}
+ */
+function elementHasProps (el, props) {
+  return each(props, function (p, propValue) {
+    if (p === 'className') {
+      return hasAllClass(el, propValue);
+    } else if (core.utils.toType(propValue) === 'object') {
+      return elementHasProps(el, propValue);
+    } else if (el[p] !== propValue) {
+      return false;
+    }
+  });
+}
+
+/**
+ *
+ * @param {HTMLElement | Node} el
+ * @param {Object} attrs
+ * @return {boolean}
+ */
+function elementHasAttrs (el, attrs) {
+  return each(attrs, function (p, propValue) {
+    if (el.getAttribute(p) !== propValue) {
+      return false;
+    }
+  });
+}
+
+function each (obj, callback) {
+  let flag = true;
+  core.each(obj, function (p, propValue) {
+    if (callback(p, propValue) === false) {
+      flag = false;
+      return flag;
+    }
+  });
+
+  return flag;
+}
+
 /**
  *
  * @param {Object} attrs
  * @param {HTMLElement | Node} el
  */
 function mapAttrsToElement (attrs, el) {
-  for (let key in attrs) {
-    el.setAttribute(key, attrs[key]);
-  }
+  core.each(attrs, function (attrName, attrValue) {
+    if (Object.hasOwn(attrs, attrName) && !/^class(?:Name)?$/i.test(attrName)) {
+      el.setAttribute(attrName, attrValue);
+    }
+  });
 }
 
 /**
@@ -209,9 +269,15 @@ function mapAttrsToElement (attrs, el) {
  * @param {HTMLElement | Node} el
  */
 function mapPropsToElement (props, el) {
-  for (let key in props) {
-    el[key] = props[key];
-  }
+  core.each(props, function (propName, propValue) {
+    if (Object.hasOwn(props, propName)) {
+      if (propName === 'className') {
+        core.dom.addClass(el, propValue);
+      } else {
+        el[propName] = propValue;
+      }
+    }
+  });
 }
 
 /**
@@ -238,7 +304,7 @@ function normalize (textNodes, range, isUndo) {
   let rangeStartNode = firstNode, rangeEndNode = lastNode;
   let rangeStartOffset = 0, rangeEndOffset = lastNode.length;
 
-  textNodes.forEach(textNode => {
+  textNodes.forEach(function (textNode) {
     const precedingNode = getPrecedingMrTextNode(textNode, !isUndo);
     // 遍历每一个textNode, 找到他们的前面的可合并节点,
     if (precedingNode) {

@@ -12,7 +12,7 @@ const classNameSupport = !(typeof document.createElement('span').className !== '
  * @param {string|Array} value
  * @return {string[]}
  */
-function classesToArray (value) {
+export function classesToArray (value) {
   if (Array.isArray(value)) {
     return value;
   }
