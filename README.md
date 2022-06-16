@@ -4,7 +4,7 @@
 
 ## Highlighter Api 接口参考
 
-在使用Highlighter编写应用程序功能时，可能使用到的所有Api接口和对象操作列表。
+在使用`Highlighter`编写应用程序功能时，可能使用到的所有Api接口和对象操作列表。
 
 - [Highlighter]()
 - [CharacterRange]()
