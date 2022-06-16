@@ -1,4 +1,4 @@
-# Highlighter 荧光笔对象
+# Highlighter
 
 **Highlighter** 表示一支笔，你可以用这支笔在纸上涂抹，它通常使用[createHighlighter]()创建
 
