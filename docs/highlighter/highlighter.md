@@ -1,6 +1,6 @@
 # Highlighter
 
-**Highlighter** 表示一支笔，你可以用这支笔在纸上涂抹，它通常使用[createHighlighter]()创建
+**Highlighter** 表示一支笔，你可以用这支笔在纸上涂抹，它通常使用[createHighlighter](https://github.com/Aery3c/highlighter/blob/main/docs/highlighter/createHighlighter.md)创建
 
 
 ### 属性
@@ -15,7 +15,7 @@
 
 ### 方法
 
-[Highlighter.highlightSelection(selection?: Selection)]()  
+[Highlighter.highlightSelection(selection?: Selection)](https://github.com/Aery3c/highlighter/blob/main/docs/highlighter/highlightSelection.md)  
 
 突出显示selection
 
@@ -30,14 +30,3 @@
 [Highlighter.removeHighlights(highlights?: Highlight[])]()  
 
 删除一个或多个突出显示
-
-
-
-
-
-
-
-
-
-
-
