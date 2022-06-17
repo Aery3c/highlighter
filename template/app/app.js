@@ -14,7 +14,7 @@ const highlighterCarnation = createHighlighter('carnation', {
   elProps: {
     onclick: (e) => {
       if (window.confirm('remove highlight')) {
-        const highlight = highlighterCarnation.getHighlightForNode(e.target);
+        const highlight = highlighterCarnation.getHighlightFromElement(e.target);
         highlighterCarnation.removeHighlights([highlight]);
         const highlights = highlighterCarnation.getAllHighlight();
         const event = new CustomEvent(UPDATE_MARKS, {
@@ -60,4 +60,3 @@ contextMenu(
     }
   }]
 )
-
