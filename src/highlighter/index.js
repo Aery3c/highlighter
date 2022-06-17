@@ -92,12 +92,12 @@ export default class Highlighter {
 
   /**
    * 根据node节点获取highlight对象
-   * @param {Node} node
+   * @param {HTMLElement} el
    * @return {Highlight | null}
    */
-  getHighlightForNode (node) {
+  getHighlightFromElement (el) {
     for (let highlight of this.highlights) {
-      if (highlight.containsNode(node)) {
+      if (highlight.containsNode(el)) {
         return highlight;
       }
     }
@@ -116,7 +116,7 @@ export default class Highlighter {
   }
 
   addHighlight (highlight) {
-    if (highlight instanceof core.Highlight) {
+    if (highlight instanceof core.Highlight && !(highlight in this.highlights)) {
       this.highlights.push(highlight);
       this.highlights.forEach(ht => {
         if (!ht.applied) {
