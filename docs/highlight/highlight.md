@@ -4,16 +4,16 @@
 
 ### 属性
 
-[Highlight.characterRange](https://github.com/Aery3c/highlighter/blob/main/docs/characterRange/characterRange.md)
+- [Highlight.characterRange](https://github.com/Aery3c/highlighter/blob/main/docs/characterRange/characterRange.md)
 
-返回characterRange对象
+  返回characterRange对象
 
 ### 方法
 
-Highlight.apply()  
+- Highlight.apply()  
+  
+  开启高亮
 
-开启高亮
+- Highlight.unapply()
 
-Highlight.unapply()
-
-关闭高亮
+  关闭高亮
