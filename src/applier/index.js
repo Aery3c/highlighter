@@ -19,7 +19,6 @@ export default class Applier {
     this.removeEmptyElement = options.removeEmptyElement ?? false;
     this.elAttrs = options.elAttrs || {};
     this.elProps = options.elProps || {};
-    this.containerElement = options.containerElement || document.body;
     this.onApplied = function () {};
     if (options.onApplied && typeof options.onApplied === 'function') {
       this.onApplied = options.onApplied;
@@ -34,7 +33,7 @@ export default class Applier {
    */
   applies (range) {
     // 获取字符范围
-    const characterRange = range.getBookmark(this.containerElement);
+    const characterRange = range.toCharacterRange();
 
     // 分割边界
     range.splitBoundaries();
@@ -56,7 +55,7 @@ export default class Applier {
     }
     // dom change
     // 从characterRange更新range
-    range.moveToBookmark(characterRange);
+    range.moveToCharacterRange(characterRange);
   }
 
   /**
@@ -65,7 +64,7 @@ export default class Applier {
    * @param {Range} range
    */
   unApplies (range) {
-    const characterRange = range.getBookmark(this.containerElement);
+    const characterRange = range.toCharacterRange();
 
     range.splitBoundaries();
 
@@ -84,7 +83,7 @@ export default class Applier {
       normalize(textNodes, range, true);
     }
 
-    range.moveToBookmark(characterRange);
+    range.moveToCharacterRange(characterRange);
   }
 
   /**
