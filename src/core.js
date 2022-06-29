@@ -3,6 +3,9 @@
 /** core as highlighter */
 let core = {}, extend;
 
+core.VERSION = '1.0.0';
+core.CONTEXT = document.body;
+
 extend = core.extend = function () {
   let options, name, src, copy, copyIsArray, clone,
     target = arguments[ 0 ] || {},
@@ -144,19 +147,19 @@ extend(Range.prototype, {
    * @return {CharacterRange}
    */
   getBookmark: function (containerElement = document.body) {
-    const cloneRange = this.cloneRange();
-    let start = 0, end = 0;
-    // 让cloneRange包围整个容器
-    cloneRange.selectNodeContents(containerElement);
-    // 获取range和cloneRange之间的交集
-    const range = this.intersectionRange(cloneRange);
-    if (range) {
-      // 将cloneRange的结尾推送至intersection的开始
-      cloneRange.setEnd(range.startContainer, range.startOffset);
-      start = cloneRange.toString().length;
-      end = start + range.toString().length
-    }
-    return core.createCharacterRange(start, end, containerElement);
+    // const cloneRange = this.cloneRange();
+    // let start = 0, end = 0;
+    // // 让cloneRange包围整个容器
+    // cloneRange.selectNodeContents(containerElement);
+    // // 获取range和cloneRange之间的交集
+    // const range = this.intersectionRange(cloneRange);
+    // if (range) {
+    //   // 将cloneRange的结尾推送至intersection的开始
+    //   cloneRange.setEnd(range.startContainer, range.startOffset);
+    //   start = cloneRange.toString().length;
+    //   end = start + range.toString().length
+    // }
+    // return core.createCharacterRange(start, end, containerElement);
   },
   /**
    *
@@ -208,7 +211,54 @@ extend(Range.prototype, {
    * @param {CharacterRange} characterRange
    */
   moveToBookmark: function (characterRange) {
-    const {start, end, containerElement} = characterRange;
+    // const {start, end, containerElement} = characterRange;
+    // this.setStart(containerElement, 0);
+    // this.collapse(true);
+    //
+    // const nodeIterator = document.createNodeIterator(containerElement, NodeFilter.SHOW_TEXT);
+    // let textNode, charIndex = 0, nextCharIndex;
+    //
+    // let foundStart = false, foundEnd = false;
+    // while (!foundEnd && (textNode = nodeIterator.nextNode())) {
+    //   nextCharIndex = charIndex + textNode.length;
+    //   if (!foundStart && start >= charIndex && start <= nextCharIndex) {
+    //     this.setStart(textNode, start - charIndex);
+    //     foundStart = true;
+    //   }
+    //
+    //   if (end >= charIndex && end <= nextCharIndex) {
+    //     this.setEnd(textNode, end - charIndex);
+    //     foundEnd = true;
+    //   }
+    //   charIndex = nextCharIndex;
+    // }
+  },
+  /**
+   * @param {HTMLElement} [containerElement]
+   * @return {CharacterRange}
+   */
+  toCharacterRange: function (containerElement = core.CONTEXT) {
+    const cloneRange = this.cloneRange();
+    let start = 0, end = 0;
+    // 让cloneRange包围整个容器
+    cloneRange.selectNodeContents(containerElement);
+    // 获取range和cloneRange之间的交集
+    const range = this.intersectionRange(cloneRange);
+    if (range) {
+      // 将cloneRange的结尾推送至intersection的开始
+      cloneRange.setEnd(range.startContainer, range.startOffset);
+      start = cloneRange.toString().length;
+      end = start + range.toString().length
+    }
+    return core.createCharacterRange(start, end);
+  },
+  /**
+   *
+   * @param {CharacterRange} characterRange
+   * @param {HTMLElement} [containerElement]
+   */
+  moveToCharacterRange: function (characterRange, containerElement = core.CONTEXT) {
+    const {start, end} = characterRange;
     this.setStart(containerElement, 0);
     this.collapse(true);
 
