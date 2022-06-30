@@ -5,13 +5,11 @@ import core from '@/core';
 /**
  * unapplies to then range
  * @param {Range} range
- * @param {Object} [options]
+ * @param {string} [className]
  */
-function unappliesToRange(range, options = {}) {
+function unappliesToRange(range, className = core.DEFAULT_CLASS_NAME) {
 
-  const className = options.className || core.DEFAULT_CLASS_NAME, containerElement = options.containerElement;
-
-  const characterRange = range.toCharacterRange(containerElement);
+  const characterRange = range.toCharacterRange();
 
   range.splitBoundaries();
 
@@ -30,9 +28,8 @@ function unappliesToRange(range, options = {}) {
     core.dom.normalize(textNodes, range, true);
   }
 
-  range.moveToCharacterRange(characterRange, containerElement);
+  range.moveToCharacterRange(characterRange);
 }
-
 
 /**
  *

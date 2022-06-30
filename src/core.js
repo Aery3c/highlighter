@@ -298,6 +298,15 @@ extend(Selection.prototype, {
     }
     return ranges;
   },
+
+  /**
+   * @param {HTMLElement} [containerElement]
+   * @return {CharacterRange[]}
+   */
+  toCharacterRanges: function (containerElement) {
+    const ranges = this.getAllRange();
+    return ranges.map(range => range.toCharacterRange(containerElement));
+  },
   isBackward: function () {}
 });
 

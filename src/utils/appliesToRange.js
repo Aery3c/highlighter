@@ -5,17 +5,15 @@ import core from '@/core';
 /**
  * applies to then range
  * @param {Range} range
- * @param {Object} [options]
+ * @param {string} tagName
+ * @param {string} className
+ * @param {Object} [elAttrs]
+ * @param {Object} [elProps]
  */
-function appliesToRange (range, options = {}) {
-  const tagName = options.tagName || core.TAG_NAME,
-    className = options.className || core.DEFAULT_CLASS_NAME,
-    elAttrs = options.elAttrs,
-    elProps = options.elProps,
-    containerElement = options.containerElement;
+function appliesToRange (range, tagName = core.TAG_NAME, className = core.className, elAttrs = {}, elProps = {}) {
 
   // get current characterRange
-  const characterRange = range.toCharacterRange(containerElement);
+  const characterRange = range.toCharacterRange();
 
   // split
   range.splitBoundaries();
@@ -36,7 +34,7 @@ function appliesToRange (range, options = {}) {
     core.dom.normalize(textNodes, range, false);
   }
 
-  range.moveToCharacterRange(characterRange, containerElement);
+  range.moveToCharacterRange(characterRange);
 }
 
 export default appliesToRange;

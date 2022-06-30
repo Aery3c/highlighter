@@ -6,6 +6,7 @@ export default class Highlight {
   /**
    *
    * @param {CharacterRange} characterRange
+   * @param {Object} [options]
    */
   constructor(characterRange) {
     this.characterRange = characterRange;
@@ -17,7 +18,6 @@ export default class Highlight {
    * light self
    */
   apply () {
-    console.log(111);
     const range = this.characterRange.toRange();
     this.applied = true;
   }
