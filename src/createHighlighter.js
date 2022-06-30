@@ -2,7 +2,6 @@
 
 import core from '@/core';
 import Highlighter from '@/highlighter';
-import Applier from '@/applier';
 
 /**
  *
@@ -11,8 +10,7 @@ import Applier from '@/applier';
  * @returns {Highlighter}
  */
 function createHighlighter (name = 'highlight', options = {}) {
-  const applier = new Applier(name, options);
-  return new Highlighter(applier, options.containerElement);
+  return new Highlighter(name, options);
 }
 
 core.extend({

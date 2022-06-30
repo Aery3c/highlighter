@@ -5,6 +5,8 @@ let core = {}, extend;
 
 core.VERSION = '1.0.0';
 core.CONTEXT = document.body;
+core.DEFAULT_CLASS_NAME = 'highlight';
+core.TAG_NAME = 'span';
 
 extend = core.extend = function () {
   let options, name, src, copy, copyIsArray, clone,

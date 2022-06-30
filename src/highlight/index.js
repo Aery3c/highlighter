@@ -6,11 +6,10 @@ export default class Highlight {
   /**
    *
    * @param {CharacterRange} characterRange
-   * @param {Applier} applier
    */
-  constructor(characterRange, applier) {
+  constructor(characterRange) {
     this.characterRange = characterRange;
-    this.applier = applier;
+    this.range = this.characterRange.toRange();
     this.applied = false;
   }
 
@@ -18,8 +17,8 @@ export default class Highlight {
    * light self
    */
   apply () {
+    console.log(111);
     const range = this.characterRange.toRange();
-    this.applier.applies(range);
     this.applied = true;
   }
 
@@ -28,7 +27,6 @@ export default class Highlight {
    */
   unapply () {
     const range = this.characterRange.toRange();
-    this.applier.unApplies(range);
     this.applied = false;
   }
 
@@ -38,9 +36,9 @@ export default class Highlight {
    * @return {boolean}
    */
   containsNode (node) {
-    const range = document.createRange();
-    range.selectNodeContents(node);
-    return this.characterRange.contains(range.getBookmark(this.characterRange.containerElement));
+    // const range = document.createRange();
+    // range.selectNodeContents(node);
+    // return this.characterRange.contains(range.getBookmark(this.characterRange.containerElement));
   }
 
   inspect () {

@@ -4,98 +4,90 @@
 'use strict'
 
 class CharacterRange {
-  /**
-   *
-   * @param {number} start
-   * @param {number} end
-   * @param {HTMLElement} containerElement
-   */
-  constructor (start = 0, end = 0, containerElement = document.body) {
+  constructor (start = 0, end = 0) {
     this.start = start;
     this.end = end;
-    this.containerElement = containerElement;
   }
 
   /**
-   * 返回两段范围产生交集的部分, 返回一个新的范围
-   * @param {CharacterRange} otherCharRange
+   * range产生交集的部分, 一个新的range
+   * @param {CharacterRange} characterRange
    * @return {CharacterRange | null}
    */
-  intersection (otherCharRange) {
-    if (this.containerElement === otherCharRange.containerElement) {
-      return new CharacterRange(Math.max(this.start, otherCharRange.start), Math.min(this.end, otherCharRange.end), this.containerElement);
+  intersection (characterRange) {
+    if (this.isIntersects(characterRange)) {
+      return new CharacterRange(Math.max(this.start, characterRange.start), Math.min(this.end, characterRange.end));
     }
-    return null
+    return null;
   }
 
   /**
-   * 如果range产生交集, 返回true, 否则false
-   * @param {CharacterRange} otherCharRange
+   * 如果范围产生交集, 返回true, 否则false
+   * @param {CharacterRange} characterRange
    * @return {boolean}
    */
-  isIntersects (otherCharRange) {
-    return this.start < otherCharRange.end && this.end > otherCharRange.start;
+  isIntersects (characterRange) {
+    return this.start < characterRange.end && this.end > characterRange.start;
   }
 
   /**
    * range是否是相邻的
-   * @param {CharacterRange} otherCharRange
+   * @param {CharacterRange} characterRange
    * @return {boolean}
    */
-  isAdjoin (otherCharRange) {
-    return this.start === otherCharRange.end || this.end === otherCharRange.start
+  isAdjoin (characterRange) {
+    return this.start === characterRange.end || this.end === characterRange.start
   }
 
   /**
    * 两个range是否完全重叠在一起
-   * @param otherCharRange
+   * @param characterRange
    * @return {boolean}
    */
-  isOverlap (otherCharRange) {
-    return this.start === otherCharRange.start && this.end === otherCharRange.end;
+  isOverlap (characterRange) {
+    return this.start === characterRange.start && this.end === characterRange.end;
   }
 
   /**
-   * 并集, 返回一个新的range
-   * @param {CharacterRange} otherCharRange
+   * range之间的并集, 返回一个新的range
+   * @param {CharacterRange} characterRange
    * @return {CharacterRange | null}
    *
    */
-  union (otherCharRange) {
-    if (this.containerElement === otherCharRange.containerElement) {
-      return new CharacterRange(Math.min(this.start, otherCharRange.start), Math.max(this.end, otherCharRange.end), this.containerElement);
+  union (characterRange) {
+    if (this.isIntersects(characterRange) || this.isAdjoin(characterRange)) {
+      return new CharacterRange(Math.min(this.start, characterRange.start), Math.max(this.end, characterRange.end));
     }
-
     return null
   }
 
   /**
-   * 如果范围包含另一个范围 返回true, 否则false
-   * @param {CharacterRange} otherCharRange
+   * range是否包含另一个range
+   * @param {CharacterRange} characterRange
    * @return {boolean}
    */
-  contains (otherCharRange) {
-    return this.start <= otherCharRange.start && this.end >= otherCharRange.end;
+  contains (characterRange) {
+    return this.start <= characterRange.start && this.end >= characterRange.end;
   }
+
 
   /**
    * 补集, 返回一组新的range
-   * @param {CharacterRange} subCharRange
+   * @param {CharacterRange} characterRange
    * @return {CharacterRange[]}
    */
-  complementarySet (subCharRange) {
-    const charSet = [];
+  complementarySet (characterRange) {
+    const characterRanges = [];
 
-    if (this.containerElement === subCharRange.containerElement) {
-      if (this.start < subCharRange.start) {
-        charSet.push(new CharacterRange(this.start, subCharRange.start, this.containerElement));
-      }
-
-      if (this.end > subCharRange.end) {
-        charSet.push(new CharacterRange(subCharRange.end, this.end, this.containerElement));
-      }
+    if (this.start < characterRange.start) {
+      characterRanges.push(new CharacterRange(this.start, characterRange.start));
     }
-    return charSet;
+
+    if (this.end > characterRange.end) {
+      characterRanges.push(new CharacterRange(characterRange.end, this.end));
+    }
+
+    return characterRanges;
   }
 
   /**
@@ -116,13 +108,15 @@ class CharacterRange {
 
   /**
    * to range
+   * @param {HTMLElement} [containerElement]
    * @return {Range}
    */
-  toRange () {
+  toRange (containerElement) {
     const range = document.createRange();
-    range.moveToBookmark(this);
+    range.moveToCharacterRange(this, containerElement);
     return range;
   }
+
 }
 
 export default CharacterRange;

@@ -7,14 +7,14 @@ import core from '@/core';
 export default class Highlighter {
   /**
    *
-   * @param {Applier} _applier
-   * @param {HTMLElement} containerElement
+   * @param {string} name
+   * @param {Object} [options]
    */
-  constructor(_applier, containerElement) {
+  constructor(name, options) {
     /** @type {Highlight[]} */
     this.highlights = [];
-    this._applier = _applier;
-    this.containerElement = containerElement;
+    this._applier = core.createApplier(name, options);
+    this.containerElement = options.containerElement;
   }
 
   /**
@@ -61,34 +61,34 @@ export default class Highlighter {
    * @param {boolean} [scroll]
    * @return {Highlight[]}
    */
-  highlightAllText (text, scroll = true) {
-    const highlights = this.highlights;
-    text = core.utils.stripAndCollapse(text);
-    if (text !== '') {
-      const fullText = this.containerElement.textContent,
-        matchArr = [...fullText.matchAll(new RegExp(`${text}`, 'gi'))]
-
-      matchArr.forEach(({ index: point }) => {
-        highlights.push(core.createHighlight(core.createCharacterRange(point, point + text.length, this.containerElement), this._applier));
-      });
-    }
-
-    const newHighlights = [];
-    highlights.forEach((ht, index) => {
-      if (!ht.applied) {
-        if (index === 0 && scroll) {
-          const rect = ht.characterRange.toRange().getBoundingClientRect();
-          if (rect.bottom < 0 || rect.top > window.innerHeight) {
-            window.scrollTo({ top: window.pageYOffset + rect.y - (window.innerHeight / 2), left: 0, behavior: 'smooth' });
-          }
-        }
-        ht.apply();
-        newHighlights.push(ht);
-      }
-    });
-
-    return newHighlights;
-  }
+  // highlightAllText (text, scroll = true) {
+  //   const highlights = this.highlights;
+  //   text = core.utils.stripAndCollapse(text);
+  //   if (text !== '') {
+  //     const fullText = this.containerElement.textContent,
+  //       matchArr = [...fullText.matchAll(new RegExp(`${text}`, 'gi'))]
+  //
+  //     matchArr.forEach(({ index: point }) => {
+  //       highlights.push(core.createHighlight(core.createCharacterRange(point, point + text.length, this.containerElement), this._applier));
+  //     });
+  //   }
+  //
+  //   const newHighlights = [];
+  //   highlights.forEach((ht, index) => {
+  //     if (!ht.applied) {
+  //       if (index === 0 && scroll) {
+  //         const rect = ht.characterRange.toRange().getBoundingClientRect();
+  //         if (rect.bottom < 0 || rect.top > window.innerHeight) {
+  //           window.scrollTo({ top: window.pageYOffset + rect.y - (window.innerHeight / 2), left: 0, behavior: 'smooth' });
+  //         }
+  //       }
+  //       ht.apply();
+  //       newHighlights.push(ht);
+  //     }
+  //   });
+  //
+  //   return newHighlights;
+  // }
 
   /**
    * 根据node节点获取highlight对象
@@ -270,12 +270,12 @@ function highlightCharacterRanges (characterRanges, highlights, applier) {
 /**
  *
  * @param {Selection} selection
- * @param {HTMLElement} containerElement
+ * @param {HTMLElement} [containerElement]
  * @return {CharacterRange[]}
  */
 function serializeSelection (selection, containerElement) {
   const ranges = selection.getAllRange();
-  return ranges.map(range => range.getBookmark(containerElement));
+  return ranges.map(range => range.toCharacterRange(containerElement));
 }
 
 function getSelection (selection) {
