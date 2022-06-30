@@ -1,6 +1,7 @@
 'use strict'
 
 import core from '@/core';
+
 /**
  * applies to then range
  * @param {Range} range
@@ -8,10 +9,13 @@ import core from '@/core';
  */
 function appliesToRange (range, options = {}) {
   const tagName = options.tagName || core.TAG_NAME,
-    className = options.className || core.DEFAULT_CLASS_NAME;
+    className = options.className || core.DEFAULT_CLASS_NAME,
+    elAttrs = options.elAttrs,
+    elProps = options.elProps,
+    containerElement = options.containerElement;
 
   // get current characterRange
-  const characterRange = range.toCharacterRange();
+  const characterRange = range.toCharacterRange(containerElement);
 
   // split
   range.splitBoundaries();
@@ -22,7 +26,7 @@ function appliesToRange (range, options = {}) {
   if (textNodes.length) {
     textNodes.forEach(textNode => {
       if (!core.dom.getSelfOrAncestorWithClass(textNode, className) && !core.dom.isWhiteSpaceTextNode(textNode)) {
-        core.utils.appliesToText(textNode, tagName, className);
+        core.utils.appliesToText(textNode, tagName, className, elAttrs, elProps);
       }
     });
 
@@ -30,9 +34,9 @@ function appliesToRange (range, options = {}) {
     range.setStartAndEnd(textNodes[0], 0, lastTextNode, lastTextNode.length);
 
     core.dom.normalize(textNodes, range, false);
-
-    range.moveToCharacterRange(characterRange);
   }
+
+  range.moveToCharacterRange(characterRange, containerElement);
 }
 
 export default appliesToRange;

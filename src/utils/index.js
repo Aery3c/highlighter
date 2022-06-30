@@ -11,6 +11,8 @@ import appliesToText from './appliesToText';
 import getEffectiveTextNodes from './getEffectiveTextNodes';
 import rangeSelectsAnyText from './rangeSelectsAnyText';
 import createContainer from './createContainer';
+import unhighlightACharacterRange from './unhighlightACharacterRange';
+import unappliesToRange from './unappliesToRange';
 
 const utils = {
   stripAndCollapse,
@@ -22,7 +24,9 @@ const utils = {
   getEffectiveTextNodes,
   rangeSelectsAnyText,
   appliesToText,
-  createContainer
+  createContainer,
+  unhighlightACharacterRange,
+  unappliesToRange
 };
 
 core.extend({
