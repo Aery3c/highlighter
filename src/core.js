@@ -143,26 +143,7 @@ extend(Range.prototype, {
 
     this.setStartAndEnd(sc, so, ec, eo);
   },
-  /**
-   *
-   * @param {HTMLElement} [containerElement]
-   * @return {CharacterRange}
-   */
-  getBookmark: function (containerElement = document.body) {
-    // const cloneRange = this.cloneRange();
-    // let start = 0, end = 0;
-    // // 让cloneRange包围整个容器
-    // cloneRange.selectNodeContents(containerElement);
-    // // 获取range和cloneRange之间的交集
-    // const range = this.intersectionRange(cloneRange);
-    // if (range) {
-    //   // 将cloneRange的结尾推送至intersection的开始
-    //   cloneRange.setEnd(range.startContainer, range.startOffset);
-    //   start = cloneRange.toString().length;
-    //   end = start + range.toString().length
-    // }
-    // return core.createCharacterRange(start, end, containerElement);
-  },
+
   /**
    *
    * @param sc
@@ -209,32 +190,7 @@ extend(Range.prototype, {
 
     return start < 0 && end > 0;
   },
-  /**
-   * @param {CharacterRange} characterRange
-   */
-  moveToBookmark: function (characterRange) {
-    // const {start, end, containerElement} = characterRange;
-    // this.setStart(containerElement, 0);
-    // this.collapse(true);
-    //
-    // const nodeIterator = document.createNodeIterator(containerElement, NodeFilter.SHOW_TEXT);
-    // let textNode, charIndex = 0, nextCharIndex;
-    //
-    // let foundStart = false, foundEnd = false;
-    // while (!foundEnd && (textNode = nodeIterator.nextNode())) {
-    //   nextCharIndex = charIndex + textNode.length;
-    //   if (!foundStart && start >= charIndex && start <= nextCharIndex) {
-    //     this.setStart(textNode, start - charIndex);
-    //     foundStart = true;
-    //   }
-    //
-    //   if (end >= charIndex && end <= nextCharIndex) {
-    //     this.setEnd(textNode, end - charIndex);
-    //     foundEnd = true;
-    //   }
-    //   charIndex = nextCharIndex;
-    // }
-  },
+
   /**
    * @param {HTMLElement} [containerElement]
    * @return {CharacterRange}
@@ -281,8 +237,7 @@ extend(Range.prototype, {
       }
       charIndex = nextCharIndex;
     }
-  },
-  _removeEmptyElements: function () {},
+  }
 });
 
 /** Selection extend */
@@ -306,8 +261,7 @@ extend(Selection.prototype, {
   toCharacterRanges: function (containerElement) {
     const ranges = this.getAllRange();
     return ranges.map(range => range.toCharacterRange(containerElement));
-  },
-  isBackward: function () {}
+  }
 });
 
 export default core;
