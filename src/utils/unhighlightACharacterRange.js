@@ -8,9 +8,11 @@ import core from '@/core';
  * @param {Object} [options]
  */
 function unhighlightACharacterRange (characterRange, options) {
-  const { containerElement = core.CONTEXT, className = core.DEFAULT_CLASS_NAME } = options;
-  const range = characterRange.toRange(containerElement);
-  core.utils.unappliesToRange(range, className);
+
+  options = core.utils.createHighlightOptions(options);
+
+  const range = characterRange.toRange(options.containerElement);
+  core.utils.unappliesToRange(range, options.className);
 }
 
 export default unhighlightACharacterRange;
