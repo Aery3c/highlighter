@@ -10,7 +10,7 @@ import core from '@/core';
  * @param {Object} [elAttrs]
  * @param {Object} [elProps]
  */
-function appliesToRange (range, tagName = core.TAG_NAME, className = core.className, elAttrs = {}, elProps = {}) {
+function appliesToRange (range, tagName, className, elAttrs = {}, elProps = {}) {
 
   // get current characterRange
   const characterRange = range.toCharacterRange();
