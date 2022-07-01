@@ -5,37 +5,22 @@ import core from '@/core';
 export default class Highlighter {
   /**
    *
-   * @param {string} className
+   * @param {string} name
    * @param {Object} [options]
    */
-  constructor(className, options = {}) {
+  constructor(name, options = {}) {
     this.highlights = [];
+    this.name = name;
   }
   /**
    * highlight Selection
    *
-   * @param {Selection} [selection]
-   * @param {Object} [options]
    * @return {Highlight[]}
    */
-  highlightSelection (selection, options) {
-    let i = 0, containerElement, elAttrs, elProps, className;
-    let target = arguments[i] || {};
+  highlightSelection () {
+    const { selection, options } = parse(...arguments)
 
-    if (target instanceof Selection) {
-      i++;
-      target = arguments[i] || {};
-    }
-
-    if (core.utils.toType(target) !== 'object') {
-      target = {};
-    }
-    selection = getSelection(selection);
-
-    containerElement = target.containerElement;
-    elAttrs = target.elAttrs;
-    elProps = target.elProps;
-    className = target.className;
+    const containerElement = options.containerElement;
 
     const characterRanges = selection.toCharacterRanges(containerElement), highlights = this.highlights;
 
@@ -66,7 +51,7 @@ export default class Highlighter {
       }
 
       if (!isRangeSame) {
-        highlights.push(core.createHighlight(cr));
+        highlights.push(core.createHighlight(cr, { ...options, className: this.name }));
       }
     });
 
@@ -86,7 +71,60 @@ export default class Highlighter {
       }
     });
 
+    restoreSelection(selection, characterRanges, containerElement);
+
     return newHighlight;
+  }
+
+  unhighlightSelection () {
+    const { selection, options } = parse(...arguments);
+    const containerElement = options.containerElement;
+    const characterRanges = selection.toCharacterRanges(containerElement), highlights = this.highlights;
+
+    const removeToHighlights = [];
+    characterRanges.forEach(cr => {
+      if (cr.start === cr.end) {
+        // ignore empty range
+        return false;
+      }
+
+      let highlight, i;
+      for (i = 0; (highlight = highlights[i]); ++i) {
+        const htcr = highlight.characterRange;
+        if (cr.isIntersects(htcr)) {
+          // isIntersects
+          const intersect = cr.intersection(htcr);
+          const complements = htcr.complementarySet(intersect);
+          complements.forEach(complement => {
+            // add complement
+            highlights.push(core.createHighlight(complement, { ...options, className: this.name }));
+          });
+          removeToHighlights.push(highlight);
+          highlights.splice(i--, 1);
+        }
+      }
+    });
+
+    // off
+    const unHighlights = [];
+    removeToHighlights.forEach(removeHt => {
+      if (removeHt.applied) {
+        removeHt.unapply();
+        unHighlights.push(removeHt);
+      }
+    });
+
+    // on
+    highlights.forEach(ht => {
+      if (!ht.applied) {
+        ht.apply();
+      }
+      return ht;
+    });
+
+    restoreSelection(selection, characterRanges, containerElement);
+
+    return unHighlights;
   }
 }
 
@@ -359,31 +397,39 @@ export default class Highlighter {
 //   return newHighlight;
 // }
 //
-// /**
-//  *
-//  * @param {Selection} selection
-//  * @param {HTMLElement} [containerElement]
-//  * @return {CharacterRange[]}
-//  */
-// function serializeSelection (selection, containerElement) {
-//   const ranges = selection.getAllRange();
-//   return ranges.map(range => range.toCharacterRange(containerElement));
-// }
-//
+
+function parse () {
+  let i = 0, selection, options = arguments[i] || {};
+
+  if (options instanceof Selection) {
+    selection = options;
+    i++;
+    options = arguments[i] || {};
+  }
+
+  if (core.utils.toType(options) !== 'object') {
+    options = {};
+  }
+  selection = getSelection(selection);
+
+  return { selection, options };
+}
+
 function getSelection (selection) {
   return (selection instanceof Selection && selection)
     || window.getSelection();
 }
-//
-// /**
-//  *
-//  * @param {Selection} selection
-//  * @param {CharacterRange[]} characterRanges
-//  */
-// function restoreSelection (selection, characterRanges) {
-//   selection.removeAllRanges();
-//   characterRanges.forEach(characterRange => {
-//     const range = characterRange.toRange();
-//     selection.addRange(range);
-//   });
-// }
+
+/**
+ *
+ * @param {Selection} selection
+ * @param {CharacterRange[]} characterRanges
+ * @param {HTMLElement} containerElement
+ */
+function restoreSelection (selection, characterRanges, containerElement) {
+  selection.removeAllRanges();
+  characterRanges.forEach(characterRange => {
+    const range = characterRange.toRange(containerElement);
+    selection.addRange(range);
+  });
+}
