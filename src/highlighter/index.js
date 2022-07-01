@@ -10,18 +10,34 @@ export default class Highlighter {
    */
   constructor(className, options = {}) {
     this.highlights = [];
-    this.containerElement = options.containerElement;
   }
   /**
    * highlight Selection
    *
    * @param {Selection} [selection]
+   * @param {Object} [options]
    * @return {Highlight[]}
    */
-  highlightSelection (selection) {
+  highlightSelection (selection, options) {
+    let i = 0, containerElement, elAttrs, elProps, className;
+    let target = arguments[i] || {};
+
+    if (target instanceof Selection) {
+      i++;
+      target = arguments[i] || {};
+    }
+
+    if (core.utils.toType(target) !== 'object') {
+      target = {};
+    }
     selection = getSelection(selection);
 
-    const characterRanges = selection.toCharacterRanges(this.containerElement), highlights = this.highlights;
+    containerElement = target.containerElement;
+    elAttrs = target.elAttrs;
+    elProps = target.elProps;
+    className = target.className;
+
+    const characterRanges = selection.toCharacterRanges(containerElement), highlights = this.highlights;
 
     const removeToHighligts = [];
     characterRanges.forEach(cr => {
@@ -71,7 +87,7 @@ export default class Highlighter {
     });
 
     return newHighlight;
-    }
+  }
 }
 
 // /**
