@@ -1,5 +1,6 @@
 'use strict'
 
+import core from '@/core';
 import inspect from './inspect';
 
 export default class Highlight {
@@ -8,17 +9,25 @@ export default class Highlight {
    * @param {CharacterRange} characterRange
    * @param {Object} [options]
    */
-  constructor(characterRange) {
+  constructor(characterRange, options) {
+
+    options = core.utils.createHighlightOptions(options);
+
+    this.containerElement = options.containerElement;
+    this.tagName = options.tagName;
+    this.className = options.className;
+    this.elProps = options.elProps;
+    this.elAttrs = options.elAttrs;
     this.characterRange = characterRange;
-    this.range = this.characterRange.toRange();
+    this.range = this.characterRange.toRange(this.containerElement);
     this.applied = false;
+
   }
 
   /**
    * light self
    */
   apply () {
-    const range = this.characterRange.toRange();
     this.applied = true;
   }
 
@@ -26,7 +35,6 @@ export default class Highlight {
    * dark self
    */
   unapply () {
-    const range = this.characterRange.toRange();
     this.applied = false;
   }
 
