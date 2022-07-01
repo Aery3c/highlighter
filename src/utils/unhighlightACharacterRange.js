@@ -9,7 +9,7 @@ import core from '@/core';
  */
 function unhighlightACharacterRange (characterRange, options) {
 
-  options = core.utils.createHighlightOptions(options);
+  // options = core.utils.createHighlightOptions(options);
 
   const range = characterRange.toRange(options.containerElement);
   core.utils.unappliesToRange(range, options.className);
