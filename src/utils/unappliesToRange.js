@@ -7,7 +7,7 @@ import core from '@/core';
  * @param {Range} range
  * @param {string} [className]
  */
-function unappliesToRange(range, className = core.DEFAULT_CLASS_NAME) {
+function unappliesToRange(range, className) {
 
   const characterRange = range.toCharacterRange();
 
@@ -92,6 +92,8 @@ function splitBoundariesAncestorWithClass (range, className) {
  */
 function splitNodeAt (ancestor, descendant, descendantOffset) {
 
+  let newNode, splitAtStart = (descendantOffset === 0);
+
   if (core.dom.isCharacterDataNode(descendant)) {
     let index = core.dom.getNodeIndex(descendant);
 
@@ -105,7 +107,7 @@ function splitNodeAt (ancestor, descendant, descendantOffset) {
   // 必须保证节点被range分割, 否则会出现空的节点
   if (core.utils.isSplitPoint(descendant, descendantOffset)) {
     // clone empty node
-    let newNode = descendant.cloneNode(false);
+    newNode = descendant.cloneNode(false);
     if (newNode.hasAttribute('id')) {
       newNode.removeAttribute('id');
     }
@@ -116,6 +118,16 @@ function splitNodeAt (ancestor, descendant, descendantOffset) {
     }
     // move newNode to parentNode
     core.dom.moveNode(newNode, descendant.parentNode, core.dom.getNodeIndex(descendant) + 1);
+  } else if (ancestor !== descendant) {
+    newNode = descendant.parentNode;
+
+    // Work out a new split point in the parent node
+    let newNodeIndex = core.dom.getNodeIndex(descendant);
+
+    if (!splitAtStart) {
+      newNodeIndex++;
+    }
+    return splitNodeAt(ancestor, newNode, newNodeIndex);
   }
 }
 
