@@ -22,8 +22,9 @@ export function isWhiteSpaceTextNode (textNode) {
  * @param {Text[]} textNodes - 一个有序的文本节点队列, 这通常应该是从range中遍历出来的.
  * @param {Range} range - Range对象
  * @param {boolean} isUndo
+ * @param {(adjacentNode: Node) => boolean} [isMergeable]
  */
-export function normalize (textNodes, range, isUndo) {
+export function normalize (textNodes, range, isUndo, isMergeable) {
   let firstNode = textNodes[0], lastNode = textNodes[textNodes.length - 1];
 
   let currentMerge = null, merges = [];
@@ -32,7 +33,7 @@ export function normalize (textNodes, range, isUndo) {
   let rangeStartOffset = 0, rangeEndOffset = lastNode.length;
 
   textNodes.forEach(function (textNode) {
-    const precedingNode = core.dom.getPrecedingMrTextNode(textNode, !isUndo);
+    const precedingNode = core.dom.getPrecedingMrTextNode(textNode, !isUndo, isMergeable);
     // 遍历每一个textNode, 找到他们的前面的可合并节点,
     if (precedingNode) {
       // 以precedingNode为首创建merge对象
@@ -58,7 +59,7 @@ export function normalize (textNodes, range, isUndo) {
     }
   });
 
-  const nextNode = core.dom.getNextMrTextNode(lastNode, !isUndo);
+  const nextNode = core.dom.getNextMrTextNode(lastNode, !isUndo, isMergeable);
   if (nextNode) {
     if (currentMerge == null) {
       currentMerge = new core.dom.Merge(lastNode);
@@ -78,12 +79,12 @@ export function normalize (textNodes, range, isUndo) {
 /**
  *
  * @param {boolean} forward
- * @return {function(node: Node, checkParentElement?: boolean): Node | Text | null}
+ * @return {function(node: Node, checkParentElement?: boolean, isMergeable?: (adjacentNode: Node) => boolean): Node | Text | null}
  */
 function factory (forward) {
   const adjacentPropName = forward ? 'nextSibling' : 'previousSibling';
   const position = forward ? 'firstChild' : 'lastChild';
-  return function (textNode, checkParentElement) {
+  return function (textNode, checkParentElement, isMergeable) {
 
     let adjacentNode = textNode[adjacentPropName], parentNode = textNode.parentNode;
 
@@ -91,48 +92,18 @@ function factory (forward) {
       return adjacentNode
     } else if (checkParentElement) {
       adjacentNode = parentNode[adjacentPropName];
-      if (adjacentNode && adjacentNode.nodeType === Node.ELEMENT_NODE && isMergeable(adjacentNode, parentNode)) {
-        let adjacentNodeChild = adjacentNode[position];
-        if (adjacentNodeChild && adjacentNodeChild.nodeType === Node.TEXT_NODE) {
-          return adjacentNodeChild;
+      if (adjacentNode && adjacentNode.nodeType === Node.ELEMENT_NODE) {
+        if (isMergeable && isMergeable(adjacentNode)) {
+          let adjacentNodeChild = adjacentNode[position];
+          if (adjacentNodeChild && adjacentNodeChild.nodeType === Node.TEXT_NODE) {
+            return adjacentNodeChild
+          }
         }
       }
     }
 
     return null
   }
-}
-
-/**
- *
- * @param {Node | HTMLElement} adjacentNode
- * @param {Node | HTMLElement} node
- * @return {boolean}
- */
-function isMergeable(adjacentNode, node) {
-  if (adjacentNode.tagName.toUpperCase() !== node.tagName.toUpperCase()) {
-    // isEqual tagName
-    return false;
-  }
-
-  if (adjacentNode.attributes.length !== node.attributes.length) {
-    // isEqual attributes.length
-    return false;
-  }
-
-  for (let attrs = adjacentNode.attributes, i = attrs.length - 1; i >= 0; --i) {
-    if (!node.hasAttribute(attrs[i].name)) {
-      // isEqual attrName
-      return false;
-    }
-
-    if (attrs[i].value !== node.getAttribute(attrs[i].name)) {
-      // isEqual attrValue
-      return false;
-    }
-  }
-
-  return true;
 }
 
 export const getPrecedingMrTextNode = factory(false);
