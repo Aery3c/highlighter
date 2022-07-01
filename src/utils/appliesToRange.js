@@ -31,10 +31,36 @@ function appliesToRange (range, tagName = core.TAG_NAME, className = core.classN
     const lastTextNode = textNodes[textNodes.length - 1];
     range.setStartAndEnd(textNodes[0], 0, lastTextNode, lastTextNode.length);
 
-    core.dom.normalize(textNodes, range, false);
+    core.dom.normalize(textNodes, range, false, function (adjacentNode) {
+      return isMergeable(adjacentNode, tagName, className, elAttrs, elProps);
+    });
   }
 
   range.moveToCharacterRange(characterRange);
+}
+
+function isMergeable (adjacentNode, tagName, className, elAttrs, elProps) {
+  let identifier = true;
+
+  if (core.dom.getClass(adjacentNode) !== className) {
+    identifier = false;
+  } else if (adjacentNode.tagName.toLowerCase() !== tagName.toLowerCase()) {
+    identifier = false;
+  }else {
+    core.each(elProps, function (key, value) {
+      if (adjacentNode[key] !== value) {
+        identifier = false;
+      }
+    });
+
+    core.each(elAttrs, function (key, value) {
+      if (adjacentNode.getAttribute(key) !== value) {
+        identifier = false;
+      }
+    });
+  }
+
+  return identifier;
 }
 
 export default appliesToRange;
