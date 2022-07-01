@@ -13,6 +13,7 @@ import rangeSelectsAnyText from './rangeSelectsAnyText';
 import createContainer from './createContainer';
 import unhighlightACharacterRange from './unhighlightACharacterRange';
 import unappliesToRange from './unappliesToRange';
+import createHighlightOptions from './createHighlightOptions';
 
 const utils = {
   stripAndCollapse,
@@ -26,7 +27,8 @@ const utils = {
   appliesToText,
   createContainer,
   unhighlightACharacterRange,
-  unappliesToRange
+  unappliesToRange,
+  createHighlightOptions
 };
 
 core.extend({
