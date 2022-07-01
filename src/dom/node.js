@@ -1,5 +1,7 @@
 'use strict'
 
+import core from '@/core';
+
 /**
  * 返回node在容器中的位置
  * @param {Node} node
@@ -78,4 +80,51 @@ export function moveNode (node, parentNode, index) {
 
 export function isWindow (obj) {
   return obj != null && obj === obj.window;
+}
+
+/**
+ *
+ * @param {Node} ancestor
+ * @param {Node | Text} descendant
+ * @param {number} descendantOffset
+ */
+export function splitNodeAt (ancestor, descendant, descendantOffset) {
+
+  let newNode, splitAtStart = (descendantOffset === 0);
+
+  if (core.dom.isCharacterDataNode(descendant)) {
+    let index = core.dom.getNodeIndex(descendant);
+
+    if (descendantOffset === 0) {
+      descendantOffset = index;
+    } else if (descendantOffset === descendant.data.length) {
+      descendantOffset = index + 1;
+    }
+    descendant = descendant.parentNode;
+  }
+  // 必须保证节点被range分割, 否则会出现空的节点
+  if (core.utils.isSplitPoint(descendant, descendantOffset)) {
+    // clone empty node
+    newNode = descendant.cloneNode(false);
+    if (newNode.hasAttribute('id')) {
+      newNode.removeAttribute('id');
+    }
+    let child, newIndex = 0;
+    while ((child = descendant.childNodes[descendantOffset])) {
+      // move child to newNode
+      core.dom.moveNode(child, newNode, newIndex++);
+    }
+    // move newNode to parentNode
+    core.dom.moveNode(newNode, descendant.parentNode, core.dom.getNodeIndex(descendant) + 1);
+  } else if (ancestor !== descendant) {
+    newNode = descendant.parentNode;
+
+    // Work out a new split point in the parent node
+    let newNodeIndex = core.dom.getNodeIndex(descendant);
+
+    if (!splitAtStart) {
+      newNodeIndex++;
+    }
+    return splitNodeAt(ancestor, newNode, newNodeIndex);
+  }
 }
