@@ -3,8 +3,6 @@
 import core from '@/core';
 import Highlighter from '@/highlighter';
 
-const DEFAULT_OPTIONS = core.utils.getDefaultOptions();
-
 /**
  *
  * @param {string} [name]
@@ -12,6 +10,8 @@ const DEFAULT_OPTIONS = core.utils.getDefaultOptions();
  * @returns {Highlighter}
  */
 function createHighlighter (name, options) {
+  const defaultOptions = core.utils.getDefaultOptions();
+
   if (core.utils.toType(name) !== 'string') {
     name = core.DEFAULT_CLASS_NAME;
   }
@@ -21,7 +21,7 @@ function createHighlighter (name, options) {
   }
 
   return new Highlighter(name, {
-    ...DEFAULT_OPTIONS,
+    ...defaultOptions,
     ...options,
   });
 }
