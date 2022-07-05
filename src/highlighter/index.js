@@ -1,6 +1,7 @@
 'use strict'
 
 import core from '@/core';
+import Highlight from "@/highlight";
 
 export default class Highlighter {
   /**
@@ -28,8 +29,6 @@ export default class Highlighter {
       elProps: this.options.elProps
     });
   }
-
-
 
   /**
    *
@@ -145,6 +144,40 @@ export default class Highlighter {
     restoreSelection(selection, characterRanges, containerElement);
 
     return unHighlights;
+  }
+
+  /**
+   *
+   * @param {HTMLElement} el
+   * @return {Highlight | null}
+   */
+  getHighlightInElement (el) {
+    for (let highlight of this.highlights) {
+      if (highlight.containsElement(el)) {
+        return highlight;
+      }
+    }
+
+    return null
+  }
+
+  /**
+   *
+   * @param {Highlight} highlight
+   */
+  removeHighlight (highlight) {
+    if (highlight instanceof Highlight) {
+      let i = 0, highlights = this.highlights, len = this.highlights.length;
+      for (; i < len; ++i) {
+        highlight = this.highlights[i];
+        if (highlights.indexOf(highlight) > -1) {
+          if (highlight.applied) {
+            highlight.off();
+          }
+          this.highlights.splice(i--, 1);
+        }
+      }
+    }
   }
 }
 
@@ -276,26 +309,7 @@ export default class Highlighter {
 //     }
 //   }
 //
-//   /**
-//    * remove highlight
-//    *
-//    * 删除高亮
-//    * @param {Highlight[]} highlights
-//    */
-//   removeHighlights (highlights) {
-//     if (Array.isArray(highlights) && highlights.length) {
-//       let i = 0, highlight, len = this.highlights.length;
-//       for (; i < len; ++i) {
-//         highlight = this.highlights[i];
-//         if (highlights.indexOf(highlight) > -1) {
-//           if (highlight.applied) {
-//             highlight.unapply();
-//           }
-//           this.highlights.splice(i--, 1);
-//         }
-//       }
-//     }
-//   }
+
 //
 //   removeAllHighlight () {
 //     for (let i = 0, highlight; (highlight = this.highlights[i]); ++i) {

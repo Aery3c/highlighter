@@ -37,13 +37,13 @@ export default class Highlight {
 
   /**
    *
-   * @param {Node} node
+   * @param {HTMLElement} el
    * @return {boolean}
    */
-  containsNode (node) {
-    // const range = document.createRange();
-    // range.selectNodeContents(node);
-    // return this.characterRange.contains(range.getBookmark(this.characterRange.containerElement));
+  containsElement (el) {
+    const range = document.createRange();
+    range.selectNodeContents(el);
+    return this.characterRange.contains(range.toCharacterRange(this.containerElement));
   }
 
   inspect () {
