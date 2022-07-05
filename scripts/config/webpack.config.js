@@ -26,10 +26,10 @@ module.exports = function (webpackEnv) {
   }
   if (isEnvDevelopment) {
     const dirs = [];
-    const files = fs.readdirSync(paths.templateDir);
+    const files = fs.readdirSync(paths.exampleDir);
 
     files.forEach(name => {
-      const fp = path.join(paths.templateDir, name);
+      const fp = path.join(paths.exampleDir, name);
       const stats = fs.statSync(fp);
       if (stats.isDirectory()) {
         if (['common', 'components'].indexOf(name) > -1) {
@@ -114,7 +114,7 @@ module.exports = function (webpackEnv) {
     resolve: {
       alias: {
         '@': paths.appSrc,
-        '@components': path.join(paths.templateDir, './components'),
+        '@components': path.join(paths.exampleDir, './components'),
       }
     }
   }

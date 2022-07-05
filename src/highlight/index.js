@@ -7,28 +7,31 @@ export default class Highlight {
   /**
    *
    * @param {CharacterRange} characterRange
-   * @param {Object} [options]
+   * @param {Applier} applier
+   * @param {HTMLElement} containerElement
    */
-  constructor(characterRange, options) {
-    this.options = core.utils.createHighlightOptions(options);
+  constructor(characterRange, applier, containerElement) {
+    this.applier = applier;
     this.characterRange = characterRange;
-    this.range = this.characterRange.toRange(this.options.containerElement);
+    this.containerElement = containerElement;
     this.applied = false;
   }
 
   /**
    * light self
    */
-  apply () {
-    core.utils.highlightACharacterRange(this.characterRange, this.options);
+  on () {
+    this.range = this.characterRange.toRange(this.containerElement);
+    this.applier.apply(this.range);
     this.applied = true;
   }
 
   /**
    * dark self
    */
-  unapply () {
-    core.utils.unhighlightACharacterRange(this.characterRange, this.options);
+  off () {
+    this.range = this.characterRange.toRange(this.containerElement);
+    this.applier.unapply(this.range);
     this.applied = false;
   }
 

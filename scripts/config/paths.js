@@ -9,7 +9,7 @@ module.exports = {
   appBuild: resolveApp('build'),
   appIndexJs: resolveApp('src/index'),
   appSrc: resolveApp('src'),
-  templateDir: resolveApp('template'),
+  exampleDir: resolveApp('example'),
   yarnLockFile: resolveApp('yarn.lock'),
   appPackageJson: resolveApp('package.json'),
   eslintPath: resolveApp('.eslintrc.js')

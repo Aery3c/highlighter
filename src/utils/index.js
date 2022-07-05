@@ -14,6 +14,7 @@ import createContainer from './createContainer';
 import unhighlightACharacterRange from './unhighlightACharacterRange';
 import unappliesToRange from './unappliesToRange';
 import createHighlightOptions from './createHighlightOptions';
+import getDefaultOptions from './getDefaultOptions';
 
 const utils = {
   stripAndCollapse,
@@ -28,7 +29,8 @@ const utils = {
   createContainer,
   unhighlightACharacterRange,
   unappliesToRange,
-  createHighlightOptions
+  createHighlightOptions,
+  getDefaultOptions
 };
 
 core.extend({

@@ -6,21 +6,40 @@ export default class Highlighter {
   /**
    *
    * @param {string} name
-   * @param {Object} [options]
+   * @param {Object} options
    */
-  constructor(name, options = {}) {
+  constructor(name, options) {
     this.highlights = [];
     this.name = name;
+    this.options = core.utils.getDefaultOptions();
+    this.setOptions(options);
   }
+
+  setOptions (options) {
+    this.options = {
+      ...this.options,
+      ...options
+    };
+
+    this.applier = core.createApplier({
+      className: this.name,
+      tagName: this.options.tagName,
+      elAttrs: this.options.elAttrs,
+      elProps: this.options.elProps
+    });
+  }
+
+
+
   /**
-   * highlight Selection
    *
+   * @param {Selection} [selection]
    * @return {Highlight[]}
    */
-  highlightSelection () {
-    const { selection, options } = parse(...arguments)
+  highlightSelection (selection) {
 
-    const containerElement = options.containerElement;
+    selection = getSelection(selection);
+    const containerElement = this.options.containerElement;
 
     const characterRanges = selection.toCharacterRanges(containerElement), highlights = this.highlights;
 
@@ -51,14 +70,14 @@ export default class Highlighter {
       }
 
       if (!isRangeSame) {
-        highlights.push(core.createHighlight(cr, { ...options, className: this.name }));
+        highlights.push(core.createHighlight(cr, this.applier, containerElement));
       }
     });
 
     // off
     removeToHighligts.forEach(removeHt => {
       if (removeHt.applied) {
-        removeHt.unapply();
+        removeHt.off();
       }
     });
 
@@ -66,7 +85,7 @@ export default class Highlighter {
     const newHighlight = [];
     highlights.forEach(ht => {
       if (!ht.applied) {
-        ht.apply();
+        ht.on();
         newHighlight.push(ht)
       }
     });
@@ -76,9 +95,10 @@ export default class Highlighter {
     return newHighlight;
   }
 
-  unhighlightSelection () {
-    const { selection, options } = parse(...arguments);
-    const containerElement = options.containerElement;
+  unhighlightSelection (selection) {
+    selection = getSelection(selection);
+
+    const containerElement = this.options.containerElement;
     const characterRanges = selection.toCharacterRanges(containerElement), highlights = this.highlights;
 
     const removeToHighlights = [];
@@ -97,7 +117,7 @@ export default class Highlighter {
           const complements = htcr.complementarySet(intersect);
           complements.forEach(complement => {
             // add complement
-            highlights.push(core.createHighlight(complement, { ...options, className: this.name }));
+            highlights.push(core.createHighlight(complement, this.applier, containerElement));
           });
           removeToHighlights.push(highlight);
           highlights.splice(i--, 1);
@@ -109,7 +129,7 @@ export default class Highlighter {
     const unHighlights = [];
     removeToHighlights.forEach(removeHt => {
       if (removeHt.applied) {
-        removeHt.unapply();
+        removeHt.off();
         unHighlights.push(removeHt);
       }
     });
@@ -117,7 +137,7 @@ export default class Highlighter {
     // on
     highlights.forEach(ht => {
       if (!ht.applied) {
-        ht.apply();
+        ht.on();
       }
       return ht;
     });
@@ -287,116 +307,7 @@ export default class Highlighter {
 //   }
 // }
 //
-// /**
-//  *
-//  * @param {CharacterRange[]} characterRanges
-//  * @param {Highlight[]} highlights
-//  * @param {Applier} applier
-//  * @return {Highlight[]}
-//  */
-// function unhighlightCharacterRanges (characterRanges, highlights, applier) {
-//   const removeToHighlights = [];
-//   characterRanges.forEach(cr => {
-//     if (cr.start === cr.end) {
-//       // ignore empty range
-//       return false;
-//     }
-//
-//     let highlight, i;
-//     for (i = 0; (highlight = highlights[i]); ++i) {
-//       const htcr = highlight.characterRange;
-//       if (cr.isIntersects(htcr)) {
-//         // isIntersects
-//         const intersect = cr.intersection(htcr);
-//         const complements = htcr.complementarySet(intersect);
-//         complements.forEach(complement => {
-//           // add complement
-//           highlights.push(core.createHighlight(complement, applier));
-//         });
-//         removeToHighlights.push(highlight);
-//         highlights.splice(i--, 1);
-//       }
-//     }
-//   });
-//
-//   // off
-//   const unHighlights = [];
-//   removeToHighlights.forEach(removeHt => {
-//     if (removeHt.applied) {
-//       removeHt.unapply();
-//       unHighlights.push(removeHt);
-//     }
-//   });
-//
-//   // on
-//   highlights.forEach(ht => {
-//     if (!ht.applied) {
-//       ht.apply();
-//     }
-//     return ht;
-//   });
-//
-//   return unHighlights;
-// }
-//
-// /**
-//  * highlight characterRanges
-//  * @param {CharacterRange[]} characterRanges
-//  * @param {Highlight[]} highlights
-//  * @param {Applier} applier
-//  * @return {Highlight[]}
-//  */
-// function highlightCharacterRanges (characterRanges, highlights, applier) {
-//   const removeToHighligts = [];
-//   characterRanges.forEach(cr => {
-//     if (cr.start === cr.end) {
-//       // ignore empty range
-//       return false;
-//     }
-//
-//     let isRangeSame = false;
-//     // compare each range with the existing highlight range
-//     for (let i = 0, ht; (ht = highlights[i]); ++i) {
-//       const htcr = ht.characterRange;
-//
-//       if (cr.isOverlap(htcr)) {
-//         // ignore same range
-//         isRangeSame = true;
-//         continue;
-//       }
-//
-//       if (cr.isIntersects(htcr) || cr.isAdjoin(htcr)) {
-//         // range intersect joint
-//         cr = cr.union(htcr);
-//         removeToHighligts.push(ht);
-//         highlights.splice(i--, 1);
-//       }
-//     }
-//
-//     if (!isRangeSame) {
-//       highlights.push(core.createHighlight(cr, applier));
-//     }
-//   });
-//
-//   // off
-//   removeToHighligts.forEach(removeHt => {
-//     if (removeHt.applied) {
-//       removeHt.unapply();
-//     }
-//   });
-//
-//   // on
-//   const newHighlight = [];
-//   highlights.forEach(ht => {
-//     if (!ht.applied) {
-//       ht.apply();
-//       newHighlight.push(ht)
-//     }
-//   });
-//
-//   return newHighlight;
-// }
-//
+
 
 function parse () {
   let i = 0, selection, options = arguments[i] || {};

@@ -7,7 +7,7 @@ import core from '@/core';
  * @param {Object} [options]
  */
 function highlightACharacterRange (characterRange, options = {}) {
-  options = core.utils.createHighlightOptions(options);
+  // options = core.utils.createHighlightOptions(options);
   const { containerElement, tagName, className, elAttrs, elProps } = options;
   const range = characterRange.toRange(containerElement);
   core.utils.appliesToRange(range, tagName, className, elAttrs, elProps);

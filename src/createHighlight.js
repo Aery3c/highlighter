@@ -6,11 +6,12 @@ import Highlight from './highlight';
 /**
  *
  * @param {CharacterRange} characterRange
- * @param {Object} [options]
+ * @param {Applier} applier
+ * @param {HTMLElement} containerElement
  * @return {Highlight}
  */
-function createHighlight (characterRange, options) {
-  return new Highlight(characterRange, options);
+function createHighlight (characterRange, applier, containerElement) {
+  return new Highlight(characterRange, applier, containerElement);
 }
 
 core.extend({

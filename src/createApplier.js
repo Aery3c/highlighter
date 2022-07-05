@@ -3,14 +3,15 @@
 import core from '@/core';
 import Applier from '@/applier';
 
+/** @typedef {{ className: string; tagName: string; elAttrs: {}; elProps: {} }} ApplierOptions */
+
 /**
  *
- * @param {string} [className]
- * @param {Object} [options]
- * @returns {Applier}
+ * @param {ApplierOptions} options
+ * @return {Applier}
  */
-function createApplier (className = 'highlight', options = {}) {
-  return new Applier(className, options);
+function createApplier (options) {
+  return new Applier(options);
 }
 
 core.extend({
