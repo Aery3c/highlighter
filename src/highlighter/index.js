@@ -1,7 +1,7 @@
 'use strict'
 
 import core from '@/core';
-import Highlight from "@/highlight";
+import Highlight from '@/highlight';
 
 export default class Highlighter {
   /**
