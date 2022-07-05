@@ -6,6 +6,10 @@ highlighter.on('click', function (highlight) {
   highlighter.removeHighlight(highlight);
 });
 
+highlighter.on('create', function (highlights) {
+  // console.log(highlights);
+});
+
 dom.gE('#pink').addEventListener('click', () => {
   highlighter.highlightSelection();
 });

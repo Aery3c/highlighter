@@ -16,8 +16,12 @@ class Highlighter {
     this.options = core.utils.getDefaultOptions();
     this.setOptions(options);
 
-    const containerElement = this.options.containerElement;
-    containerElement.addEventListener('click', this._handleHighlightClick);
+    this.setOptions({
+      elProps: {
+        ...this.options.elProps,
+        onclick: this._handleHighlightClick,
+      }
+    })
   }
 
   setOptions (options) {
@@ -93,7 +97,7 @@ class Highlighter {
     });
 
     restoreSelection(selection, characterRanges, containerElement);
-
+    this.emit('create', newHighlight, this);
     return newHighlight;
   }
 
@@ -184,7 +188,7 @@ class Highlighter {
   _handleHighlightClick = (e) => {
     const highlight = this.getHighlightInElement(e.target);
     if (highlight) {
-      this.emit('click', highlight);
+      this.emit('click', highlight, this);
     }
   }
 }
