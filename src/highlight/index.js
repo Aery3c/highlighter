@@ -1,6 +1,5 @@
 'use strict'
 
-import core from '@/core';
 import inspect from './inspect';
 
 export default class Highlight {
