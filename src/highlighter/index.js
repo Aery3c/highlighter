@@ -2,8 +2,9 @@
 
 import core from '@/core';
 import Highlight from '@/highlight';
+import ee from './event-emitter';
 
-export default class Highlighter {
+class Highlighter {
   /**
    *
    * @param {string} name
@@ -14,6 +15,9 @@ export default class Highlighter {
     this.name = name;
     this.options = core.utils.getDefaultOptions();
     this.setOptions(options);
+
+    const containerElement = this.options.containerElement;
+    containerElement.addEventListener('click', this._handleHighlightClick);
   }
 
   setOptions (options) {
@@ -36,7 +40,6 @@ export default class Highlighter {
    * @return {Highlight[]}
    */
   highlightSelection (selection) {
-
     selection = getSelection(selection);
     const containerElement = this.options.containerElement;
 
@@ -167,16 +170,21 @@ export default class Highlighter {
    */
   removeHighlight (highlight) {
     if (highlight instanceof Highlight) {
-      let i = 0, highlights = this.highlights, len = this.highlights.length;
-      for (; i < len; ++i) {
-        highlight = this.highlights[i];
-        if (highlights.indexOf(highlight) > -1) {
-          if (highlight.applied) {
-            highlight.off();
-          }
-          this.highlights.splice(i--, 1);
+      let highlights = this.highlights, index;
+      if ((index = highlights.indexOf(highlight)) > -1) {
+        if (highlight.applied) {
+          highlight.off();
         }
+
+        highlights.splice(index, 1);
       }
+    }
+  }
+
+  _handleHighlightClick = (e) => {
+    const highlight = this.getHighlightInElement(e.target);
+    if (highlight) {
+      this.emit('click', highlight);
     }
   }
 }
@@ -200,43 +208,7 @@ export default class Highlighter {
 //     this.containerElement = options.containerElement;
 //   }
 //
-//   /**
-//    * highlight Selection
-//    *
-//    * 高亮当前的选中
-//    * @param {Selection} [selection]
-//    * @return {Highlight[]}
-//    */
-//   highlightSelection (selection) {
-//     selection = getSelection(selection);
-//
-//     const characterRanges = serializeSelection(selection, this.containerElement);
-//
-//     const newHighlights = highlightCharacterRanges(characterRanges, this.highlights, this._applier);
-//
-//     restoreSelection(selection, characterRanges);
-//
-//     return newHighlights;
-//   }
-//
-//   /**
-//    * undo highlight in selection
-//    *
-//    * 从当前的选中撤销高亮
-//    * @param {Selection} [selection]
-//    * @return {Highlight[]}
-//    */
-//   unhighlightSelection (selection) {
-//     selection = getSelection(selection);
-//
-//     const characterRanges = serializeSelection(selection, this.containerElement);
-//
-//     const newHighlights = unhighlightCharacterRanges(characterRanges, this.highlights, this._applier);
-//
-//     restoreSelection(selection, characterRanges);
-//
-//     return newHighlights;
-//   }
+
 //
 //   /**
 //    *
@@ -273,20 +245,7 @@ export default class Highlighter {
 //   //   return newHighlights;
 //   // }
 //
-//   /**
-//    * 根据node节点获取highlight对象
-//    * @param {HTMLElement} el
-//    * @return {Highlight | null}
-//    */
-//   getHighlightFromElement (el) {
-//     for (let highlight of this.highlights) {
-//       if (highlight.containsNode(el)) {
-//         return highlight;
-//       }
-//     }
-//
-//     return null
-//   }
+
 //
 //   /**
 //    *
@@ -358,3 +317,7 @@ function restoreSelection (selection, characterRanges, containerElement) {
     selection.addRange(range);
   });
 }
+
+ee(Highlighter.prototype);
+
+export default Highlighter;

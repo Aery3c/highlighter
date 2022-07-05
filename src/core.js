@@ -10,55 +10,55 @@ core.TAG_NAME = 'span';
 
 extend = core.extend = function () {
   let options, name, src, copy, copyIsArray, clone,
-    target = arguments[ 0 ] || {},
+    target = arguments[0] || {},
     i = 1,
     length = arguments.length,
     deep = false;
 
-  if ( typeof target === 'boolean' ) {
+  if (typeof target === 'boolean') {
     deep = target;
 
-    target = arguments[ i ] || {};
+    target = arguments[i] || {};
     i++;
   }
 
-  if ( typeof target !== 'object' && typeof target !== 'function' ) {
+  if (typeof target !== 'object' && typeof target !== 'function') {
     target = {};
   }
 
-  if ( i === length ) {
+  if (i === length) {
     target = this;
     i--;
   }
 
-  for ( ; i < length; i++ ) {
+  for (; i < length; i++) {
 
-    if ( ( options = arguments[ i ] ) != null ) {
+    if ((options = arguments[i] ) != null) {
 
-      for ( name in options ) {
+      for (name in options) {
         copy = options[ name ];
 
-        if ( name === '__proto__' || target === copy ) {
+        if (name === '__proto__' || target === copy) {
           continue;
         }
 
-        if ( deep && copy && ( core.isPlainObject( copy ) ||
-          ( copyIsArray = Array.isArray( copy ) ) ) ) {
-          src = target[ name ];
+        if (deep && copy && (core.isPlainObject(copy) ||
+          (copyIsArray = Array.isArray(copy)))) {
+          src = target[name];
 
-          if ( copyIsArray && !Array.isArray( src ) ) {
+          if (copyIsArray && !Array.isArray(src)) {
             clone = [];
-          } else if ( !copyIsArray && !core.isPlainObject( src ) ) {
+          } else if (!copyIsArray && !core.isPlainObject(src)) {
             clone = {};
           } else {
             clone = src;
           }
           copyIsArray = false;
 
-          target[ name ] = extend( deep, clone, copy );
+          target[name] = extend(deep, clone, copy);
 
-        } else if ( copy !== undefined ) {
-          target[ name ] = copy;
+        } else if (copy !== undefined) {
+          target[name] = copy;
         }
       }
     }
@@ -71,33 +71,33 @@ core.extend({
   isPlainObject: function (obj) {
     let proto, Ctor;
 
-    if ( !obj || toString.call( obj ) !== '[object Object]' ) {
+    if (!obj || toString.call(obj) !== '[object Object]') {
       return false;
     }
 
-    proto = Object.getPrototypeOf( obj );
+    proto = Object.getPrototypeOf(obj);
 
-    if ( !proto ) {
+    if (!proto) {
       return true;
     }
 
-    Ctor = {}.hasOwnProperty.call( proto, 'constructor' ) && proto.constructor;
-    return typeof Ctor === 'function' && {}.hasOwnProperty.toString.call( Ctor ) === {}.hasOwnProperty.toString.call(Object);
+    Ctor = {}.hasOwnProperty.call(proto, 'constructor') && proto.constructor;
+    return typeof Ctor === 'function' && {}.hasOwnProperty.toString.call(Ctor) === {}.hasOwnProperty.toString.call(Object);
   },
 
   each: function (obj, callback) {
     let length, i = 0;
 
-    if ( core.utils.isArrayLike( obj ) ) {
+    if (core.utils.isArrayLike(obj)) {
       length = obj.length;
-      for ( ; i < length; i++ ) {
-        if ( callback.call( obj[ i ], i, obj[ i ] ) === false ) {
+      for (; i < length; i++) {
+        if (callback.call(obj[i], i, obj[i]) === false) {
           break;
         }
       }
     } else {
-      for ( i in obj ) {
-        if ( callback.call( obj[ i ], i, obj[ i ] ) === false ) {
+      for (i in obj) {
+        if (callback.call( obj[i], i, obj[i]) === false) {
           break;
         }
       }

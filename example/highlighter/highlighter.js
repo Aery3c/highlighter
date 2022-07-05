@@ -1,12 +1,9 @@
 import { dom, createHighlighter } from '@/index';
 
-const highlighter = createHighlighter('pink', {
-  elProps: {
-    onclick: function () {
-      const highlight = highlighter.getHighlightInElement(this);
-      highlighter.removeHighlight(highlight);
-    }
-  }
+const highlighter = createHighlighter('pink');
+
+highlighter.on('click', function (highlight) {
+  highlighter.removeHighlight(highlight);
 });
 
 dom.gE('#pink').addEventListener('click', () => {
