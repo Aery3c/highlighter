@@ -9,8 +9,9 @@ import core from '@/core';
  * @param {string} className
  * @param {Object} [elAttrs]
  * @param {Object} [elProps]
+ * @param {(el: HTMLElement) => void} onElementCreate
  */
-function appliesToRange (range, tagName, className, elAttrs = {}, elProps = {}) {
+function appliesToRange (range, tagName, className, elAttrs, elProps, onElementCreate) {
 
   // get current characterRange
   const characterRange = range.toCharacterRange();
@@ -24,7 +25,7 @@ function appliesToRange (range, tagName, className, elAttrs = {}, elProps = {}) 
   if (textNodes.length) {
     textNodes.forEach(textNode => {
       if (!core.dom.getSelfOrAncestorWithClass(textNode, className) && !core.dom.isWhiteSpaceTextNode(textNode)) {
-        core.utils.appliesToText(textNode, tagName, className, elAttrs, elProps);
+        core.utils.appliesToText(textNode, tagName, className, elAttrs, elProps, onElementCreate);
       }
     });
 

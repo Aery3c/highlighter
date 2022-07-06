@@ -9,8 +9,9 @@ import core from '@/core';
  * @param {string} className
  * @param {Object} elAttrs
  * @param {Object} elProps
+ * @param {(el: HTMLElement) => void} onElementCreate
  */
-function appliesToText (textNode, tagName, className, elAttrs = {}, elProps = {}) {
+function appliesToText (textNode, tagName, className, elAttrs, elProps, onElementCreate) {
   const parentNode = textNode.parentNode;
   if (textNode.nodeType === Node.TEXT_NODE) {
     if (parentNode.childNodes.length === 1
@@ -20,7 +21,7 @@ function appliesToText (textNode, tagName, className, elAttrs = {}, elProps = {}
     ) {
       core.dom.addClass(parentNode, className);
     } else {
-      const el = core.utils.createContainer(tagName, className, elAttrs, elProps);
+      const el = core.utils.createContainer(tagName, className, elAttrs, elProps, onElementCreate);
       parentNode.insertBefore(el, textNode);
       el.appendChild(textNode);
     }

@@ -7,6 +7,10 @@ core.VERSION = '1.0.0';
 core.CONTEXT = document.body;
 core.DEFAULT_CLASS_NAME = 'highlight';
 core.TAG_NAME = 'span';
+core.event = {
+  CLICK: 'highlight:click',
+  CREATE: 'highlight:create'
+};
 
 extend = core.extend = function () {
   let options, name, src, copy, copyIsArray, clone,

@@ -3,11 +3,12 @@
 import core from '@/core';
 
 export default class Applier {
-  constructor({ className, tagName, elAttrs, elProps }) {
+  constructor({ className, tagName, elAttrs, elProps, onElementCreate }) {
     this.className = className;
     this.tagName = tagName;
     this.elAttrs = elAttrs;
     this.elProps = elProps;
+    this.onElementCreate = onElementCreate;
   }
 
   /**
@@ -15,7 +16,7 @@ export default class Applier {
    * @param {Range} range
    */
   apply (range) {
-    core.utils.appliesToRange(range, this.tagName, this.className, this.elAttrs, this.elProps);
+    core.utils.appliesToRange(range, this.tagName, this.className, this.elAttrs, this.elProps, this.onElementCreate);
   }
 
   /**

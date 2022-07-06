@@ -1,13 +1,13 @@
-import { dom, createHighlighter } from '@/index';
+import Highlighter, { dom, createHighlighter } from '@/index';
 
 const highlighter = createHighlighter('pink');
 
-highlighter.on('click', function (highlight) {
+highlighter.on(Highlighter.event.CLICK, function (highlight) {
   highlighter.removeHighlight(highlight);
 });
 
-highlighter.on('create', function (highlights) {
-  // console.log(highlights);
+highlighter.on(Highlighter.event.CREATE, function (highlights) {
+  console.log(highlights);
 });
 
 dom.gE('#pink').addEventListener('click', () => {

@@ -3,7 +3,7 @@
 import core from '@/core';
 import Applier from '@/applier';
 
-/** @typedef {{ className: string; tagName: string; elAttrs: {}; elProps: {} }} ApplierOptions */
+/** @typedef {{ className: string; tagName: string; elAttrs: {}; elProps: {}, onElementCreate: (el: HTMLElement) => void }} ApplierOptions */
 
 /**
  *

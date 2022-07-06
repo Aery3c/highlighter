@@ -95,9 +95,9 @@ class Highlighter {
         newHighlight.push(ht)
       }
     });
-
+    this.emit(core.event.CREATE, newHighlight, this);
     restoreSelection(selection, characterRanges, containerElement);
-    this.emit('create', newHighlight, this);
+
     return newHighlight;
   }
 
@@ -188,8 +188,16 @@ class Highlighter {
   _handleHighlightClick = (e) => {
     const highlight = this.getHighlightInElement(e.target);
     if (highlight) {
-      this.emit('click', highlight, this);
+      this.emit(core.event.CLICK, highlight, this, e);
     }
+  }
+
+  _handleHighligtCreate = (el) => {
+    console.log(el);
+    // const highlight = this.getHighlightInElement(el);
+    // if (highlight) {
+    //   this.emit('create', highlight, this, el);
+    // }
   }
 }
 

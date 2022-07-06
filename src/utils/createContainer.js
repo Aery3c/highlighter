@@ -8,13 +8,17 @@ import core from '@/core';
  * @param {string} className
  * @param {Object} elAttrs
  * @param {Object} elProps
+ * @param {(el: HTMLElement) => void} onElementCreate
  * @return {HTMLElement}
  */
-function createContainer (tagName, className, elAttrs = {}, elProps = {}) {
+function createContainer (tagName, className, elAttrs, elProps, onElementCreate) {
   const el = document.createElement(tagName);
   core.dom.addClass(el, className);
   mapAttrsToElement(elAttrs, el);
   mapPropsToElement(elProps, el);
+  if (onElementCreate) {
+    onElementCreate(el);
+  }
   return el;
 }
 
