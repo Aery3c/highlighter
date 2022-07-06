@@ -16,7 +16,7 @@ module.exports = function (webpackEnv) {
 
   const plugins = [];
   const entry = {};
-  entry.highlighter = {
+  entry['highlighter'] = {
     import: paths.appIndexJs,
     library: {
       name: 'Highlighter',
@@ -25,27 +25,27 @@ module.exports = function (webpackEnv) {
     },
   }
   if (isEnvDevelopment) {
-    // const dirs = [];
-    // const files = fs.readdirSync(paths.exampleDir);
-    //
-    // files.forEach(name => {
-    //   const fp = path.join(paths.exampleDir, name);
-    //   const stats = fs.statSync(fp);
-    //   if (stats.isDirectory()) {
-    //     if (['common', 'components'].indexOf(name) > -1) {
-    //       // ignore these dirs
-    //       return;
-    //     }
-    //     dirs.push(fp);
-    //   }
-    // });
-    // // add html-webpack-plugin
-    // dirs.forEach(dir => {
-    //   const name = path.parse(dir).name;
-    //   plugins.push(new HtmlWebpackPlugin({ ...createHtmlOptions(`${name}.html`, path.join(dir, `${name}.html`)) }));
-    //   // add entry file
-    //   Object.assign(entry, { [name]: path.join(dir, name) })
-    // });
+    const files = fs.readdirSync(paths.exampleDir);
+
+    files.forEach(filename => {
+      const fp = path.join(paths.exampleDir, filename);
+      const stats = fs.statSync(fp);
+      if (stats.isFile() && new RegExp(/\.js$/).test(filename) && filename !== 'highlighter.js') {
+        const name = filename.split('.')[0];
+        plugins.push(
+          new HtmlWebpackPlugin({
+            title: name,
+            filename: `example/${name}.html`,
+            template: path.join(paths.templateDir, 'index.html'),
+            publicPath: '../',
+            scriptLoading: 'blocking',
+            inject: 'body',
+            chunks: ['highlighter', 'init', 'menu', name]
+          }),
+        );
+        entry[name] = fp;
+      }
+    });
   }
 
   return {
@@ -116,19 +116,5 @@ module.exports = function (webpackEnv) {
         '@': paths.appSrc
       }
     }
-  }
-}
-
-function createHtmlOptions (filename, path) {
-  const name = filename.split('.')[0];
-  return {
-    title: name,
-    filename: `demos/${filename}`,
-    template: path,
-    publicPath: '../',
-    scriptLoading: 'blocking',
-    inject: 'body',
-    // chunks: [name, 'highlighter']
-    chunks: [name]
   }
 }
