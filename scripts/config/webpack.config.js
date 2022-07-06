@@ -25,27 +25,27 @@ module.exports = function (webpackEnv) {
     },
   }
   if (isEnvDevelopment) {
-    const dirs = [];
-    const files = fs.readdirSync(paths.exampleDir);
-
-    files.forEach(name => {
-      const fp = path.join(paths.exampleDir, name);
-      const stats = fs.statSync(fp);
-      if (stats.isDirectory()) {
-        if (['common', 'components'].indexOf(name) > -1) {
-          // ignore these dirs
-          return;
-        }
-        dirs.push(fp);
-      }
-    });
-    // add html-webpack-plugin
-    dirs.forEach(dir => {
-      const name = path.parse(dir).name;
-      plugins.push(new HtmlWebpackPlugin({ ...createHtmlOptions(`${name}.html`, path.join(dir, `${name}.html`)) }));
-      // add entry file
-      Object.assign(entry, { [name]: path.join(dir, name) })
-    });
+    // const dirs = [];
+    // const files = fs.readdirSync(paths.exampleDir);
+    //
+    // files.forEach(name => {
+    //   const fp = path.join(paths.exampleDir, name);
+    //   const stats = fs.statSync(fp);
+    //   if (stats.isDirectory()) {
+    //     if (['common', 'components'].indexOf(name) > -1) {
+    //       // ignore these dirs
+    //       return;
+    //     }
+    //     dirs.push(fp);
+    //   }
+    // });
+    // // add html-webpack-plugin
+    // dirs.forEach(dir => {
+    //   const name = path.parse(dir).name;
+    //   plugins.push(new HtmlWebpackPlugin({ ...createHtmlOptions(`${name}.html`, path.join(dir, `${name}.html`)) }));
+    //   // add entry file
+    //   Object.assign(entry, { [name]: path.join(dir, name) })
+    // });
   }
 
   return {
@@ -113,8 +113,7 @@ module.exports = function (webpackEnv) {
     ],
     resolve: {
       alias: {
-        '@': paths.appSrc,
-        '@components': path.join(paths.exampleDir, './components'),
+        '@': paths.appSrc
       }
     }
   }
