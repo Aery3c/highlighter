@@ -25,26 +25,30 @@ module.exports = function (webpackEnv) {
     },
   }
   if (isEnvDevelopment) {
+    const dirs = [];
     const files = fs.readdirSync(paths.exampleDir);
 
-    files.forEach(filename => {
-      const fp = path.join(paths.exampleDir, filename);
+    files.forEach(name => {
+      const fp = path.join(paths.exampleDir, name);
       const stats = fs.statSync(fp);
-      if (stats.isFile() && new RegExp(/\.js$/).test(filename) && filename !== 'highlighter.js') {
-        const name = filename.split('.')[0];
-        plugins.push(
-          new HtmlWebpackPlugin({
-            title: name,
-            filename: `example/${name}.html`,
-            template: path.join(paths.templateDir, 'index.html'),
-            publicPath: '../',
-            scriptLoading: 'blocking',
-            inject: 'body',
-            chunks: ['highlighter', 'init', 'menu', name]
-          }),
-        );
-        entry[name] = fp;
+      if (stats.isDirectory()) {
+        dirs.push(fp);
       }
+    });
+    // add html-webpack-plugin
+    dirs.forEach(dir => {
+      const name = path.parse(dir).name;
+      plugins.push(new HtmlWebpackPlugin({
+        title: name,
+        filename: `example/${name}.html`,
+        template: path.join(dir, `${name}.html`),
+        publicPath: '../',
+        scriptLoading: 'blocking',
+        inject: 'body',
+        chunks: [name]
+      }));
+      // add entry file
+      Object.assign(entry, { [name]: path.join(dir, name) })
     });
   }
 

@@ -1,1 +1,0 @@
-const { createHighlighter } = window.Highlighter;

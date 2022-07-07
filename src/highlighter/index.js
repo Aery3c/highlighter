@@ -185,6 +185,15 @@ class Highlighter {
     }
   }
 
+  removeAllHighlight () {
+    for (let i = 0, highlight; (highlight = this.highlights[i]); ++i) {
+      if (highlight.applied) {
+        highlight.off();
+      }
+      this.highlights.splice(i--, 1);
+    }
+  }
+
   _handleHighlightClick = (e) => {
     const highlight = this.getHighlightInElement(e.target);
     if (highlight) {
@@ -192,107 +201,14 @@ class Highlighter {
     }
   }
 
-  _handleHighligtCreate = (el) => {
-    console.log(el);
-    // const highlight = this.getHighlightInElement(el);
-    // if (highlight) {
-    //   this.emit('create', highlight, this, el);
-    // }
+  serialize () {
+
+  }
+
+  deserialize () {
+
   }
 }
-
-// /**
-//  * highlight selection
-//  */
-// 'use strict'
-// import core from '@/core';
-//
-// export default class Highlighter {
-//   /**
-//    *
-//    * @param {string} name
-//    * @param {Object} [options]
-//    */
-//   constructor(name, options) {
-//     /** @type {Highlight[]} */
-//     this.highlights = [];
-//     this._applier = core.createApplier(name, options);
-//     this.containerElement = options.containerElement;
-//   }
-//
-
-//
-//   /**
-//    *
-//    * @param {string} text
-//    * @param {boolean} [scroll]
-//    * @return {Highlight[]}
-//    */
-//   // highlightAllText (text, scroll = true) {
-//   //   const highlights = this.highlights;
-//   //   text = core.utils.stripAndCollapse(text);
-//   //   if (text !== '') {
-//   //     const fullText = this.containerElement.textContent,
-//   //       matchArr = [...fullText.matchAll(new RegExp(`${text}`, 'gi'))]
-//   //
-//   //     matchArr.forEach(({ index: point }) => {
-//   //       highlights.push(core.createHighlight(core.createCharacterRange(point, point + text.length, this.containerElement), this._applier));
-//   //     });
-//   //   }
-//   //
-//   //   const newHighlights = [];
-//   //   highlights.forEach((ht, index) => {
-//   //     if (!ht.applied) {
-//   //       if (index === 0 && scroll) {
-//   //         const rect = ht.characterRange.toRange().getBoundingClientRect();
-//   //         if (rect.bottom < 0 || rect.top > window.innerHeight) {
-//   //           window.scrollTo({ top: window.pageYOffset + rect.y - (window.innerHeight / 2), left: 0, behavior: 'smooth' });
-//   //         }
-//   //       }
-//   //       ht.apply();
-//   //       newHighlights.push(ht);
-//   //     }
-//   //   });
-//   //
-//   //   return newHighlights;
-//   // }
-//
-
-//
-//   /**
-//    *
-//    * @return {Highlight[]}
-//    */
-//   getAllHighlight () {
-//     const sortHighlight = [];
-//     this.highlights.forEach(h => sortHighlight.push(h));
-//     return sortHighlight.sort((a, b) => a.characterRange.start - b.characterRange.start);
-//   }
-//
-//   addHighlight (highlight) {
-//     if (highlight instanceof core.Highlight && !(highlight in this.highlights)) {
-//       this.highlights.push(highlight);
-//       this.highlights.forEach(ht => {
-//         if (!ht.applied) {
-//           ht.apply();
-//         }
-//       });
-//     }
-//   }
-//
-
-//
-//   removeAllHighlight () {
-//     for (let i = 0, highlight; (highlight = this.highlights[i]); ++i) {
-//       if (highlight.applied) {
-//         highlight.unapply();
-//       }
-//       this.highlights.splice(i--, 1);
-//     }
-//   }
-// }
-//
-
 
 function parse () {
   let i = 0, selection, options = arguments[i] || {};
