@@ -54,3 +54,35 @@ export function getSelfOrAncestorWithClass (node, className) {
   }
   return null;
 }
+
+/**
+ *
+ * @param {Node | Document} node
+ * @return {Document}
+ */
+export function getDoc (node) {
+  if (node.nodeType === Node.DOCUMENT_NODE) {
+    return node;
+  } else if (node.ownerDocument != null) {
+    return node.ownerDocument;
+  } else {
+    throw Error('getDoc: no document found for node');
+  }
+}
+
+/**
+ *
+ * @param {Node} node
+ */
+export function getWin (node) {
+  const doc = getDoc(node);
+  if (doc.defaultView != null) {
+    return doc.defaultView;
+  }
+
+  throw Error('getWin: Cannot get a window object for node');
+}
+
+export function getScrollPosition (win) {
+  let y = 0, x = 0;
+}

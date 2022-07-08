@@ -17,6 +17,7 @@ import createHighlightOptions from './createHighlightOptions';
 import getDefaultOptions from './getDefaultOptions';
 
 const utils = {
+  extend: core.extend,
   stripAndCollapse,
   isSplitPoint,
   toType,
