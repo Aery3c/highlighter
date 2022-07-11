@@ -83,6 +83,29 @@ export function getWin (node) {
   throw Error('getWin: Cannot get a window object for node');
 }
 
+/**
+ *
+ * @param {Window} win
+ * @return {{x: number, y: number}}
+ */
 export function getScrollPosition (win) {
   let y = 0, x = 0;
+  if (
+    typeof win.pageYOffset === 'number'
+    && typeof win.pageXOffset === 'number'
+  ) {
+    y = win.pageYOffset;
+    x = win.pageXOffset;
+  } else {
+    const doc = win.document;
+    const docEl = doc.documentElement;
+    const scrollEl = doc.compatMode === 'CSS1Compat' ? docEl : doc.body;
+
+    if (typeof scrollEl.scrollTop === 'number' && typeof scrollEl.scrollLeft === 'number') {
+      y = scrollEl.scrollTop;
+      x = scrollEl.scrollLeft;
+    }
+  }
+
+  return { y, x }
 }

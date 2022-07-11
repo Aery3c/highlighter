@@ -9,15 +9,15 @@ const isInteractive = process.stdout.isTTY;
 
 function printInstructions(appName, urls, useYarn) {
   console.log();
-  console.log(`You can now view ${chalk.bold(appName + ' app demos')} in the browser.`);
+  console.log(`You can now view ${chalk.bold(appName + ' app example')} in the browser.`);
   console.log();
 
   if (urls.lanUrlForTerminal) {
     console.log(
-      `  ${chalk.bold('Local:')}            ${urls.localUrlForTerminal}domes`
+      `  ${chalk.bold('Local:')}            ${urls.localUrlForTerminal}example`
     );
     console.log(
-      `  ${chalk.bold('On Your Network:')}  ${urls.lanUrlForTerminal}domes`
+      `  ${chalk.bold('On Your Network:')}  ${urls.lanUrlForTerminal}example`
     );
   } else {
     console.log(`  ${urls.localUrlForTerminal}`);
