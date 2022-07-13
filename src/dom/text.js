@@ -18,7 +18,7 @@ export function splitText (node, offset) {
   const textNode = document.createTextNode(node.data);
   textNode.deleteData(0, offset);
 
-  node.deleteData(offset, node.length);
+  node.deleteData(offset, node.length - offset);
   core.dom.insertAfter(textNode, node);
 
   return textNode;
