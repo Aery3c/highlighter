@@ -61,6 +61,23 @@ export function removeNode (node) {
 }
 
 /**
+ *
+ * @param {Node} node
+ * @param {Node} precedingNode
+ * @return {Node}
+ */
+export function insertAfter (node, precedingNode) {
+  let next = precedingNode.nextSibling, parent = precedingNode.parentNode;
+  if (next) {
+    parent.insertBefore(node, next);
+  } else {
+    parent.appendChild(node);
+  }
+
+  return node;
+}
+
+/**
  * 将node移动到parentNode
  * @param {Node} node
  * @param {Node} parentNode

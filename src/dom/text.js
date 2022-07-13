@@ -2,6 +2,28 @@
 
 import core from '@/core';
 
+if (!Text.prototype.splitText) {
+  Text.prototype.splitText = function (offset) {
+    return splitText(this, offset);
+  }
+}
+
+/**
+ *
+ * @param {Text} node
+ * @param {number} offset
+ * @return {Text}
+ */
+export function splitText (node, offset) {
+  const textNode = document.createTextNode(node.data);
+  textNode.deleteData(0, offset);
+
+  node.deleteData(offset, node.length);
+  core.dom.insertAfter(textNode, node);
+
+  return textNode;
+}
+
 /**
  *
  * @param {Node} node
