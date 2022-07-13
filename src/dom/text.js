@@ -71,7 +71,7 @@ export function normalize (textNodes, range, isUndo, isMergeable) {
   if (merges.length) {
     merges.forEach(merge => merge.start());
 
-    range.setStartAndEnd(rangeStartNode, rangeStartOffset, rangeEndNode, rangeEndOffset);
+    core.setRangeStartAndEnd(range, rangeStartNode, rangeStartOffset, rangeEndNode, rangeEndOffset);
   }
 
 }

@@ -9,9 +9,9 @@ import core from '@/core';
  */
 function unappliesToRange(range, className) {
 
-  const characterRange = range.toCharacterRange();
+  const characterRange = core.rangeToCharacterRange(range);
 
-  range.splitBoundaries();
+  core.splitRangeBoundaries(range);
 
   const textNodes = core.utils.getEffectiveTextNodes(range);
 
@@ -28,7 +28,7 @@ function unappliesToRange(range, className) {
     core.dom.normalize(textNodes, range, true);
   }
 
-  range.moveToCharacterRange(characterRange);
+  core.rangeMoveToCharacterRange(range, characterRange);
 }
 
 /**

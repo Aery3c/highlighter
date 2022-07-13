@@ -49,7 +49,7 @@ export default class RangeIterator {
       eo = this.range.endOffset;
     }
 
-    range.setStartAndEnd(sc, so, ec, eo);
+    core.setRangeStartAndEnd(range, sc, so, ec, eo);
 
     return new RangeIterator(range, this.whatToShow, this.filter).generator();
   }

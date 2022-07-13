@@ -3,6 +3,8 @@
  */
 'use strict'
 
+import core from '@/core';
+
 class CharacterRange {
   constructor (start = 0, end = 0) {
     this.start = start;
@@ -113,7 +115,7 @@ class CharacterRange {
    */
   toRange (containerElement) {
     const range = document.createRange();
-    range.moveToCharacterRange(this, containerElement);
+    core.rangeMoveToCharacterRange(range, this, containerElement);
     return range;
   }
 

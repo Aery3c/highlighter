@@ -10,7 +10,7 @@ import core from '@/core';
 function getEffectiveTextNodes (range) {
 
   /** @type {Text[]} */
-  const textNodes = range.getNodes(NodeFilter.SHOW_TEXT);
+  const textNodes = core.getNodesInRange(range, NodeFilter.SHOW_TEXT);
   let start = 0, end = textNodes.length, node;
 
   // 从左往右排除不被包含在range中的textNode

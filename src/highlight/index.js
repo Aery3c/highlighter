@@ -1,5 +1,6 @@
 'use strict'
 
+import core from '@/core';
 import inspect from './inspect';
 
 export default class Highlight {
@@ -42,7 +43,7 @@ export default class Highlight {
   containsElement (el) {
     const range = document.createRange();
     range.selectNodeContents(el);
-    return this.characterRange.contains(range.toCharacterRange(this.containerElement));
+    return this.characterRange.contains(core.rangeToCharacterRange(range, this.containerElement));
   }
 
   inspect () {

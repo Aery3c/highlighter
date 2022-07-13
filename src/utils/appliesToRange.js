@@ -14,10 +14,10 @@ import core from '@/core';
 function appliesToRange (range, tagName, className, elAttrs, elProps, onElementCreate) {
 
   // get current characterRange
-  const characterRange = range.toCharacterRange();
+  const characterRange = core.rangeToCharacterRange(range);
 
   // split
-  range.splitBoundaries();
+  core.splitRangeBoundaries(range);
 
   // get textNodes in range
   const textNodes = core.utils.getEffectiveTextNodes(range);
@@ -30,14 +30,14 @@ function appliesToRange (range, tagName, className, elAttrs, elProps, onElementC
     });
 
     const lastTextNode = textNodes[textNodes.length - 1];
-    range.setStartAndEnd(textNodes[0], 0, lastTextNode, lastTextNode.length);
+    core.setRangeStartAndEnd(range, textNodes[0], 0, lastTextNode, lastTextNode.length);
 
     core.dom.normalize(textNodes, range, false, function (adjacentNode) {
       return isMergeable(adjacentNode, tagName, className, elAttrs, elProps);
     });
   }
 
-  range.moveToCharacterRange(characterRange);
+  core.rangeMoveToCharacterRange(range, characterRange);
 }
 
 function isMergeable (adjacentNode, tagName, className, elAttrs, elProps) {

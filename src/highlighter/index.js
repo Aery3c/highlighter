@@ -47,7 +47,7 @@ class Highlighter {
     selection = getSelection(selection);
     const containerElement = this.options.containerElement;
 
-    const characterRanges = selection.toCharacterRanges(containerElement), highlights = this.highlights;
+    const characterRanges = core.selectionToCharacterRanges(selection, containerElement), highlights = this.highlights;
 
     const removeToHighligts = [];
     characterRanges.forEach(cr => {
@@ -105,7 +105,7 @@ class Highlighter {
     selection = getSelection(selection);
 
     const containerElement = this.options.containerElement;
-    const characterRanges = selection.toCharacterRanges(containerElement), highlights = this.highlights;
+    const characterRanges = core.selectionToCharacterRanges(selection, containerElement), highlights = this.highlights;
 
     const removeToHighlights = [];
     characterRanges.forEach(cr => {
