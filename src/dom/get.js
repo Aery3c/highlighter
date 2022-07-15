@@ -109,3 +109,24 @@ export function getScrollPosition (win) {
 
   return { y, x }
 }
+
+/**
+ *
+ * @param {Node} nodeA
+ * @param {Node} nodeB
+ */
+export function getClosestCommonAncestorIn (nodeA, nodeB) {
+  let ancestors = [], n;
+
+  for (n = nodeA; n; n = n.parentNode) {
+    ancestors.push(n);
+  }
+
+  for (n = nodeB; n; n = n.parentNode) {
+    if (ancestors.indexOf(n) !== -1) {
+      return n;
+    }
+  }
+
+  return null
+}
