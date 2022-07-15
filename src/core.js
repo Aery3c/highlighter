@@ -100,7 +100,7 @@ function each (obj, callback) {
     }
   } else {
     for (i in obj) {
-      if (callback.call( obj[i], i, obj[i]) === false) {
+      if (callback.call(obj[i], i, obj[i]) === false) {
         break;
       }
     }
@@ -118,14 +118,63 @@ function each (obj, callback) {
  */
 function getRangeBoundingClientRect (range) {
   // todo test
+  let rect;
   if (typeof range.getBoundingClientRect !== 'function') {
-    return range.getBoundingClientRect();
+    rect = range.getBoundingClientRect();
   } else {
-    let rect, span = document.createElement('span');
+    const span = document.createElement('span');
     if (range.collapsed) {
-      insertNodeToRange(span, range);
+      range.insertNode(span);
+      rect = span.getBoundingClientRect();
+      core.dom.removeNode(span);
+    } else {
+      const workingRange = range.cloneRange();
+
+      range.collapse(true);
+      range.insertNode(span);
+      const startRect = span.getBoundingClientRect();
+      core.dom.removeNode(span);
+
+      core.collapseToPoint(workingRange, range.endContainer, range.endOffset);
+      range.insertNode(span);
+      const endRect = span.getBoundingClientRect();
+      core.dom.removeNode(span);
+
+      console.log(startRect, endRect);
     }
   }
+  console.log(rect);
+  console.log(range.getBoundingClientRect());
+
+  return rect;
+}
+
+/**
+ *
+ * @param {Range} range
+ * @param {boolean} [toStart]
+ */
+function collapse (range, toStart = false) {
+  if (typeof range.collapse === 'function') {
+    range.collapse(toStart);
+  } else {
+    if (toStart) {
+      range.setEnd(range.startContainer, range.startOffset);
+    } else {
+      range.setStart(range.endContainer, range.endOffset);
+    }
+  }
+}
+
+/**
+ *
+ * @param {Range} range
+ * @param {Node} node
+ * @param {number} offset
+ */
+function collapseToPoint (range, node, offset) {
+  range.setStart(node, offset);
+  range.setEnd(node, offset);
 }
 
 /** Range pertinence */
@@ -136,29 +185,38 @@ function getRangeBoundingClientRect (range) {
  * @param {Range} range
  */
 function insertNodeToRange (node, range) {
+  if (typeof range.insertNode === 'function') {
+    return range.insertNode(node);
+  }
+
   if (core.dom.isOrIsAncestorOf(node, range.startContainer)) {
     throw new DOMException(`Failed to execute 'insertNode' on 'Range': The new child element contains the parent.`);
   }
 
   const firstNode = insertNodeAtPosition(node, range.startContainer, range.startOffset);
+  range.setStartBefore(firstNode);
+
 }
 
 /**
  *
  * @param {Node} node
- * @param {Node} n
+ * @param {Node | Text} n
  * @param {number} offset
  * @return {Node}
  */
 function insertNodeAtPosition (node, n, offset) {
-  console.log('insertNodeAtPosition');
   const firstNode = node.nodeType === Node.DOCUMENT_FRAGMENT_NODE ? node.firstChild : node;
   if (core.dom.isCharacterDataNode(n)) {
     if (n.length === offset) {
       core.dom.insertAfter(firstNode, n);
     } else {
-
+      n.parentNode.insertBefore(firstNode, offset === 0 ? n : n.splitText(offset));
     }
+  } else if (offset >= n.childNodes.length) {
+    n.parentNode.appendChild(firstNode);
+  } else {
+    n.parentNode.insertBefore(firstNode, n.childNodes[offset]);
   }
 
   return firstNode;
@@ -238,7 +296,7 @@ function setRangeStartAndEnd (range) {
  * @param {Range} rangeB
  */
 function getIntersectionInRange (rangeA, rangeB) {
-  if (core.isIntersectionInRange(rangeA, rangeB)) {
+  if (core.intersectsRange(rangeA, rangeB)) {
     const range = rangeA.cloneRange();
     if (range.compareBoundaryPoints(rangeB.START_TO_START, rangeB) === -1) {
       range.setStart(rangeB.startContainer, rangeB.startOffset);
@@ -260,13 +318,98 @@ function getIntersectionInRange (rangeA, rangeB) {
  * @param {Range} rangeB
  * @return {boolean}
  */
-function isIntersectionInRange (rangeA, rangeB) {
+function intersectsRange (rangeA, rangeB) {
   // rangeA.s < rangeB.e;
   const start = rangeA.compareBoundaryPoints(rangeB.END_TO_START, rangeB);
   // rangeA.e > rangeB.s;
   const end = rangeA.compareBoundaryPoints(rangeB.START_TO_END, rangeB);
 
   return start < 0 && end > 0;
+}
+
+/**
+ *
+ * @param {Node} node
+ * @param {Range} range
+ * @return {boolean}
+ */
+function intersectsNode (node, range) {
+  if (core.dom.getDoc(node) !== core.dom.getDoc(range.startContainer)) {
+    throw new DOMException('WRONG_DOCUMENT_ERR');
+  }
+
+  const n = node.parentNode, offset = core.dom.getNodeIndex(node);
+
+}
+
+function comparePoint (node, offset) {
+
+}
+
+/**
+ *
+ * @param {number} how
+ * @param {Range} target
+ * @param {Range} source
+ */
+function compareBoundaryPoints (how, target, source) {
+  if (core.utils.toType(how) !== 'number') {
+    return -1;
+  }
+  if (how > 3) {
+    throw new DOMException('NotSupportedError');
+  }
+
+  if (!(target instanceof Range)) {
+    throw new TypeError(`Failed to execute 'compareBoundaryPoints' on 'Range': parameter 2 is not of type 'Range'.`);
+  }
+
+  if (!(source instanceof Range)) {
+    throw new TypeError(`Failed to execute 'compareBoundaryPoints' on 'Range': parameter 3 is not of type 'Range'.`);
+  }
+
+  let t = ['start', 'end', 'end', 'start'], s = ['start', 'start', 'end', 'end'];
+  const sourcePrefix = s[how], targetPrefix = t[how];
+
+  return core.comparePoints(target[targetPrefix + 'Container'], target[targetPrefix + 'Offset'], source[sourcePrefix + 'Container'], source[sourcePrefix + 'Offset']);
+}
+
+/**
+ *
+ * @param {Node} nodeA
+ * @param {number} offsetA
+ * @param {Node} nodeB
+ * @param {number} offsetB
+ */
+function comparePoints (nodeA, offsetA, nodeB, offsetB) {
+  let nodeC, childA, childB, n;
+  if (nodeA === nodeB) {
+    return offsetA === offsetB ? 0 : (offsetA < offsetB) ? -1 : 1;
+  } else if ((nodeC = core.dom.getClosestAncestorIn(nodeB, nodeA))) {
+    return offsetA <= core.dom.getNodeIndex(nodeC) ? -1 : 1;
+  } else if ((nodeC = core.dom.getClosestAncestorIn(nodeA, nodeB))) {
+    return core.dom.getNodeIndex(nodeC) < offsetB ? -1 : 1;
+  } else {
+
+    const root = core.dom.getClosestCommonAncestorIn(nodeA, nodeB);
+
+    if (!root) {
+      throw new Error("comparePoints error: nodes have no common ancestor");
+    }
+
+    childA = (root === nodeA) ? root : core.dom.getClosestAncestorIn(nodeA, root);
+    childB = (root === nodeB) ? root : core.dom.getClosestAncestorIn(nodeB, root);
+
+    n = root.firstChild;
+    while (n) {
+      if (n === childA) {
+        return -1
+      } else if (n === childB) {
+        return 1
+      }
+      n = n.nextSibling;
+    }
+  }
 }
 
 /**
@@ -346,17 +489,49 @@ function selectionToCharacterRanges (sel, containerElement) {
   return ranges.map(range => core.rangeToCharacterRange(range, containerElement));
 }
 
+
+/** range.prototype extend */
+if (!Range.prototype.insertNode) {
+  Range.prototype.insertNode = function (node) {
+    core.insertNodeToRange(node, this);
+  }
+}
+
+if (!Range.prototype.collapse) {
+  Range.prototype.collapse = function (toStart) {
+    core.collapse(this, toStart);
+  }
+}
+
+if (!Range.prototype.compareBoundaryPoints) {
+  Range.prototype.compareBoundaryPoints = function (how, range) {
+    return core.compareBoundaryPoints(how, this, range);
+  }
+}
+
+if (!Range.prototype.comparePoint) {
+  Range.prototype.comparePoint = function (node, offset) {
+    return comparePoint(node, offset);
+  }
+}
+
 core.extend({
   isPlainObject,
   each,
   getNodesInRange,
   splitRangeBoundaries,
   setRangeStartAndEnd,
-  isIntersectionInRange,
+  intersectsRange,
   getIntersectionInRange,
   rangeToCharacterRange,
   rangeMoveToCharacterRange,
   getRangeBoundingClientRect,
+  collapse,
+  comparePoints,
+  comparePoint,
+  collapseToPoint,
+  compareBoundaryPoints,
+  insertNodeToRange,
   getAllRangeInSelection,
   selectionToCharacterRanges
 });
