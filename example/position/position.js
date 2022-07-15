@@ -1,4 +1,4 @@
-import Highlighter, { utils, dom } from '@';
+import core, { utils, dom } from '@';
 import '../init.scss';
 import '../layout.scss';
 
@@ -19,12 +19,11 @@ function createRelativeRect (rect, dx, dy) {
   return DOMRect.fromRect({ x: rect.left + dx, y: rect.top + dy, width: rect.width, height: rect.height });
 }
 
-var wholeSelRectEl, startSelEl, endSelEl;
 document.addEventListener('mouseup', function () {
-  console.log('mouseup');
-  const [range] = Highlighter.getAllRangeInSelection(window.getSelection());
 
-  Highlighter.getRangeBoundingClientRect(range);
+  const [range] = core.getAllRangeInSelection(window.getSelection());
+
+  core.getRangeBoundingClientRect(range);
 
 });
 
