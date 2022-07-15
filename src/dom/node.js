@@ -20,10 +20,25 @@ export function getNodeIndex (node) {
  * 如果ancestor是descendant的祖先节点, 返回true, 否则返回false
  * @param {Node} ancestor
  * @param {Node} descendant
+ * @param {boolean} [selfIsAncestor]
  * @return {boolean}
  */
-export function isAncestorOf (ancestor, descendant) {
-  return !!(ancestor.compareDocumentPosition(descendant) & 16);
+export function isAncestorOf (ancestor, descendant, selfIsAncestor = false) {
+  let n = selfIsAncestor ? descendant : descendant.parentNode;
+
+  while (n) {
+    if (n === ancestor) {
+      return true;
+    } else {
+      n = n.parentNode
+    }
+  }
+
+  return false;
+}
+
+export function isOrIsAncestorOf (ancestor, descendant) {
+  return isAncestorOf(ancestor, descendant, true);
 }
 
 /**

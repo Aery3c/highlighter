@@ -1,4 +1,4 @@
-import { utils, dom } from '@';
+import Highlighter, { utils, dom } from '@';
 import '../init.scss';
 import '../layout.scss';
 
@@ -21,29 +21,10 @@ function createRelativeRect (rect, dx, dy) {
 
 var wholeSelRectEl, startSelEl, endSelEl;
 document.addEventListener('mouseup', function () {
+  console.log('mouseup');
+  const [range] = Highlighter.getAllRangeInSelection(window.getSelection());
 
-  const range = window.getSelection().getRangeAt(0);
-
-  const wholeSelRect = range.getBoundingDocumentRect();
-
-  wholeSelRectEl = document.createElement('div');
-  wholeSelRectEl.id = 'wholeSelection';
-
-  var wholeSelRectInnerEl = wholeSelRectEl.appendChild(document.createElement('div'));
-  wholeSelRectInnerEl.id = 'wholeSelectionInner';
-
-  utils.extend(wholeSelRectEl.style, {
-    left: wholeSelRect.left + 'px',
-    top: wholeSelRect.top + 'px'
-  });
-
-  utils.extend(wholeSelRectInnerEl.style, {
-    width: wholeSelRect.width + 'px',
-    height: wholeSelRect.height + 'px'
-  });
-
-  document.body.appendChild(wholeSelRectEl);
-
-
+  Highlighter.getRangeBoundingClientRect(range);
 
 });
+

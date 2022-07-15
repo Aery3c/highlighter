@@ -109,7 +109,60 @@ function each (obj, callback) {
   return obj;
 }
 
+/** position */
+
+/**
+ *
+ * @param {Range} range
+ * @return {DOMRect}
+ */
+function getRangeBoundingClientRect (range) {
+  // todo test
+  if (typeof range.getBoundingClientRect !== 'function') {
+    return range.getBoundingClientRect();
+  } else {
+    let rect, span = document.createElement('span');
+    if (range.collapsed) {
+      insertNodeToRange(span, range);
+    }
+  }
+}
+
 /** Range pertinence */
+
+/**
+ *
+ * @param {Node} node
+ * @param {Range} range
+ */
+function insertNodeToRange (node, range) {
+  if (core.dom.isOrIsAncestorOf(node, range.startContainer)) {
+    throw new DOMException(`Failed to execute 'insertNode' on 'Range': The new child element contains the parent.`);
+  }
+
+  const firstNode = insertNodeAtPosition(node, range.startContainer, range.startOffset);
+}
+
+/**
+ *
+ * @param {Node} node
+ * @param {Node} n
+ * @param {number} offset
+ * @return {Node}
+ */
+function insertNodeAtPosition (node, n, offset) {
+  console.log('insertNodeAtPosition');
+  const firstNode = node.nodeType === Node.DOCUMENT_FRAGMENT_NODE ? node.firstChild : node;
+  if (core.dom.isCharacterDataNode(n)) {
+    if (n.length === offset) {
+      core.dom.insertAfter(firstNode, n);
+    } else {
+
+    }
+  }
+
+  return firstNode;
+}
 
 /**
  *
@@ -303,6 +356,7 @@ core.extend({
   getIntersectionInRange,
   rangeToCharacterRange,
   rangeMoveToCharacterRange,
+  getRangeBoundingClientRect,
   getAllRangeInSelection,
   selectionToCharacterRanges
 });
