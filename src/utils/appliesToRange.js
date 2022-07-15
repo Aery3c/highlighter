@@ -9,7 +9,7 @@ import core from '@/core';
  * @param {string} className
  * @param {Object} [elAttrs]
  * @param {Object} [elProps]
- * @param {(el: HTMLElement) => void} onElementCreate
+ * @param {(el: HTMLElement) => void} [onElementCreate]
  */
 function appliesToRange (range, tagName, className, elAttrs, elProps, onElementCreate) {
 
