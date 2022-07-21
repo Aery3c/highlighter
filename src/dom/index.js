@@ -1,5 +1,8 @@
 'use strict'
 
+import { extend } from '@/utils';
+const dom = {};
+
 /**
  *
  * @param {Node} node
@@ -40,9 +43,38 @@ export function getNodeLength (node) {
 
 /**
  *
+ * @param {Node} ancestor
+ * @param {Node} node
+ * @param {boolean} selfIsAncestor
+ * @return {Node | null}
+ */
+export function findClosestAncestor (ancestor, node, selfIsAncestor) {
+  let p, n = selfIsAncestor ? node : node.parentNode;
+  while (n) {
+    p = n.parentNode;
+    if (p === ancestor) {
+      return n;
+    }
+    n = p;
+  }
+  return null;
+}
+
+/**
+ *
  * @param {string} selector
  * @return {HTMLElement | null}
  */
 export function gE (selector) {
   return document.querySelector(selector);
 }
+
+extend(dom, {
+  getNodeLength,
+  getNodeIndex,
+  gE,
+  isCharacterDataNode,
+  findClosestAncestor
+});
+
+export default dom;
