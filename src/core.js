@@ -1,6 +1,7 @@
 'use strict'
 
-import { isCharacterDataNode, getNodeIndex, getNodeLength } from '@/dom';
+import { isCharacterDataNode, getNodeIndex, getNodeLength, findClosestAncestor } from '@/dom';
+import { extend } from '@/utils';
 
 const core = {};
 
@@ -21,7 +22,7 @@ function splitRangeBoundaries (range) {
     if (startSameEnd) {
       eo -= so;
       ec = sc;
-    } else if (ec === sc.parentNode && eo < getNodeIndex(ec)) {
+    } else if (ec === sc.parentNode && eo <= getNodeIndex(sc)) {
       eo++;
     }
     so = 0;
@@ -40,7 +41,7 @@ function setRange (range) {
       eo = len;
       break;
     case 4:
-      ec = sc;
+      ec = arguments[3];
       eo = so;
       break;
     case 5:
@@ -53,6 +54,41 @@ function setRange (range) {
   range.setEnd(ec, eo);
 }
 
-core.splitRangeBoundaries = splitRangeBoundaries;
+class RangeIterator {
+  /** @param {Range} range */
+  constructor(range) {
+    this.range = range;
+
+    if (!this.range.collapsed) {
+      this.root = this.range.commonAncestorContainer;
+      this.sc = this.range.startContainer;
+      this.so = this.range.startOffset;
+      this.ec = this.range.endContainer;
+      this.eo = this.range.endOffset;
+
+      this._next = this.sc === this.root && !isCharacterDataNode(this.sc)
+        ? this.sc.childNodes[this.so] : findClosestAncestor(this.root, this.sc, true)
+
+      this._end = this.ec === this.root && !isCharacterDataNode(this.ec)
+        ? this.ec.childNodes[this.eo] : findClosestAncestor(this.root, this.ec, true);
+    }
+
+  }
+
+  _current = null;
+  _end = null;
+  _next = null;
+
+  next () {
+    const current = this._current = this._next;
+    this._next = this._current != null && this._current !== this._end ? this._current.nextSibling : null;
+  }
+}
+
+extend(core, {
+  splitRangeBoundaries,
+  setRange,
+  RangeIterator
+});
 
 export default core;
