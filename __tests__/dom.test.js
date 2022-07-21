@@ -5,7 +5,8 @@
  */
 
 import { HTML_TEST_TEMPLATE } from './constant';
-import { gE, isCharacterDataNode, getNodeIndex, getNodeLength } from '@/dom';
+import { dom } from '@/index';
+const { gE, isCharacterDataNode, getNodeIndex, getNodeLength, findClosestAncestor } = dom;
 
 document.body.innerHTML = HTML_TEST_TEMPLATE;
 
@@ -39,4 +40,15 @@ test('dom test getNodeLength', () => {
 test('dom test gE', () => {
   expect(gE('#container')).toBeInstanceOf(HTMLElement);
   expect(gE('#random')).toBeNull();
+});
+
+test('dom test findClosestAncestor', () => {
+  const node = gE('#b');
+  const ancestor = gE('#container');
+
+  expect(findClosestAncestor(ancestor, node, false)).toEqual(gE('#p'));
+
+  expect(findClosestAncestor(ancestor, node, true)).toEqual(gE('#p'));
+
+  expect(findClosestAncestor(ancestor, ancestor, true)).toBeNull();
 });
