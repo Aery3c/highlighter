@@ -4,7 +4,9 @@
  * @jest-environment jsdom
  */
 
+import { expect, test } from '@jest/globals';
 import { HTML_TEST_TEMPLATE } from './constant';
+import { createSamePointTextNodeRange, createDiffPointTextNodeRange } from './range-getter';
 import { dom } from '@/index';
 const { gE, isCharacterDataNode, getNodeIndex, getNodeLength, findClosestAncestor } = dom;
 
@@ -42,13 +44,21 @@ test('dom test gE', () => {
   expect(gE('#random')).toBeNull();
 });
 
-test('dom test findClosestAncestor', () => {
-  const node = gE('#b');
-  const ancestor = gE('#container');
+test('test findClosestAncestor in same point range', () => {
 
-  expect(findClosestAncestor(ancestor, node, false)).toEqual(gE('#p'));
+  const range = createSamePointTextNodeRange();
 
-  expect(findClosestAncestor(ancestor, node, true)).toEqual(gE('#p'));
+  expect(findClosestAncestor(range.commonAncestorContainer, range.startContainer)).toBeNull();
 
-  expect(findClosestAncestor(ancestor, ancestor, true)).toBeNull();
+  expect(findClosestAncestor(range.commonAncestorContainer, range.endContainer)).toBeNull();
+});
+
+test('test findClosestAncestor in diff point range', () => {
+
+  const range = createDiffPointTextNodeRange();
+
+  expect(findClosestAncestor(range.commonAncestorContainer, range.startContainer)).toBe(range.startContainer.parentNode);
+
+  expect(findClosestAncestor(range.commonAncestorContainer, range.endContainer)).toBe(range.endContainer);
+
 });
