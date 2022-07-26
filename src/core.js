@@ -55,9 +55,14 @@ function setRange (range) {
 }
 
 class RangeIterator {
-  /** @param {Range} range */
-  constructor(range) {
+  /**
+   *
+   * @param {Range} range
+   * @param {boolean} clonePartiallySelectedTextNodes
+   */
+  constructor(range, clonePartiallySelectedTextNodes) {
     this.range = range;
+    this.clonePartiallySelectedTextNodes = clonePartiallySelectedTextNodes;
 
     if (!this.range.collapsed) {
       this.root = this.range.commonAncestorContainer;
@@ -66,11 +71,15 @@ class RangeIterator {
       this.ec = this.range.endContainer;
       this.eo = this.range.endOffset;
 
-      this._next = this.sc === this.root && !isCharacterDataNode(this.sc)
-        ? this.sc.childNodes[this.so] : findClosestAncestor(this.root, this.sc, true)
+      if (this.sc === this.ec && isCharacterDataNode(this.sc)) {
+        this._next = this._end = this.sc;
+      } else {
+        this._next = this.sc === this.root && !isCharacterDataNode(this.sc)
+          ? this.sc.childNodes[this.so] : findClosestAncestor(this.root, this.sc)
 
-      this._end = this.ec === this.root && !isCharacterDataNode(this.ec)
-        ? this.ec.childNodes[this.eo] : findClosestAncestor(this.root, this.ec, true);
+        this._end = this.ec === this.root && !isCharacterDataNode(this.ec)
+          ? this.ec.childNodes[this.eo - 1] : findClosestAncestor(this.root, this.ec);
+      }
     }
 
   }
@@ -80,8 +89,23 @@ class RangeIterator {
   _next = null;
 
   next () {
-    const current = this._current = this._next;
+    let current = this._current = this._next;
     this._next = this._current != null && this._current !== this._end ? this._current.nextSibling : null;
+
+    // Check for partially selected text nodes
+    if (isCharacterDataNode(current) && this.clonePartiallySelectedTextNodes) {
+      // clone partially selected text nodes
+      // return cloneNode
+      if (current === this.ec) {
+        current = current.cloneNode(true).deleteData(this.eo, current.length - this.eo);
+      }
+
+      if (current === this.sc) {
+        current = current.cloneNode(true).deleteData(0, this.so);
+      }
+    }
+
+    return current;
   }
 }
 
