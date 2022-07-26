@@ -4,22 +4,39 @@
  * @jest-environment jsdom
  */
 
-import { HTML_TEST_TEMPLATE } from './constant';
+import { expect, test } from '@jest/globals';
 import core from '@/core';
-import { gE } from '@/dom';
+import { createSamePointTextNodeRange, createCollapsedRange, createStartElementNode } from './range-getter';
 
-document.body.innerHTML = HTML_TEST_TEMPLATE;
+test ('case 2: range is collapsed', () => {
+  const range = createCollapsedRange();
 
-test('case 1: It starts and ends the same and is a text node. tests start and end as expected', () => {
-  const range = document.createRange();
+  const it = new core.RangeIterator(range, true);
 
-  const textNode = gE('#b').firstChild;
+  expect(it.next()).toBeNull();
+});
 
-  core.setRange(range, textNode, 0);
+test('case 2: It starts and ends the same and is a text node. tests start and end as expected', () => {
+  const range = createSamePointTextNodeRange();
 
-  const iterator = new core.RangeIterator(range);
+  const it = new core.RangeIterator(range, false);
 
-  expect(iterator._next).toBeNull();
+  expect(it._next).toBe(range.startContainer);
+  expect(it._end).toBe(range.startContainer);
 
-  expect(iterator._end).toBeNull();
+  expect(it.next()).toBe(range.startContainer);
+
+  expect(it.next()).toBeNull();
+});
+
+test('case 3: ', () => {
+  const range = createStartElementNode();
+
+  const it = new core.RangeIterator(range, false);
+
+  expect(it.next()).toBe(range.startContainer);
+
+  expect(it.next()).toBe(range.endContainer);
+
+  expect(it.next()).toBeNull();
 });
