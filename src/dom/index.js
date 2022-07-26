@@ -5,10 +5,11 @@ const dom = {};
 
 /**
  *
- * @param {Node} node
+ * @param {Node | null} node
  * @return {boolean}
  */
 export function isCharacterDataNode (node) {
+  if (!node) return false;
   const t = node.nodeType;
   return t === Node.TEXT_NODE || t === Node.COMMENT_NODE;
 }
@@ -41,22 +42,23 @@ export function getNodeLength (node) {
   return 0;
 }
 
+
 /**
  *
  * @param {Node} ancestor
  * @param {Node} node
- * @param {boolean} selfIsAncestor
  * @return {Node | null}
  */
-export function findClosestAncestor (ancestor, node, selfIsAncestor) {
-  let p, n = selfIsAncestor ? node : node.parentNode;
-  while (n) {
-    p = n.parentNode;
+export function findClosestAncestor (ancestor, node) {
+  let p;
+  while (node) {
+    p = node.parentNode;
     if (p === ancestor) {
-      return n;
+      return node
     }
-    n = p;
+    node = p;
   }
+
   return null;
 }
 
