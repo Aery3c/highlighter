@@ -29,7 +29,7 @@ test('case 2: It starts and ends the same and is a text node. tests start and en
   expect(it.next()).toBeNull();
 });
 
-test('case 3: ', () => {
+test('case 3: The node is actually an element node', () => {
   const range = createStartElementNode();
 
   const it = new core.RangeIterator(range, false);

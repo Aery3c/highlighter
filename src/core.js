@@ -31,6 +31,10 @@ function splitRangeBoundaries (range) {
   setRange(range, sc, so, ec, eo);
 }
 
+/**
+ *
+ * @param {Range} range
+ */
 function setRange (range) {
   let sc = arguments[1], so = arguments[2], ec, eo;
   const len = getNodeLength(sc);
@@ -52,6 +56,38 @@ function setRange (range) {
 
   range.setStart(sc, so);
   range.setEnd(ec, eo);
+}
+
+/**
+ *
+ * @param {Range} range
+ * @param {Node} node
+ */
+function insertNode (range, node) {
+  let nodes = [];
+  if (node.nodeType === Node.DOCUMENT_FRAGMENT_NODE) {
+    nodes = node.childNodes;
+  } else {
+    nodes = [node];
+  }
+
+  nodes.forEach(node => {
+    insertPoint(node, range.startContainer, range.startOffset);
+  });
+}
+
+/**
+ *
+ * @param {Node} newNode
+ * @param {Node} referenceNode
+ * @param {number} offset
+ */
+function insertPoint (newNode, referenceNode, offset) {
+  if (isCharacterDataNode(referenceNode)) {
+    if (offset === referenceNode.length) {
+
+    }
+  }
 }
 
 class RangeIterator {

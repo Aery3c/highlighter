@@ -62,3 +62,7 @@ test('test findClosestAncestor in diff point range', () => {
   expect(findClosestAncestor(range.commonAncestorContainer, range.endContainer)).toBe(range.endContainer);
 
 });
+
+test('test insertAfter', () => {
+
+});

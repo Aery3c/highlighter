@@ -1,6 +1,7 @@
 'use strict'
 
 import { extend } from '@/utils';
+import { addClass, toggleClass, getClass, removeClass, hasClass, classesToArray } from './classes';
 const dom = {};
 
 /**
@@ -71,12 +72,36 @@ export function gE (selector) {
   return document.querySelector(selector);
 }
 
+/**
+ *
+ * @param {Node} newNode
+ * @param {Node} referenceNode
+ * @return {Node}
+ */
+export function insertAfter (newNode, referenceNode) {
+  let p = referenceNode.parentNode, next = referenceNode.nextSibling;
+  if (!next) {
+    return p.appendChild(newNode);
+  } else {
+    return p.insertBefore(newNode, next);
+  }
+}
+
+export { addClass, toggleClass, getClass, removeClass, hasClass, classesToArray }
+
 extend(dom, {
   getNodeLength,
   getNodeIndex,
   gE,
   isCharacterDataNode,
-  findClosestAncestor
+  findClosestAncestor,
+  insertAfter,
+  addClass,
+  toggleClass,
+  getClass,
+  removeClass,
+  hasClass,
+  classesToArray
 });
 
 export default dom;

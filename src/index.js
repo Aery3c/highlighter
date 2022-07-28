@@ -2,11 +2,13 @@
 
 import core from '@/core';
 import dom from '@/dom';
-// import utils from '@/utils';
+import utils from '@/utils';
+import Applier from '@/applier';
 
 export {
   dom,
-  // utils
+  utils,
+  Applier
 }
 
 export default core;

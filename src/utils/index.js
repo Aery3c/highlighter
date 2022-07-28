@@ -1,5 +1,7 @@
 'use strict'
 
+const utils = {};
+
 export function extend () {
   let options, name, src, copy, copyIsArray, clone,
     target = arguments[0] || {},
@@ -75,3 +77,19 @@ export function isPlainObject (obj) {
   Ctor = {}.hasOwnProperty.call(proto, 'constructor') && proto.constructor;
   return typeof Ctor === 'function' && {}.hasOwnProperty.toString.call(Ctor) === {}.hasOwnProperty.toString.call(Object);
 }
+
+export const rnothtmlwhite = /[^\x20\t\r\n\f]+/g;
+
+export function stripAndCollapse( value ) {
+  const tokens = value.match(rnothtmlwhite) || [];
+  return tokens.join(' ');
+}
+
+extend(utils, {
+  extend,
+  isPlainObject,
+  stripAndCollapse,
+  rnothtmlwhite
+});
+
+export default utils;
