@@ -1,17 +1,13 @@
-import Highlighter from '@';
-import { gE, getNodeIndex } from '@/dom';
+'use strict';
 
-const start = gE('#b').firstChild;
-const end = gE('#b');
+import highlighter from '@';
+import {createContainerRange, createDiffPointTextNodeRange, createSamePointTextNodeRange} from '@test/range-getter';
+import { createTextNode, createElNode } from '@test/node-getter';
 
-const range = document.createRange();
+const range = createContainerRange();
+// range.setStart(range.startContainer, 3);
+// range.setEnd(range.endContainer, 6);
 
-range.setStart(start, 4);
-range.setEnd(end, 1);
-
-console.log(range.endOffset);
-console.log(getNodeIndex(range.startContainer));
-
-Highlighter.splitRangeBoundaries(range);
+range.surroundContents(createElNode());
 
 window.getSelection().addRange(range);

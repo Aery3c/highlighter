@@ -61,3 +61,12 @@ export function createStartElementNode () {
 
   return range;
 }
+
+export function createContainerRange () {
+  document.body.innerHTML = HTML_TEST_TEMPLATE;
+
+  const range = document.createRange();
+  range.selectNodeContents(gE('#p'));
+
+  return range;
+}

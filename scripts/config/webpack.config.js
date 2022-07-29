@@ -117,7 +117,8 @@ module.exports = function (webpackEnv) {
     ],
     resolve: {
       alias: {
-        '@': paths.appSrc
+        '@': paths.appSrc,
+        '@test': paths.testPath
       }
     }
   }

@@ -1,6 +1,6 @@
 'use strict'
 
-import { isCharacterDataNode, getNodeIndex, getNodeLength, findClosestAncestor } from '@/dom';
+import { isCharacterDataNode, getNodeIndex, getNodeLength, findClosestAncestor, insertPoint } from '@/dom';
 import { extend } from '@/utils';
 
 const core = {};
@@ -71,22 +71,13 @@ function insertNode (range, node) {
     nodes = [node];
   }
 
-  nodes.forEach(node => {
-    insertPoint(node, range.startContainer, range.startOffset);
-  });
-}
+  let firstNode;
+  for (let i = nodes.length, n; (n = nodes[--i]);) {
+    firstNode = insertPoint(n, range.startContainer, range.startOffset);
+  }
 
-/**
- *
- * @param {Node} newNode
- * @param {Node} referenceNode
- * @param {number} offset
- */
-function insertPoint (newNode, referenceNode, offset) {
-  if (isCharacterDataNode(referenceNode)) {
-    if (offset === referenceNode.length) {
-
-    }
+  if (firstNode) {
+    range.setStartBefore(firstNode);
   }
 }
 
@@ -148,7 +139,8 @@ class RangeIterator {
 extend(core, {
   splitRangeBoundaries,
   setRange,
-  RangeIterator
+  RangeIterator,
+  insertNode
 });
 
 export default core;

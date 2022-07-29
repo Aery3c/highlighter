@@ -6,9 +6,23 @@
 
 import { expect, test } from '@jest/globals';
 import { HTML_TEST_TEMPLATE } from './constant';
-import { createSamePointTextNodeRange, createDiffPointTextNodeRange } from './range-getter';
+import {
+  createSamePointTextNodeRange,
+  createDiffPointTextNodeRange,
+  createStartElementNode,
+  createContainerRange
+} from './range-getter';
 import { dom } from '@/index';
-const { gE, isCharacterDataNode, getNodeIndex, getNodeLength, findClosestAncestor } = dom;
+const {
+  gE,
+  isCharacterDataNode,
+  getNodeIndex,
+  getNodeLength,
+  findClosestAncestor,
+  insertAfter,
+  insertPoint,
+  isPartiallySelected
+} = dom;
 
 document.body.innerHTML = HTML_TEST_TEMPLATE;
 
@@ -64,5 +78,52 @@ test('test findClosestAncestor in diff point range', () => {
 });
 
 test('test insertAfter', () => {
+  const range = createSamePointTextNodeRange();
+  const node = range.startContainer;
 
+  const textNode = node.splitText(3);
+  const span = document.createElement('span');
+  insertAfter(span, textNode);
+
+  expect(textNode.nextSibling).toBe(span);
+});
+
+test('test insertPoint case 1: test are inserted from the middle of the text', () => {
+  const range = createSamePointTextNodeRange();
+  const textNode = range.startContainer;
+  const span = document.createElement('span');
+
+  insertPoint(span, textNode, 3);
+  expect(textNode.nextSibling).toBe(span);
+  expect(textNode.length).toBe(3); // text is split
+});
+
+test('test insertPoint case 2: test are inserted from the end of the text', () => {
+  const range = createSamePointTextNodeRange();
+  const textNode = range.startContainer;
+  const span = document.createElement('span');
+
+  insertPoint(span, textNode, textNode.length);
+
+  expect(textNode.length).toBe(textNode.length); // text is not split
+
+  expect(span.previousSibling).toBe(textNode);
+});
+
+test('test insertPoint case 3: test inserts from the middle of the element node', () => {
+  const range = createContainerRange();
+  const node = range.startContainer;
+
+  const span = document.createTextNode('test');
+  insertPoint(span, node, 1)
+
+  expect(node.childNodes[1]).toBe(span);
+});
+
+test('test isPartiallySelected', () => {
+  const range = createDiffPointTextNodeRange();
+
+  expect(isPartiallySelected(range.startContainer)).toBe(true);
+
+  expect(isPartiallySelected(range.endContainer)).toBe(true);
 });

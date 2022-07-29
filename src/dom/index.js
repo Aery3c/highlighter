@@ -87,6 +87,67 @@ export function insertAfter (newNode, referenceNode) {
   }
 }
 
+/**
+ *
+ * @param {Node} newNode
+ * @param {Node | Text} referenceNode
+ * @param {number} offset
+ * @return {Node}
+ */
+export function insertPoint (newNode, referenceNode, offset) {
+  if (isCharacterDataNode(referenceNode)) {
+    if (offset === referenceNode.length) {
+      insertAfter(newNode, referenceNode);
+    } else {
+      referenceNode.parentNode.insertBefore(newNode, offset === 0 ? referenceNode : referenceNode.splitText(offset));
+    }
+  } else if (offset >= referenceNode.childNodes.length) {
+    referenceNode.appendChild(newNode);
+  } else {
+    referenceNode.insertBefore(newNode, referenceNode.childNodes[offset]);
+  }
+
+  return newNode;
+}
+
+/**
+ *
+ * @param {Node} ancestor
+ * @param {Node} descendant
+ * @param {boolean} selfIsAncestor
+ */
+export function isAncestorOf (ancestor, descendant, selfIsAncestor) {
+  let n = selfIsAncestor ? descendant : descendant.parentNode;
+  while (n) {
+    if (n === ancestor) {
+      return true;
+    } else {
+      n = n.parentNode;
+    }
+  }
+  return false;
+}
+
+/**
+ *
+ * @param {Node} ancestor
+ * @param {Node} descendant
+ * @return {boolean}
+ */
+export function isOrIsAncestorOf(ancestor, descendant) {
+  return isAncestorOf(ancestor, descendant, true);
+}
+
+/**
+ *
+ * @param {Node} node
+ * @param {Node} boundaryPoint
+ * @return {boolean}
+ */
+export function isPartiallySelected (node, boundaryPoint) {
+  return isOrIsAncestorOf(node, boundaryPoint);
+}
+
 export { addClass, toggleClass, getClass, removeClass, hasClass, classesToArray }
 
 extend(dom, {
@@ -101,7 +162,11 @@ extend(dom, {
   getClass,
   removeClass,
   hasClass,
-  classesToArray
+  classesToArray,
+  insertPoint,
+  isAncestorOf,
+  isOrIsAncestorOf,
+  isPartiallySelected
 });
 
 export default dom;
