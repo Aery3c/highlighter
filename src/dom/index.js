@@ -148,6 +148,18 @@ export function isPartiallySelected (node, boundaryPoint) {
   return isOrIsAncestorOf(node, boundaryPoint);
 }
 
+/**
+ *
+ * @param {RangeIterator} it
+ * @param {() => void} cb
+ */
+export function iterateSubtree (it, cb) {
+  let node;
+  while((node = it.next())) {
+    // todo
+  }
+}
+
 export { addClass, toggleClass, getClass, removeClass, hasClass, classesToArray }
 
 extend(dom, {
@@ -166,7 +178,8 @@ extend(dom, {
   insertPoint,
   isAncestorOf,
   isOrIsAncestorOf,
-  isPartiallySelected
+  isPartiallySelected,
+  iterateSubtree
 });
 
 export default dom;

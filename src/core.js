@@ -1,6 +1,6 @@
 'use strict'
 
-import { isCharacterDataNode, getNodeIndex, getNodeLength, findClosestAncestor, insertPoint } from '@/dom';
+import { isCharacterDataNode, getNodeIndex, getNodeLength, findClosestAncestor, insertPoint, iterateSubtree, isPartiallySelected } from '@/dom';
 import { extend } from '@/utils';
 
 const core = {};
@@ -134,13 +134,29 @@ class RangeIterator {
 
     return current;
   }
+
+  isPartiallySelectedSubtree () {
+    return isPartiallySelected(this._current, this.sc) || isPartiallySelected(this._current, this.ec);
+  }
+}
+
+/**
+ *
+ * @param {Range} range
+ */
+function getNodesFromRange (range) {
+
+  iterateSubtree(new RangeIterator(range, false), (node) => {
+
+  });
 }
 
 extend(core, {
   splitRangeBoundaries,
   setRange,
   RangeIterator,
-  insertNode
+  insertNode,
+  getNodesFromRange
 });
 
 export default core;
