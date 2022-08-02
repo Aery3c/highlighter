@@ -151,12 +151,16 @@ export function isPartiallySelected (node, boundaryPoint) {
 /**
  *
  * @param {RangeIterator} it
- * @param {() => void} cb
+ * @param {(node: Node) => void} cb
  */
 export function iterateSubtree (it, cb) {
   let node;
   while((node = it.next())) {
-    // todo
+    if (it.isPartiallySelectedSubtree()) {
+
+    } else {
+
+    }
   }
 }
 

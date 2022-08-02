@@ -1,7 +1,7 @@
 'use strict'
 
 import core from '@/core';
-import { addClass, isOrIsAncestorOf } from '@/dom';
+import { addClass } from '@/dom';
 
 /**
  * Applier Object
@@ -18,7 +18,7 @@ export default class Applier {
    */
   highlightToRange (range) {
 
-    // core.splitRangeBoundaries(range);
+    core.splitRangeBoundaries(range);
   }
 
   createWrapElement () {

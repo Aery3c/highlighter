@@ -1,6 +1,6 @@
 'use strict'
 
-import { isCharacterDataNode, getNodeIndex, getNodeLength, findClosestAncestor, insertPoint, iterateSubtree, isPartiallySelected } from '@/dom';
+import { isCharacterDataNode, getNodeIndex, getNodeLength, findClosestAncestor, insertPoint, iterateSubtree, isOrIsAncestorOf } from '@/dom';
 import { extend } from '@/utils';
 
 const core = {};
@@ -124,11 +124,11 @@ class RangeIterator {
       // clone partially selected text nodes
       // return cloneNode
       if (current === this.ec) {
-        current = current.cloneNode(true).deleteData(this.eo, current.length - this.eo);
+        (current = current.cloneNode(true)).deleteData(this.eo, current.length - this.eo);
       }
 
       if (current === this.sc) {
-        current = current.cloneNode(true).deleteData(0, this.so);
+        (current = current.cloneNode(true)).deleteData(0, this.so);
       }
     }
 
@@ -136,19 +136,74 @@ class RangeIterator {
   }
 
   isPartiallySelectedSubtree () {
-    return isPartiallySelected(this._current, this.sc) || isPartiallySelected(this._current, this.ec);
+    return !isCharacterDataNode(this._current) &&
+      (isOrIsAncestorOf(this._current, this.sc) || isOrIsAncestorOf(this._current, this.ec));
+  }
+
+  getSubtreeIterator () {
+    // todo
   }
 }
+
 
 /**
  *
  * @param {Range} range
+ * @param {number[]} [nodeTypes]
+ * @param {(node: Node) => boolean} [filter]
  */
-function getNodesFromRange (range) {
+function getNodes (range, nodeTypes, filter) {
+
 
   iterateSubtree(new RangeIterator(range, false), (node) => {
 
   });
+}
+
+function isRangeSelectsInvalidTextNode (range, textNode) {
+  const textNodeRange = document.createRange();
+  textNodeRange.selectNodeContents(textNode);
+  const intersectionRange = getIntersectionRange(textNodeRange, range)
+  const text = intersectionRange ? intersectionRange.toString() : '';
+  return text !== '';
+}
+
+/**
+ * Returns a boolean indicating whether the given Range intersects the Range.
+ * @param {Range} rangeA
+ * @param {Range} rangeB
+ * @return {boolean}
+ */
+function intersectsRange (rangeA, rangeB) {
+  // rangeA.s < rangeB.e;
+  const start = rangeA.compareBoundaryPoints(rangeB.END_TO_START, rangeB);
+  // rangeA.e > rangeB.s;
+  const end = rangeA.compareBoundaryPoints(rangeB.START_TO_END, rangeB);
+
+  return start < 0 && end > 0;
+}
+
+/**
+ * Returns the part of a specified range that intersects another range
+ * @param {Range} rangeA
+ * @param {Range} rangeB
+ * @return {Range | null}
+ */
+function getIntersectionRange (rangeA, rangeB) {
+  if (intersectsRange(rangeA, rangeB)) {
+    const range = rangeA.cloneRange();
+    if (range.compareBoundaryPoints(rangeB.START_TO_START, rangeB) === -1) {
+      range.setStart(rangeB.startContainer, rangeB.startOffset);
+    }
+
+    if (range.compareBoundaryPoints(rangeB.END_TO_END, rangeB) === 1) {
+      range.setEnd(rangeB.endContainer, rangeB.endOffset);
+    }
+
+    return range;
+  }
+
+  return null;
 }
 
 extend(core, {
@@ -156,7 +211,9 @@ extend(core, {
   setRange,
   RangeIterator,
   insertNode,
-  getNodesFromRange
+  getNodes,
+  intersectsRange,
+  getIntersectionRange
 });
 
 export default core;

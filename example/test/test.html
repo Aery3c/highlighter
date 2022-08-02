@@ -2,16 +2,124 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>test</title>
+  <title><%= htmlWebpackPlugin.options.title %></title>
 </head>
 <body>
-  <div id="container">
-    <p id="p">
-      <b id="b">Use the buttons below</b>
-      to select or deselect the contents of this paragraph.
+<main id="container">
+  <article id="content">
+    <h1>Node.textContent</h1>
+    <div class="section-content">
+      <p>
+        The <strong><code>textContent</code></strong> property of the <a href="/en-US/docs/Web/API/Node"><code>Node</code></a>
+        interface represents the text content of the node and its descendants.
+      </p>
+      <div class="notecard note" id="sect1">
+        <p>
+          <strong>Note:</strong> <code>textContent</code> and <a href="/en-US/docs/Web/API/HTMLElement/innerText"><code>HTMLElement.innerText</code></a> are easily confused,
+          but the two properties are <a href="#differences_from_innertext">different in important ways</a>.
+        </p>
+      </div>
+    </div>
+
+    <section aria-labelledby="value">
+      <h2 id="value">
+        <a href="#value" title="Permalink to Value">Value</a>
+      </h2>
+      <div class="section-content">
+        <p>A string, or
+          <a href="/en-US/docs/Web/JavaScript/Reference/Operators/null"><code>null</code></a>
+          . Its value depends on the situation:
+        </p>
+        <ul>
+          <li>
+            If the node is a <a href="/en-US/docs/Web/API/Document"><code>document</code></a> or a <a href="/en-US/docs/Glossary/Doctype">doctype</a>,
+            <code>textContent</code> returns <a href="/en-US/docs/Web/JavaScript/Reference/Operators/null"><code>null</code></a>.
+            <div class="notecard note" id="sect2">
+              <p>
+                <strong>Note:</strong> To get <em>all</em> of the text and <a href="/en-US/docs/Web/API/CDATASection">CDATA data</a> for the whole
+                document, use <code>document.documentElement.textContent</code>.
+              </p>
+            </div>
+          </li>
+          <li>
+            If the node is a <a href="/en-US/docs/Web/API/CDATASection">CDATA section</a>,
+            a comment, a <a href="/en-US/docs/Web/API/ProcessingInstruction">processing instruction</a>,
+            or a <a href="/en-US/docs/Web/API/Text">text node</a>,
+            <code>textContent</code> returns, or sets, the text inside the node,
+            i.e., the <a href="/en-US/docs/Web/API/Node/nodeValue"><code>Node.nodeValue</code></a>.
+          </li>
+          <li>
+            For other node types, <code>textContent</code> returns the concatenation of the
+            <code>textContent</code> of every child node, excluding comments and processing
+            instructions. (This is an empty string if the node has no children.)
+          </li>
+        </ul>
+        <div class="notecard warning" id="sect3">
+          <p>
+            <strong>Warning:</strong> Setting <code>textContent</code> on a node removes <em>all</em> of the node's children
+            and replaces them with a single text node with the given string value.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section aria-labelledby="differences_from_innertext"><h3 id="differences_from_innertext"><a href="#differences_from_innertext" title="Permalink to Differences from innerText">Differences from innerText</a></h3><div class="section-content"><p>
+      Don't get confused by the differences between <code>Node.textContent</code> and
+      <a href="/en-US/docs/Web/API/HTMLElement/innerText"><code>HTMLElement.innerText</code></a>. Although the names seem similar, there are
+      important differences:
     </p>
-    <button id="select-button">Select paragraph</button>
-    <button id="deselect-button">Deselect paragraph</button>
-  </div>
+      <ul>
+        <li>
+          <code>textContent</code> gets the content of <em>all</em> elements, including
+          <a href="/en-US/docs/Web/HTML/Element/script"><code>&lt;script&gt;</code></a> and <a href="/en-US/docs/Web/HTML/Element/style"><code>&lt;style&gt;</code></a> elements. In contrast,
+          <code>innerText</code> only shows "human-readable" elements.
+        </li>
+        <li>
+          <code>textContent</code> returns every element in the node. In contrast,
+          <code>innerText</code> is aware of styling and won't return the text of "hidden"
+          elements.
+          <ul>
+            <li>
+              Moreover, since <code>innerText</code> takes CSS styles into account,
+              reading the value of <code>innerText</code> triggers a
+              <a href="/en-US/docs/Glossary/Reflow">reflow</a> to ensure up-to-date computed styles. (Reflows can
+              be computationally expensive, and thus should be avoided when possible.)
+            </li>
+          </ul>
+        </li>
+        <li>
+          Both <code>textContent</code> and <code>innerText</code> remove child nodes when altered,
+          but altering <code>innerText</code> in Internet Explorer (version 11 and below) also
+          <em>permanently destroys</em> all descendant text nodes. It is impossible to
+          insert the nodes again into any other element or into the same element after doing
+          so.
+        </li>
+      </ul></div>
+    </section>
+    <section aria-labelledby="differences_from_innerhtml"><h3 id="differences_from_innerhtml"><a href="#differences_from_innerhtml" title="Permalink to Differences from innerHTML">Differences from innerHTML</a></h3><div class="section-content"><p>
+      <a href="/en-US/docs/Web/API/Element/innerHTML"><code>Element.innerHTML</code></a> returns HTML, as its name indicates. Sometimes people
+      use <code>innerHTML</code> to retrieve or write text inside an element, but
+      <code>textContent</code> has better performance because its value is not parsed as
+      HTML.
+    </p>
+      <div contenteditable="true">
+        <p>Moreover, using <code>textContent</code> can prevent <a href="/en-US/docs/Glossary/Cross-site_scripting">XSS attacks</a>.</p>
+      </div>
+    </div></section>
+
+    <section aria-labelledby="examples"><h2 id="examples"><a href="#examples" title="Permalink to Examples">Examples</a></h2><div class="section-content"><p>Given this HTML fragment:</p>
+      <div class="code-example"><pre class="brush: html notranslate"><code><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>div</span> <span class="token attr-name">id</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>divA<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>This is <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>span</span><span class="token punctuation">&gt;</span></span>some<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>span</span><span class="token punctuation">&gt;</span></span> text!<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>div</span><span class="token punctuation">&gt;</span></span>
+</code></pre><span class="copy-icon-message visually-hidden" role="alert" style="top: 52px;"></span></div>
+      <p>... you can use <code>textContent</code> to get the element's text content:</p>
+      <div class="code-example"><pre class="brush: js notranslate"><code><span class="token keyword">let</span> text <span class="token operator">=</span> document<span class="token punctuation">.</span><span class="token function">getElementById</span><span class="token punctuation">(</span><span class="token string">'divA'</span><span class="token punctuation">)</span><span class="token punctuation">.</span>textContent<span class="token punctuation">;</span>
+<span class="token comment">// The text variable is now: 'This is some text!'</span>
+</code></pre><span class="copy-icon-message visually-hidden" role="alert" style="top: 52px;"></span></div>
+      <p>... or set the element's text content:</p>
+      <div class="code-example"><pre class="brush: js notranslate"><code>document<span class="token punctuation">.</span><span class="token function">getElementById</span><span class="token punctuation">(</span><span class="token string">'divA'</span><span class="token punctuation">)</span><span class="token punctuation">.</span>textContent <span class="token operator">=</span> <span class="token string">'This text is different!'</span><span class="token punctuation">;</span>
+<span class="token comment">// The HTML for divA is now:</span>
+<span class="token comment">// &lt;div id="divA"&gt;This text is different!&lt;/div&gt;</span>
+</code></pre><span class="copy-icon-message visually-hidden" role="alert" style="top: 52px;"></span></div></div></section>
+  </article>
+</main>
 </body>
 </html>
