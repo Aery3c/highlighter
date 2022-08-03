@@ -67,7 +67,7 @@ export function getClass (el) {
 
 /**
  *
- * @param {HTMLElement} el
+ * @param {HTMLElement | Node} el
  * @param {string} value
  * @return {boolean}
  */

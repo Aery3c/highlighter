@@ -1,6 +1,6 @@
 'use strict'
 
-import { extend } from '@/utils';
+import { extend, stripAndCollapse } from '@/utils';
 import { addClass, toggleClass, getClass, removeClass, hasClass, classesToArray } from './classes';
 const dom = {};
 
@@ -60,6 +60,22 @@ export function findClosestAncestor (ancestor, node) {
     node = p;
   }
 
+  return null;
+}
+
+/**
+ *
+ * @param {Node} node
+ * @param {string} className
+ * @return {Node | null}
+ */
+export function findSelfOrAncestorWithClass (node, className) {
+  while (node) {
+    if (hasClass(node, className)) {
+      return node;
+    }
+    node = node.parentNode;
+  }
   return null;
 }
 
@@ -140,16 +156,6 @@ export function isOrIsAncestorOf(ancestor, descendant) {
 
 /**
  *
- * @param {Node} node
- * @param {Node} boundaryPoint
- * @return {boolean}
- */
-export function isPartiallySelected (node, boundaryPoint) {
-  return isOrIsAncestorOf(node, boundaryPoint);
-}
-
-/**
- *
  * @param {RangeIterator} it
  * @param {(node: Node) => void} cb
  */
@@ -157,12 +163,60 @@ export function iterateSubtree (it, cb) {
   let node;
   while((node = it.next())) {
     if (it.isPartiallySelectedSubtree()) {
-
+      const subIt = it.getSubtreeIterator();
+      iterateSubtree(subIt, cb);
     } else {
-
+      const nit = new NodeIterator(node);
+      while((node = nit.next())) {
+        cb(node);
+      }
     }
   }
 }
+
+/**
+ *
+ * @param {Node} textNode
+ * @return {boolean}
+ */
+export function isWhiteSpaceTextNode (textNode) {
+  return textNode && textNode.nodeType === Text.TEXT_NODE && stripAndCollapse(textNode.data) === '';
+}
+
+function NodeIterator(root) {
+  this.root = root;
+  this._next = root;
+}
+
+NodeIterator.prototype = {
+  _current: null,
+
+  hasNext: function() {
+    return !!this._next;
+  },
+
+  next: function() {
+    let n = this._current = this._next;
+    let child, next;
+    if (this._current) {
+      child = n.firstChild;
+      if (child) {
+        this._next = child;
+      } else {
+        next = null;
+        while ((n !== this.root) && !(next = n.nextSibling)) {
+          n = n.parentNode;
+        }
+        this._next = next;
+      }
+    }
+    return this._current;
+  },
+
+  detach: function() {
+    this._current = this._next = this.root = null;
+  }
+};
 
 export { addClass, toggleClass, getClass, removeClass, hasClass, classesToArray }
 
@@ -182,8 +236,8 @@ extend(dom, {
   insertPoint,
   isAncestorOf,
   isOrIsAncestorOf,
-  isPartiallySelected,
-  iterateSubtree
+  iterateSubtree,
+  findSelfOrAncestorWithClass
 });
 
 export default dom;

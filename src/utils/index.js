@@ -1,5 +1,7 @@
 'use strict'
 
+import toType from './toType';
+
 const utils = {};
 
 export function extend () {
@@ -85,11 +87,16 @@ export function stripAndCollapse( value ) {
   return tokens.join(' ');
 }
 
+export {
+  toType
+}
+
 extend(utils, {
   extend,
   isPlainObject,
   stripAndCollapse,
-  rnothtmlwhite
+  rnothtmlwhite,
+  toType
 });
 
 export default utils;

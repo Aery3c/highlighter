@@ -141,7 +141,21 @@ class RangeIterator {
   }
 
   getSubtreeIterator () {
-    // todo
+    const range = document.createRange(), current = this._current;
+    let startContainer = current, startOffset = 0, endContainer = current, endOffset = getNodeLength(current);
+
+    if (isOrIsAncestorOf(current, this.sc)) {
+      startContainer = this.sc;
+      startOffset = this.so;
+    }
+    if (isOrIsAncestorOf(current, this.ec)) {
+      endContainer = this.ec;
+      endOffset = this.eo;
+    }
+
+    setRange(range, startContainer, startOffset, endContainer, endOffset);
+
+    return new RangeIterator(range, this.clonePartiallySelectedTextNodes);
   }
 }
 
@@ -151,19 +165,62 @@ class RangeIterator {
  * @param {Range} range
  * @param {number[]} [nodeTypes]
  * @param {(node: Node) => boolean} [filter]
+ * @return {Node[]}
  */
 function getNodes (range, nodeTypes, filter) {
-
+  let nodes = [], regx;
+  if (nodeTypes && nodeTypes.length) {
+    regx = new RegExp(`(${nodeTypes.join('|')})$`);
+  }
 
   iterateSubtree(new RangeIterator(range, false), (node) => {
+    if (regx && !regx.test(node.nodeType)) {
+      return;
+    }
 
+    if (typeof filter == 'function' && !filter(node)) {
+      return;
+    }
+
+    nodes.push(node);
   });
+
+  return nodes;
 }
 
-function isRangeSelectsInvalidTextNode (range, textNode) {
+/**
+ * range (prev/next) point (last/first)
+ * @param {Range} range
+ * @return {Node[]}
+ */
+function getEffectiveTextNodes (range) {
+
+  const textNodes = getNodes(range, [Node.TEXT_NODE]);
+  let start = 0, end = textNodes.length, node;
+
+  // remove invalid text nodes from left to right
+  while ((node = textNodes[start]) && !rangeSelectsAnyText(range, node)) {
+    ++start;
+  }
+
+  // remove invalid text nodes from right to left
+  while ((node = textNodes[end - 1]) && !rangeSelectsAnyText(range, node)) {
+    --end;
+  }
+
+  return textNodes.slice(start, end);
+}
+
+/**
+ * 如果textNode被包含在range内，返回true，否则返回false
+ * @param {Range} range
+ * @param {Text} textNode
+ * @return {boolean}
+ */
+function rangeSelectsAnyText(range, textNode) {
   const textNodeRange = document.createRange();
   textNodeRange.selectNodeContents(textNode);
-  const intersectionRange = getIntersectionRange(textNodeRange, range)
+  const intersectionRange = getIntersectionRange(textNodeRange, range);
   const text = intersectionRange ? intersectionRange.toString() : '';
   return text !== '';
 }
@@ -206,6 +263,13 @@ function getIntersectionRange (rangeA, rangeB) {
   return null;
 }
 
+Range.prototype.inspect = function () {
+  // todo
+  const sel = window.getSelection();
+  sel.removeAllRanges();
+  sel.addRange(this);
+}
+
 extend(core, {
   splitRangeBoundaries,
   setRange,
@@ -213,7 +277,8 @@ extend(core, {
   insertNode,
   getNodes,
   intersectsRange,
-  getIntersectionRange
+  getIntersectionRange,
+  getEffectiveTextNodes
 });
 
 export default core;
