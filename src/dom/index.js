@@ -6,6 +6,15 @@ const dom = {};
 
 /**
  *
+ * @param {Node} node
+ * @return {*}
+ */
+export function removeNode (node) {
+  return node.parentNode.removeChild(node);
+}
+
+/**
+ *
  * @param {Node | null} node
  * @return {boolean}
  */
@@ -221,6 +230,7 @@ NodeIterator.prototype = {
 export { addClass, toggleClass, getClass, removeClass, hasClass, classesToArray }
 
 extend(dom, {
+  removeNode,
   getNodeLength,
   getNodeIndex,
   gE,

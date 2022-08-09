@@ -87,6 +87,16 @@ export function stripAndCollapse( value ) {
   return tokens.join(' ');
 }
 
+export function each (obj, callback) {
+  for (let i in obj) {
+    if (callback.call(obj[i], i, obj[i]) === false) {
+      break;
+    }
+  }
+
+  return obj;
+}
+
 export {
   toType
 }
@@ -96,7 +106,8 @@ extend(utils, {
   isPlainObject,
   stripAndCollapse,
   rnothtmlwhite,
-  toType
+  toType,
+  each
 });
 
 export default utils;
