@@ -5,11 +5,10 @@ import {
   addClass,
   findSelfOrAncestorWithClass,
   isWhiteSpaceTextNode,
-  hasClass,
-  getClass,
   removeNode,
   isCharacterDataNode,
-  getNodeIndex
+  getNodeIndex,
+  removeClass
 } from '@/dom';
 import { each } from '@/utils';
 
@@ -65,12 +64,32 @@ export default class Applier {
       // split boundaries ancestor with class
       splitBoundariesAncestorWithClass(range, this.options.className);
       textNodes.forEach(textNode => {
-        let ancestor = findSelfOrAncestorWithClass(textNode, this.options.className);
-        if (ancestor) {
-          removeClassToAncestor(ancestor, this.options.className);
+        let ancestorWithClass = findSelfOrAncestorWithClass(textNode, this.options.className);
+        if (ancestorWithClass) {
+          this.unhighlightToAncestor(ancestorWithClass);
         }
       });
 
+      const lastTextNode = textNodes[textNodes.length - 1];
+      core.setRange(range, textNodes[0], 0, lastTextNode, lastTextNode.length);
+
+      this.normalize(textNodes, range, true);
+    }
+  }
+
+  unhighlightToAncestor (ancestorWithClass) {
+    if (this.isEqualNode(ancestorWithClass)) {
+      let child, index = getNodeIndex(ancestorWithClass);
+      const parentNode = ancestorWithClass.parentNode;
+
+      while ((child = ancestorWithClass.firstChild)) {
+        // move children to sibling
+        moveNode(child, parentNode, index++);
+      }
+
+      removeNode(ancestorWithClass);
+    } else {
+      removeClass(ancestorWithClass, this.options.className);
     }
   }
 
@@ -81,22 +100,16 @@ export default class Applier {
   highlightToTextNode (textNode) {
     const parentNode = textNode.parentNode;
     if (textNode.nodeType === Node.TEXT_NODE) {
-      if (
-        !hasClass(parentNode, this.options.className) &&
-        parentNode.childNodes.length === 1 &&
-        parentNode.tagName.toLowerCase() === this.options.tagName &&
-        includesAttrs(parentNode, this.options.elAttrs) &&
-        includesProps(parentNode, this.options.elProps)
-      ) {
-        addClass(parentNode, this.options.className);
-      } else {
-        const el = this.createElement();
-        parentNode.insertBefore(el, textNode);
-        el.appendChild(textNode);
-      }
+      const el = this.createElement();
+      parentNode.insertBefore(el, textNode);
+      el.appendChild(textNode);
     }
   }
 
+  /**
+   *
+   * @return {HTMLElement | Node}
+   */
   createElement () {
     const el = document.createElement(this.options.tagName);
     addClass(el, this.options.className);
@@ -113,16 +126,9 @@ export default class Applier {
     let rangeStartNode = firstNode, rangeEndNode = lastNode;
     let rangeStartOffset = 0, rangeEndOffset = lastNode.length;
 
-    const filter = (node) => {
-      return (getClass(node) === this.options.className &&
-        node.tagName.toLowerCase() === this.options.tagName &&
-        includesAttrs(node, this.options.elAttrs) &&
-        includesProps(node, this.options.elProps))
-    }
-
     textNodes.forEach(textNode => {
       // go through each textNode and find the mergable node in front of them,
-      const precedingNode = getPrecedingMrTextNode(textNode, !isUndo, filter);
+      const precedingNode = getPrecedingMrTextNode(textNode, !isUndo, this.isEqualNode.bind(this));
 
       if (precedingNode) {
         // create a Merge object headed by precedingNode
@@ -148,7 +154,7 @@ export default class Applier {
       }
     });
 
-    const nextNode = getNextMrTextNode(lastNode, !isUndo, filter);
+    const nextNode = getNextMrTextNode(lastNode, !isUndo, this.isEqualNode.bind(this));
 
     if (nextNode) {
       if (currentMerge == null) {
@@ -164,6 +170,10 @@ export default class Applier {
       core.setRange(range, rangeStartNode, rangeStartOffset, rangeEndNode, rangeEndOffset);
     }
 
+  }
+
+  isEqualNode (node) {
+    return this.createElement().cloneNode(false).isEqualNode(node.cloneNode(false));
   }
 }
 
@@ -253,41 +263,6 @@ function mapProps (el, props) {
   });
 }
 
-/**
- *
- * @param {HTMLElement | Node} el
- * @param {Object} attrs
- * @return {true}
- */
-function includesAttrs (el, attrs) {
-  for (let attrName in attrs) {
-    if (Object.hasOwn(attrs, attrName)) {
-      if (el.getAttribute(attrName) !== attrs[attrName]) {
-        return false;
-      }
-    }
-  }
-
-  return true;
-}
-
-/**
- *
- * @param {HTMLElement | Node} el
- * @param {Object} props
- */
-function includesProps (el, props) {
-  for (let propName in props) {
-    if (Object.hasOwn(props, propName)) {
-      if (el[propName] !== props[propName]) {
-        return false;
-      }
-    }
-  }
-
-  return true;
-}
-
 function splitBoundariesAncestorWithClass (range, className) {
   [{ node: range.endContainer, offset: range.endOffset }, { node: range.startContainer, offset: range.startOffset }]
     .forEach(({ node, offset }) => {
@@ -371,8 +346,4 @@ function isSplitPoint(node, offset) {
 
   // Node.ELEMENT_NODE
   return offset > 0 && offset < node.childNodes.length;
-}
-
-function removeClassToAncestor (ancestor, className) {
-  console.log(ancestor);
 }

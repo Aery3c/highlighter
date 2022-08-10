@@ -212,7 +212,7 @@ function getEffectiveTextNodes (range) {
 }
 
 /**
- * 如果textNode被包含在range内，返回true，否则返回false
+ * Exclude empty strings selected by the range
  * @param {Range} range
  * @param {Text} textNode
  * @return {boolean}
