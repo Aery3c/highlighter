@@ -3,12 +3,12 @@
 import core from '@/core';
 import dom from '@/dom';
 import utils from '@/utils';
-import Applier from '@/applier';
+import Refills from '@/refills';
 
 export {
   dom,
   utils,
-  Applier
+  Refills
 }
 
 export default core;

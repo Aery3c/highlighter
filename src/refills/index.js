@@ -27,7 +27,7 @@ function createOptions (options) {
  * Applier Object
  */
 
-export default class Applier {
+export default class Refills {
   constructor(options) {
     this.options = createOptions(options);
   }
@@ -36,7 +36,7 @@ export default class Applier {
    * highlight to range
    * @param {Range} range
    */
-  highlightToRange (range) {
+  appliesToRange (range) {
     core.splitRangeBoundaries(range);
 
     const textNodes = core.getEffectiveTextNodes(range);
@@ -44,7 +44,7 @@ export default class Applier {
     if (textNodes.length) {
       textNodes.forEach(textNode => {
         if (!findSelfOrAncestorWithClass(textNode, this.options.className) && !isWhiteSpaceTextNode(textNode)) {
-          this.highlightToTextNode(textNode);
+          this.appliesToTextNode(textNode);
         }
       });
 
@@ -55,7 +55,7 @@ export default class Applier {
     }
   }
 
-  unhighlightToRange (range) {
+  wipeToRange (range) {
     core.splitRangeBoundaries(range);
 
     const textNodes = core.getEffectiveTextNodes(range);
@@ -66,7 +66,7 @@ export default class Applier {
       textNodes.forEach(textNode => {
         let ancestorWithClass = findSelfOrAncestorWithClass(textNode, this.options.className);
         if (ancestorWithClass) {
-          this.unhighlightToAncestor(ancestorWithClass);
+          this.wipeToAncestor(ancestorWithClass);
         }
       });
 
@@ -77,7 +77,7 @@ export default class Applier {
     }
   }
 
-  unhighlightToAncestor (ancestorWithClass) {
+  wipeToAncestor (ancestorWithClass) {
     if (this.isEqualNode(ancestorWithClass)) {
       let child, index = getNodeIndex(ancestorWithClass);
       const parentNode = ancestorWithClass.parentNode;
@@ -97,7 +97,7 @@ export default class Applier {
    *
    * @param {Node} textNode
    */
-  highlightToTextNode (textNode) {
+  appliesToTextNode (textNode) {
     const parentNode = textNode.parentNode;
     if (textNode.nodeType === Node.TEXT_NODE) {
       const el = this.createElement();
