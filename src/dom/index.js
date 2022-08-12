@@ -192,6 +192,15 @@ export function isWhiteSpaceTextNode (textNode) {
   return textNode && textNode.nodeType === Text.TEXT_NODE && stripAndCollapse(textNode.data) === '';
 }
 
+/**
+ *
+ * @param {Element} el
+ * @param {string} propName
+ */
+export function getComputedStyleProperty(el, propName) {
+  return window.getComputedStyle(el, null).getPropertyValue(propName);
+}
+
 function NodeIterator(root) {
   this.root = root;
   this._next = root;
@@ -247,7 +256,8 @@ extend(dom, {
   isAncestorOf,
   isOrIsAncestorOf,
   iterateSubtree,
-  findSelfOrAncestorWithClass
+  findSelfOrAncestorWithClass,
+  getComputedStyleProperty
 });
 
 export default dom;

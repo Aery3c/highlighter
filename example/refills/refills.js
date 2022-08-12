@@ -3,16 +3,16 @@ import '../layout.scss';
 import Refills from '@/refills';
 import { gE } from '@/dom';
 
-const applier = new Refills({ className: 'highlight', elAttrs: { style: 'background-color: yellow;' } });
+const refills = new Refills({ className: 'highlight', elAttrs: { style: 'background-color: yellow;' } });
 const bold = new Refills({ className: 'bold', elAttrs: { style: 'background-color: red; font-weight: bold;' } });
-const toggle = new Refills({ className: 'pink', elAttrs: { style: 'background-color: pink;' } })
+// const pink = new Refills({ className: 'pink', elAttrs: { style: 'background-color: pink;' } })
 
 gE('#highlight').addEventListener('click', () => {
-  applier.appliesToRange(window.getSelection().getRangeAt(0));
+  refills.appliesToRange(window.getSelection().getRangeAt(0));
 });
 
 gE('#unhighlight').addEventListener('click', () => {
-  applier.wipeToRange(window.getSelection().getRangeAt(0));
+  refills.wipeToRange(window.getSelection().getRangeAt(0));
 });
 
 gE('#bold').addEventListener('click', () => {
@@ -24,5 +24,10 @@ gE('#unbold').addEventListener('click', () => {
 });
 
 gE('#toggle').addEventListener('click', () => {
-
+  const range = window.getSelection().getRangeAt(0);
+  if (refills.isAppliedToRange(range)) {
+    refills.wipeToRange(range);
+  } else {
+    refills.appliesToRange(range);
+  }
 });

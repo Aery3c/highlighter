@@ -4,7 +4,6 @@ import core from '@/core';
 import {
   addClass,
   findSelfOrAncestorWithClass,
-  isWhiteSpaceTextNode,
   removeNode,
   isCharacterDataNode,
   getNodeIndex,
@@ -33,7 +32,7 @@ export default class Refills {
   }
 
   /**
-   * highlight to range
+   *
    * @param {Range} range
    */
   appliesToRange (range) {
@@ -43,7 +42,7 @@ export default class Refills {
 
     if (textNodes.length) {
       textNodes.forEach(textNode => {
-        if (!findSelfOrAncestorWithClass(textNode, this.options.className) && !isWhiteSpaceTextNode(textNode)) {
+        if (!findSelfOrAncestorWithClass(textNode, this.options.className)) {
           this.appliesToTextNode(textNode);
         }
       });
@@ -55,6 +54,10 @@ export default class Refills {
     }
   }
 
+  /**
+   *
+   * @param {Range} range
+   */
   wipeToRange (range) {
     core.splitRangeBoundaries(range);
 
@@ -103,6 +106,25 @@ export default class Refills {
       const el = this.createElement();
       parentNode.insertBefore(el, textNode);
       el.appendChild(textNode);
+    }
+  }
+
+  /**
+   *
+   * @param {Range} range
+   */
+  isAppliedToRange (range) {
+    let textNode, textNodes = core.getEffectiveTextNodes(range);
+    if (textNodes.length) {
+      for (let i = 0; (textNode = textNodes[i++]);) {
+        if (!findSelfOrAncestorWithClass(textNode, this.options.className)) {
+          return false;
+        }
+      }
+
+      return true;
+    } else {
+      return !!findSelfOrAncestorWithClass(range.commonAncestorContainer, this.options.className);
     }
   }
 
