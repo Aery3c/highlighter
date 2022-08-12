@@ -7,10 +7,14 @@ const highlighter = new Highlighter({ className: 'highlight', elAttrs: { style: 
 
 document.querySelector('#highlightASelection').addEventListener('click', () => {
   highlighter.highlightASelection();
-  console.log(highlighter.highlights);
+  highlighter.highlights.forEach(highlight => {
+    highlight._inspect();
+  })
 });
 
 document.querySelector('#highlightASelectionfirstP').addEventListener('click', () => {
   highlighter.highlightASelection({ referenceNodeId: 'first_p' });
-  console.log(highlighter.highlights);
+  highlighter.highlights.forEach(highlight => {
+    highlight._inspect();
+  })
 });

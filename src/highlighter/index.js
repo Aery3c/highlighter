@@ -7,14 +7,14 @@ import { each } from '@/utils';
 
 class Highlighter {
   constructor(options) {
-    this.options = options;
     this.refills = new Refills(options);
     this.highlights = [];
   }
 
   /**
    *
-   * @param options
+   * @param [options]
+   * @return {Highlight[]}
    */
   highlightASelection (options) {
     options = createOptions(options);
@@ -31,23 +31,38 @@ class Highlighter {
     return highlights;
   }
 
+  unhighlightASelection (options) {
+    options = createOptions(options);
+
+    const selection = getSelection(options.selection),
+      referenceNode = getReferenceNode(options.referenceNodeId);
+
+    const characterRanges = CharacterRange.fromSelection(selection, referenceNode);
+
+    this._unhighlightCharacterRanges(characterRanges);
+  }
+
   /**
    *
    * @param {CharacterRange[]} characterRanges
-   * @return {*}
+   * @return {Highlight[]}
    */
   _highlightCharacterRanges (characterRanges) {
 
-    let i, j, characterRange, undoToHighligts = [];
+    const undoToHighligts = [];
 
-    for (i = 0; (characterRange = characterRanges[i++]);) {
+    for (let i = 0, characterRange; (characterRange = characterRanges[i++]);) {
       if (characterRange.isCollapsed) {
         // ignore empty characterRange
         continue;
       }
 
-      let isEqual = false, stockHighlight;
-      for (j = 0; (stockHighlight = this.highlights[j]); ++j) {
+      let isEqual = false;
+      for (let j = 0, stockHighlight; (stockHighlight = this.highlights[j]); ++j) {
+        // if (characterRange.referenceNode !== stockHighlight.characterRange.referenceNode) {
+        //   continue;
+        // }
+
         if (characterRange.isEqual(stockHighlight.characterRange)) {
           isEqual = true;
           continue;
@@ -82,11 +97,29 @@ class Highlighter {
     return newHighlight
   }
 
-  unhighlightSelection () {
+  _unhighlightCharacterRanges (characterRanges) {
 
+    const undoToHighligts = [];
+
+    for (let i = 0, characterRange; (characterRange = characterRanges[i++]); ) {
+      if (characterRange.isCollapsed) {
+        continue;
+      }
+
+      for (let j = 0, stockHighlight; (stockHighlight = this.highlights[j]); ++j) {
+        if (characterRange.isIntersects(stockHighlight.characterRange)) {
+          const intersectionCr = characterRange.intersection(stockHighlight.characterRange);
+          const complementCrs = stockHighlight.characterRange.complementarySet(intersectionCr);
+          complementCrs.forEach(complementCr => {
+            // add complement
+            this.highlights.push(new Highlight(complementCr, this.refills));
+          });
+          undoToHighligts.push(stockHighlight);
+          this.highlights.splice(i--, 1);
+        }
+      }
+    }
   }
-
-
 }
 
 function createOptions(options) {

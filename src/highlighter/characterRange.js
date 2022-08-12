@@ -13,36 +13,51 @@ class CharacterRange {
   }
 
   isEqual (otherCharacterRange) {
-    if (this.referenceNode === otherCharacterRange.referenceNode) {
-      return this.start === otherCharacterRange.start && this.end === otherCharacterRange.end;
-    }
-
-    return core.isEqualRange(this.toRange(), otherCharacterRange.toRange());
+    otherCharacterRange = createSameRange(otherCharacterRange, this.referenceNode);
+    return this.start === otherCharacterRange.start && this.end === otherCharacterRange.end;
   }
 
   isIntersects (otherCharacterRange) {
-    if (this.referenceNode === otherCharacterRange.referenceNode) {
-      return this.start < otherCharacterRange.end && this.end > otherCharacterRange.start;
-    }
-
-    return core.intersectsRange(this.toRange(), otherCharacterRange.toRange());
+    otherCharacterRange = createSameRange(otherCharacterRange, this.referenceNode);
+    return this.start < otherCharacterRange.end && this.end > otherCharacterRange.start;
   }
 
   isAdjoin (otherCharacterRange) {
-    if (this.referenceNode === otherCharacterRange.referenceNode) {
-      return this.start === otherCharacterRange.end || this.end === otherCharacterRange.start
-    }
-
-    return core.isAdjoinRange(this.toRange(), otherCharacterRange.toRange());
+    otherCharacterRange = createSameRange(otherCharacterRange, this.referenceNode);
+    return this.start === otherCharacterRange.end || this.end === otherCharacterRange.start
   }
 
   union (otherCharacterRange) {
-    const unionRange = core.unionRange(this.toRange(), otherCharacterRange.toRange());
-    if (unionRange) {
-      return CharacterRange.fromRange(unionRange, this.referenceNode);
+    otherCharacterRange = createSameRange(otherCharacterRange, this.referenceNode);
+    if (this.isIntersects(otherCharacterRange) || this.isAdjoin(otherCharacterRange)) {
+      return new CharacterRange(Math.min(this.start, otherCharacterRange.start), Math.max(this.end, otherCharacterRange.end), this.referenceNode);
+    }
+    return null
+  }
+
+  intersection (otherCharacterRange) {
+    otherCharacterRange = createSameRange(otherCharacterRange, this.referenceNode);
+    if (this.isIntersects(otherCharacterRange)) {
+      return new CharacterRange(Math.max(this.start, otherCharacterRange.start), Math.min(this.end, otherCharacterRange.end));
     }
 
-    return null
+    return null;
+  }
+
+  complementarySet (otherCharacterRange) {
+    const characterRanges = [];
+    otherCharacterRange = createSameRange(otherCharacterRange, this.referenceNode);
+
+
+    if (this.start < otherCharacterRange.start) {
+      characterRanges.push(new CharacterRange(this.start, otherCharacterRange.start));
+    }
+
+    if (this.end > otherCharacterRange.end) {
+      characterRanges.push(new CharacterRange(otherCharacterRange.end, this.end));
+    }
+
+    return characterRanges;
   }
 
   toRange () {
@@ -107,6 +122,17 @@ class CharacterRange {
 
     return characterRanges;
   }
+}
+
+/**
+ *
+ * @param characterRange
+ * @param referenceNode
+ * @return {CharacterRange}
+ */
+function createSameRange (characterRange, referenceNode) {
+  const range = characterRange.toRange();
+  return CharacterRange.fromRange(range, referenceNode);
 }
 
 export default CharacterRange;
