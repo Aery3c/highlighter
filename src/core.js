@@ -263,6 +263,58 @@ function getIntersectionRange (rangeA, rangeB) {
   return null;
 }
 
+/**
+ *
+ * @param {Range} rangeA
+ * @param {Range} rangeB
+ * @return {boolean}
+ */
+function isEqualRange (rangeA, rangeB) {
+  if (intersectsRange(rangeA, rangeB)) {
+    return rangeA.compareBoundaryPoints(rangeB.START_TO_START, rangeB) === 0 && rangeA.compareBoundaryPoints(rangeB.END_TO_END, rangeB) === 0;
+  }
+
+  return false;
+}
+
+/**
+ *
+ * @param {Range} rangeA
+ * @param {Range} rangeB
+ * @return {boolean}
+ */
+function isAdjoinRange (rangeA, rangeB) {
+  return rangeA.compareBoundaryPoints(rangeB.END_TO_START, rangeB) === 0 || rangeA.compareBoundaryPoints(rangeB.START_TO_END, rangeB) === 0;
+}
+
+/**
+ *
+ * @param {Range} rangeA
+ * @param {Range} rangeB
+ * @return {Range | null}
+ */
+function unionRange (rangeA, rangeB) {
+  const range = document.createRange();
+  if (intersectsRange(rangeA, rangeB) || isAdjoinRange(rangeA, rangeB)) {
+    range.setStart(rangeA.startContainer, rangeA.startOffset);
+    range.setEnd(rangeA.endContainer, rangeA.endOffset);
+    const start = rangeA.compareBoundaryPoints(rangeB.START_TO_START, rangeB);
+    const end = rangeA.compareBoundaryPoints(rangeB.END_TO_END, rangeB);
+
+    if (start === 1) {
+      range.setStart(rangeB.startContainer, rangeB.startOffset);
+    }
+
+    if (end === -1) {
+      range.setEnd(rangeB.endContainer, rangeB.endOffset);
+    }
+
+    return range;
+  }
+
+  return null
+}
+
 Range.prototype.inspect = function () {
   // todo
   const sel = window.getSelection();
@@ -278,7 +330,10 @@ extend(core, {
   getNodes,
   intersectsRange,
   getIntersectionRange,
-  getEffectiveTextNodes
+  getEffectiveTextNodes,
+  isEqualRange,
+  isAdjoinRange,
+  unionRange
 });
 
 export default core;

@@ -236,6 +236,20 @@ NodeIterator.prototype = {
   }
 };
 
+/**
+ *
+ * @param {Selection} selection
+ * @return {Range[]}
+ */
+export function getAllRange (selection) {
+  const ranges = [];
+  for (let i = 0; i < selection.rangeCount; ++i) {
+    ranges.push(selection.getRangeAt(i));
+  }
+
+  return ranges;
+}
+
 export { addClass, toggleClass, getClass, removeClass, hasClass, classesToArray }
 
 extend(dom, {
@@ -257,7 +271,8 @@ extend(dom, {
   isOrIsAncestorOf,
   iterateSubtree,
   findSelfOrAncestorWithClass,
-  getComputedStyleProperty
+  getComputedStyleProperty,
+  getAllRange
 });
 
 export default dom;
