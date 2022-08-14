@@ -6,7 +6,7 @@ import Highlight from './highlight';
 import EventEmitter from './eventEmitter';
 import { each, toType } from '@/utils';
 
-class Highlighter extends EventEmitter{
+class Highlighter extends EventEmitter {
   constructor(options) {
     super();
     this.setOptions(options);
@@ -179,6 +179,16 @@ class Highlighter extends EventEmitter{
     this.refills = new Refills(newOptions);
 
     return newOptions;
+  }
+
+  save () {
+    // todo
+    // https://github.com/LukasRada/rangee
+    // https://github.com/tildeio/range-serializer
+  }
+
+  restore () {
+
   }
 }
 
