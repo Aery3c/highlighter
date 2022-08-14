@@ -19,7 +19,11 @@ function createOptions (options) {
     elProps: {}
   }
 
-  return Object.assign(defaultOptions, options);
+  each(options, (propName, propValue) => {
+    defaultOptions[propName] = propValue;
+  });
+
+  return defaultOptions;
 }
 
 /**

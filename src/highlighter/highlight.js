@@ -1,5 +1,7 @@
 'use strict'
 
+import core from '@/core';
+
 class Highlight {
   constructor(characterRange, refills) {
     this.characterRange = characterRange;
@@ -17,6 +19,13 @@ class Highlight {
     this.range = this.characterRange.toRange();
     this.refills.wipeToRange(this.range);
     this.applied = false;
+  }
+
+  intersectsNode(node) {
+    const range = document.createRange();
+    range.selectNodeContents(node);
+
+    return core.intersectsRange(this.characterRange.toRange(), range);
   }
 
   _inspect () {

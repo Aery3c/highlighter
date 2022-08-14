@@ -12,9 +12,13 @@ document.querySelector('#highlightASelection').addEventListener('click', () => {
   })
 });
 
-document.querySelector('#highlightASelectionfirstP').addEventListener('click', () => {
-  highlighter.highlightASelection({ referenceNodeId: 'first_p' });
+document.querySelector('#unHighlightASelection').addEventListener('click', () => {
+  highlighter.unHighlightASelection();
   highlighter.highlights.forEach(highlight => {
     highlight._inspect();
   })
+});
+
+highlighter.on('click', highlight => {
+  console.log(highlight);
 });

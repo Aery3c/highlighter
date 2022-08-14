@@ -3,11 +3,13 @@
 import Refills from '@/refills';
 import CharacterRange from './characterRange';
 import Highlight from './highlight';
-import { each } from '@/utils';
+import EventEmitter from './eventEmitter';
+import { each, toType } from '@/utils';
 
-class Highlighter {
+class Highlighter extends EventEmitter{
   constructor(options) {
-    this.refills = new Refills(options);
+    super();
+    this.setOptions(options);
     this.highlights = [];
   }
 
@@ -31,7 +33,7 @@ class Highlighter {
     return highlights;
   }
 
-  unhighlightASelection (options) {
+  unHighlightASelection (options) {
     options = createOptions(options);
 
     const selection = getSelection(options.selection),
@@ -39,7 +41,12 @@ class Highlighter {
 
     const characterRanges = CharacterRange.fromSelection(selection, referenceNode);
 
-    this._unhighlightCharacterRanges(characterRanges);
+    this._unHighlightCharacterRanges(characterRanges);
+
+    restoreSelection(selection, characterRanges);
+  }
+
+  isHighlightedASelection () {
   }
 
   /**
@@ -97,9 +104,9 @@ class Highlighter {
     return newHighlight
   }
 
-  _unhighlightCharacterRanges (characterRanges) {
+  _unHighlightCharacterRanges (characterRanges) {
 
-    const undoToHighligts = [];
+    const undoToHighlights = [];
 
     for (let i = 0, characterRange; (characterRange = characterRanges[i++]); ) {
       if (characterRange.isCollapsed) {
@@ -114,22 +121,75 @@ class Highlighter {
             // add complement
             this.highlights.push(new Highlight(complementCr, this.refills));
           });
-          undoToHighligts.push(stockHighlight);
-          this.highlights.splice(i--, 1);
+          undoToHighlights.push(stockHighlight);
+          this.highlights.splice(j--, 1);
         }
       }
     }
+
+    undoToHighlights.forEach(highlight => {
+      if (highlight.applied) {
+        highlight.off();
+      }
+    });
+
+    this.highlights.forEach(ht => {
+      if (!ht.applied) {
+        ht.on();
+      }
+    });
+  }
+
+  /**
+   *
+   * @param {HTMLElement} el
+   * @return {Highlight | null}
+   */
+  getHighlightForElement (el) {
+    for (let i = 0, highlight; (highlight = this.highlights[i++]);) {
+      if (highlight.intersectsNode(el)) {
+        return highlight;
+      }
+    }
+
+    return null;
+  }
+
+  _handleHighlightClick (event, el) {
+    this.emit('click', this.getHighlightForElement(el), el, event);
+  }
+
+  setOptions (options) {
+    const newOptions = {};
+
+    const self = this;
+    function handleHighlightClick (event) {
+      self._handleHighlightClick(event, this);
+    }
+
+    each(options, (propName, propValue) => {
+      newOptions[propName] = propValue;
+    });
+
+    newOptions['elProps'] = {
+      ...newOptions['elProps'],
+      onclick: handleHighlightClick
+    }
+
+    this.refills = new Refills(newOptions);
+
+    return newOptions;
   }
 }
 
 function createOptions(options) {
-  const defaultOptions = {};
+  const newOptions = {};
 
   each(options, (propName, propValue) => {
-    defaultOptions[propName] = propValue;
+    newOptions[propName] = propValue;
   });
 
-  return defaultOptions;
+  return newOptions;
 }
 
 function getReferenceNode (id) {

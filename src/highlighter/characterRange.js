@@ -13,22 +13,22 @@ class CharacterRange {
   }
 
   isEqual (otherCharacterRange) {
-    otherCharacterRange = createSameRange(otherCharacterRange, this.referenceNode);
+    otherCharacterRange = balanceRange(otherCharacterRange, this.referenceNode);
     return this.start === otherCharacterRange.start && this.end === otherCharacterRange.end;
   }
 
   isIntersects (otherCharacterRange) {
-    otherCharacterRange = createSameRange(otherCharacterRange, this.referenceNode);
+    otherCharacterRange = balanceRange(otherCharacterRange, this.referenceNode);
     return this.start < otherCharacterRange.end && this.end > otherCharacterRange.start;
   }
 
   isAdjoin (otherCharacterRange) {
-    otherCharacterRange = createSameRange(otherCharacterRange, this.referenceNode);
+    otherCharacterRange = balanceRange(otherCharacterRange, this.referenceNode);
     return this.start === otherCharacterRange.end || this.end === otherCharacterRange.start
   }
 
   union (otherCharacterRange) {
-    otherCharacterRange = createSameRange(otherCharacterRange, this.referenceNode);
+    otherCharacterRange = balanceRange(otherCharacterRange, this.referenceNode);
     if (this.isIntersects(otherCharacterRange) || this.isAdjoin(otherCharacterRange)) {
       return new CharacterRange(Math.min(this.start, otherCharacterRange.start), Math.max(this.end, otherCharacterRange.end), this.referenceNode);
     }
@@ -36,9 +36,9 @@ class CharacterRange {
   }
 
   intersection (otherCharacterRange) {
-    otherCharacterRange = createSameRange(otherCharacterRange, this.referenceNode);
+    otherCharacterRange = balanceRange(otherCharacterRange, this.referenceNode);
     if (this.isIntersects(otherCharacterRange)) {
-      return new CharacterRange(Math.max(this.start, otherCharacterRange.start), Math.min(this.end, otherCharacterRange.end));
+      return new CharacterRange(Math.max(this.start, otherCharacterRange.start), Math.min(this.end, otherCharacterRange.end), this.referenceNode);
     }
 
     return null;
@@ -46,15 +46,14 @@ class CharacterRange {
 
   complementarySet (otherCharacterRange) {
     const characterRanges = [];
-    otherCharacterRange = createSameRange(otherCharacterRange, this.referenceNode);
-
+    otherCharacterRange = balanceRange(otherCharacterRange, this.referenceNode);
 
     if (this.start < otherCharacterRange.start) {
-      characterRanges.push(new CharacterRange(this.start, otherCharacterRange.start));
+      characterRanges.push(new CharacterRange(this.start, otherCharacterRange.start, this.referenceNode));
     }
 
     if (this.end > otherCharacterRange.end) {
-      characterRanges.push(new CharacterRange(otherCharacterRange.end, this.end));
+      characterRanges.push(new CharacterRange(otherCharacterRange.end, this.end, this.referenceNode));
     }
 
     return characterRanges;
@@ -130,7 +129,7 @@ class CharacterRange {
  * @param referenceNode
  * @return {CharacterRange}
  */
-function createSameRange (characterRange, referenceNode) {
+function balanceRange (characterRange, referenceNode) {
   const range = characterRange.toRange();
   return CharacterRange.fromRange(range, referenceNode);
 }
