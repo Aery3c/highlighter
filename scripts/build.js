@@ -84,4 +84,4 @@ function build () {
   });
 }
 
-build();
+build().catch(error => console.log(error));

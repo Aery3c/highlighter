@@ -14,43 +14,27 @@ module.exports = function (webpackEnv) {
   const isEnvDevelopment = webpackEnv === 'development';
   const isEnvProduction = webpackEnv === 'production';
 
-  const plugins = [];
-  const entry = {};
-  entry['highlighter'] = {
-    import: paths.appIndexJs,
-    library: {
-      name: 'Highlighter',
-      type: 'umd',
-      export: 'default',
-    },
-  }
-  if (isEnvDevelopment) {
-    const dirs = [];
-    const files = fs.readdirSync(paths.exampleDir);
+  const fileNames = fs.readdirSync(paths.exampleDir);
+  const examples = fileNames.map(name => {
+    const filePath = path.join(paths.exampleDir, name);
+    const stats = fs.statSync(filePath);
+    if (stats.isDirectory()) {
+      return filePath;
+    }
+  }).filter(item => !!item);
 
-    files.forEach(name => {
-      const fp = path.join(paths.exampleDir, name);
-      const stats = fs.statSync(fp);
-      if (stats.isDirectory()) {
-        dirs.push(fp);
-      }
-    });
-    // add html-webpack-plugin
-    dirs.forEach(dir => {
-      const name = path.parse(dir).name;
-      plugins.push(new HtmlWebpackPlugin({
-        title: name,
-        filename: `example/${name}.html`,
-        template: path.join(dir, `${name}.html`),
-        publicPath: '../',
-        scriptLoading: 'blocking',
-        inject: 'body',
-        chunks: [name]
-      }));
-      // add entry file
-      Object.assign(entry, { [name]: path.join(dir, name) })
-    });
-  }
+  const htmlWebpackPlugins = examples.map(d => {
+    const name = path.parse(d).name;
+    return new HtmlWebpackPlugin({
+      title: name,
+      filename: `example/${name}.html`,
+      template: path.join(d, `${name}.html`),
+      publicPath: '../',
+      scriptLoading: 'blocking',
+      inject: 'body',
+      chunks: [name]
+    })
+  });
 
   return {
     stats: 'errors-warnings',
@@ -61,7 +45,17 @@ module.exports = function (webpackEnv) {
         : false
       : isEnvDevelopment && 'cheap-module-source-map',
     bail: isEnvProduction,
-    entry,
+    entry: {
+      highlighter: {
+        import: paths.appIndexJs,
+        library: {
+          name: 'Highlighter',
+          type: 'umd',
+          export: 'default',
+        },
+      },
+      ...getEntrys(examples)
+    },
     output: {
       path: paths.appBuild,
       filename: isEnvProduction ? 'highlighter.js' : isEnvDevelopment && '[name].dev.js',
@@ -113,7 +107,7 @@ module.exports = function (webpackEnv) {
         // set the current working directory for displaying module paths
         cwd: process.cwd(),
       }),
-      ...plugins
+      ...htmlWebpackPlugins
     ],
     resolve: {
       alias: {
@@ -122,4 +116,14 @@ module.exports = function (webpackEnv) {
       }
     }
   }
+}
+
+function getEntrys (examples) {
+  const entrys = {};
+  examples.forEach(d => {
+    const name = path.parse(d).name;
+    entrys[name] = path.join(d, name)
+  });
+
+  return entrys;
 }
