@@ -37,11 +37,47 @@ describe('.Trie', function () {
   });
 
   describe('.startsWith', function () {
-    // todo
+    it('prefix letter test', function () {
+      const trie = new Trie();
+      ['free', 'freedom', 'feel', 'feeling'].forEach(word => {
+        trie.addWord(word);
+      });
+
+      expect(trie.startsWith('fr')).toBeTruthy();
+      expect(trie.startsWith('fre')).toBeTruthy();
+
+      expect(trie.startsWith('fee')).toBeTruthy();
+
+      expect(trie.startsWith('afre')).toBeFalsy();
+    });
   });
 
   describe('.remove', function () {
-    // todo
+    it('whether words can be found after they have been deleted', function () {
+      const trie = new Trie();
+      trie.addWord('hello');
+      expect(trie.search('hello')).toBeTruthy();
+      trie.removeWord('hello');
+      expect(trie.search('hello')).toBeFalsy();
+    });
+
+    it('the deleted data structure meets expectations', function () {
+      const trie = new Trie();
+      trie.addWord('hello');
+      trie.addWord('hello world');
+
+      trie.removeWord('hello');
+      let res, current = trie.root;
+      for (const char of 'hello') {
+        current = current.children[char];
+        res = current.isEnd;
+      }
+      expect(res).toBeFalsy();
+
+      trie.removeWord('hello world');
+
+      expect(Object.keys(trie.root.children).length).toBe(0);
+    });
   });
 
 });
