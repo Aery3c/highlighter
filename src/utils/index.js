@@ -1,6 +1,7 @@
 'use strict'
 
 import toType from './toType';
+import Trie from './trie';
 
 const utils = {};
 
@@ -98,7 +99,8 @@ export function each (obj, callback) {
 }
 
 export {
-  toType
+  toType,
+  Trie
 }
 
 extend(utils, {
@@ -107,7 +109,8 @@ extend(utils, {
   stripAndCollapse,
   rnothtmlwhite,
   toType,
-  each
+  each,
+  Trie
 });
 
 export default utils;
