@@ -5,14 +5,12 @@ import dom from '@/dom';
 import utils from '@/utils';
 import Refills from '@/refills';
 import Highlighter from '@/highlighter';
-import Trie from '@/utils/trie';
 
 export {
   dom,
   utils,
   Refills,
-  Highlighter,
-  Trie
+  Highlighter
 }
 
 export default core;

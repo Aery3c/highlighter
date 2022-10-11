@@ -1,5 +1,7 @@
+'use strict';
+
 import { describe, it, expect } from '@jest/globals';
-import { Trie } from '@/index';
+import Trie from '@/utils/trie';
 
 describe('.Trie', function () {
 
