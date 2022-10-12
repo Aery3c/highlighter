@@ -61,15 +61,15 @@ export default class TextSearch {
 
   /**
    *
-   * @param {string} word
+   * @param {string} str
    * @param {boolean} [aCaseSensitive] - A boolean value. If true, specifies a case-sensitive search.
    * @return {Position[]}
    */
-  findAll (word, aCaseSensitive = false) {
+  find (str, aCaseSensitive = false) {
     let node = this.trie.root, results = [], result;
-    for (const [i, char] of word.split('').entries()) {
+    for (const [i, char] of str.split('').entries()) {
       node = this._findNodeOfChar(node, char, aCaseSensitive);
-      result = this._getPosition(node, i, word);
+      result = this._getPosition(node, i, str);
       if (result) {
         results.push(result);
       }
@@ -81,18 +81,21 @@ export default class TextSearch {
   /**
    *
    * @param {string} word
+   * @param {string} str
    * @param {boolean} [aCaseSensitive]
    * @return {Position | null}
    */
-  find (word, aCaseSensitive = false) {
-    let node = this.trie.root;
-    for (const [i, char] of word.split('').entries()) {
-      node = this._findNodeOfChar(node, char, aCaseSensitive);
-      let result = this._getPosition(node, i, word);
-      if (result) return result;
-    }
+  findOne (word, str, aCaseSensitive = false) {
+    const positions = this.find(str, aCaseSensitive);
+    let result = null;
+    positions.some(pos => {
+      if (!aCaseSensitive ? ([pos.string.toUpperCase(), pos.string.toLowerCase()].indexOf(word) !== -1) : (pos.string === word)) {
+        result = pos;
+        return true;
+      }
+    });
 
-    return null;
+    return result;
   }
 
   /**

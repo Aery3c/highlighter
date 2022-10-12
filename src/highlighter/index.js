@@ -4,13 +4,15 @@ import Refills from '@/refills';
 import CharacterRange from './characterRange';
 import Highlight from './highlight';
 import EventEmitter from './eventEmitter';
-import { each, toType } from '@/utils';
+import TextSearch from './textSearch';
+import { each } from '@/utils';
 
 class Highlighter extends EventEmitter {
   constructor(options) {
     super();
     this.setOptions(options);
     this.highlights = [];
+    this.textSearch = new TextSearch();
   }
 
   /**
@@ -47,6 +49,23 @@ class Highlighter extends EventEmitter {
   }
 
   isHighlightedASelection () {
+  }
+
+  /**
+   *
+   * @param {string} text
+   * @param {string} [referenceNodeId]
+   */
+  highlightAText (text, referenceNodeId) {
+    const referenceNode = getReferenceNode(referenceNodeId),
+      textSearch = this.textSearch;
+
+    textSearch.setup([text]);
+    console.log(textSearch.findOne(text, referenceNode.textContent, true));
+  }
+
+  unHighlightAText () {
+
   }
 
   /**
@@ -153,6 +172,32 @@ class Highlighter extends EventEmitter {
     }
 
     return null;
+  }
+
+  /**
+   *
+   * @param {Highlight} highlight
+   */
+  removeHighlight (highlight) {
+    if (highlight instanceof Highlight) {
+      let highlights = this.highlights, index;
+      if ((index = highlights.indexOf(highlight)) > -1) {
+        if (highlight.applied) {
+          highlight.off();
+        }
+
+        highlights.splice(index, 1);
+      }
+    }
+  }
+
+  removeAllHighlight () {
+    for (let i = 0, highlight; (highlight = this.highlights[i]); ++i) {
+      if (highlight.applied) {
+        highlight.off();
+      }
+      this.highlights.splice(i--, 1);
+    }
   }
 
   _handleHighlightClick (event, el) {
