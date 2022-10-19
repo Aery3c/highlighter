@@ -62,13 +62,12 @@ export default class TextSearch {
   /**
    *
    * @param {string} str
-   * @param {boolean} [aCaseSensitive] - A boolean value. If true, specifies a case-sensitive search.
    * @return {Position[]}
    */
-  find (str, aCaseSensitive = false) {
+  find (str) {
     let node = this.trie.root, results = [], result;
     for (const [i, char] of str.split('').entries()) {
-      node = this._findNodeOfChar(node, char, aCaseSensitive);
+      node = this._findNodeOfChar(node, char);
       result = this._getPosition(node, i, str);
       if (result) {
         results.push(result);
@@ -80,44 +79,20 @@ export default class TextSearch {
 
   /**
    *
-   * @param {string} word
-   * @param {string} str
-   * @param {boolean} [aCaseSensitive]
-   * @return {Position | null}
-   */
-  findOne (word, str, aCaseSensitive = false) {
-    const positions = this.find(str, aCaseSensitive);
-    let result = null;
-    positions.some(pos => {
-      if (!aCaseSensitive ? ([pos.string.toUpperCase(), pos.string.toLowerCase()].indexOf(word) !== -1) : (pos.string === word)) {
-        result = pos;
-        return true;
-      }
-    });
-
-    return result;
-  }
-
-  /**
-   *
    * @param {TrieNode} node
    * @param {string} char
-   * @param {boolean} aCaseSensitive
    * @return {TrieNode}
    * @private
    */
-  _findNodeOfChar (node, char, aCaseSensitive) {
-    if (!aCaseSensitive) {
-      const nextNode = node.children[char.toLowerCase()] || node.children[char.toUpperCase()];
-      if (nextNode) return nextNode;
-    } else if (node.children[char]) {
+  _findNodeOfChar (node, char) {
+    if (node.children[char]) {
       return node.children[char];
     }
 
     if (node.isRoot) {
       return this.trie.root;
     }
-    return this._findNodeOfChar(node.pre, char, aCaseSensitive);
+    return this._findNodeOfChar(node.pre, char);
   }
 
   /**
