@@ -4,7 +4,6 @@ import Refills from '@/refills';
 import CharacterRange from './characterRange';
 import Highlight from './highlight';
 import EventEmitter from './eventEmitter';
-import TextSearch from './textSearch';
 import { each } from '@/utils';
 
 class Highlighter extends EventEmitter {
@@ -12,7 +11,6 @@ class Highlighter extends EventEmitter {
     super();
     this.setOptions(options);
     this.highlights = [];
-    this.textSearch = new TextSearch();
   }
 
   /**
@@ -49,23 +47,6 @@ class Highlighter extends EventEmitter {
   }
 
   isHighlightedASelection () {
-  }
-
-  /**
-   *
-   * @param {string} text
-   * @param {string} [referenceNodeId]
-   */
-  highlightAText (text, referenceNodeId) {
-    const referenceNode = getReferenceNode(referenceNodeId),
-      textSearch = this.textSearch;
-
-    textSearch.setup([text]);
-    console.log(textSearch.findOne(text, referenceNode.textContent, true));
-  }
-
-  unHighlightAText () {
-
   }
 
   /**
