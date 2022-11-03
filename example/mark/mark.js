@@ -9,7 +9,8 @@ import { Highlighter } from '@';
 
 const dropdownMenu = document.querySelector('.dropdown-menu'),
   container = document.getElementsByTagName('article')[0],
-  button = document.querySelector('.dropdown-item'),
+  markButton = document.querySelector('.mark-button'),
+  underLineButton = document.querySelector('.underline-button'),
   tooltip = document.querySelector('#tooltip');
 
 const generateClientRect = (x = 0, y = 0) => new DOMRect(x, y, 0, 0);
@@ -57,12 +58,23 @@ container.addEventListener('mousedown', _ => {
 });
 
 const highlighter = new Highlighter();
-button.addEventListener('click', () => {
+markButton.addEventListener('click', () => {
   highlighter.highlightASelection();
   virtualElement.getBoundingClientRect = () => generateClientRect(-1000, 0);
   popper.forceUpdate();
+
+  window.getSelection().removeAllRanges();
 });
 
+const underline = new Highlighter({ className: 'underline' })
+
+underLineButton.addEventListener('click', () => {
+  underline.highlightASelection();
+  virtualElement.getBoundingClientRect = () => generateClientRect(-1000, 0);
+  popper.forceUpdate();
+
+  window.getSelection().removeAllRanges();
+});
 
 let highlight;
 highlighter.on('click', (ht) => {
@@ -75,8 +87,18 @@ highlighter.on('click', (ht) => {
   popper2.forceUpdate();
 });
 
+underline.on('click', (ht) => {
+  highlight = ht;
+  const range = ht.characterRange.toRange();
+  const rect = range.getBoundingClientRect();
+
+  virtualElement.getBoundingClientRect = () => generateClientRect(rect.x + (rect.width / 2), rect.y);
+  popper2.forceUpdate();
+})
+
 tooltip.addEventListener('mouseup', function () {
   highlighter.removeHighlight(highlight);
+  underline.removeHighlight(highlight);
   virtualElement.getBoundingClientRect = () => generateClientRect(-1000, 0);
   popper2.forceUpdate();
 });

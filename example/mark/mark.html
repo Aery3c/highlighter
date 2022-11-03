@@ -8,6 +8,10 @@
       background-color: yellow;
       cursor: pointer;
     }
+    .underline {
+      text-decoration: underline;
+      cursor: pointer;
+    }
     #tooltip {
       background: #333;
       color: white;
@@ -58,7 +62,7 @@
 <body>
 <main>
   <div class="alert alert-dark" role="alert">
-    Make a <span class="text">selection</span> in the document!
+    Make a selection in the document!
   </div>
   <article>
     <header>
@@ -218,7 +222,8 @@
   </article>
 
   <ul class="dropdown-menu show">
-    <li><button class="dropdown-item">highlightSelection</button></li>
+    <li><button class="dropdown-item mark-button">mark</button></li>
+    <li><button class="dropdown-item underline-button">underline</button></li>
   </ul>
 
   <div id="tooltip" role="tooltip">
