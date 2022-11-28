@@ -7,6 +7,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ESLintPlugin = require('eslint-webpack-plugin');
 const ProgressBarPlugin = require('progress-bar-webpack-plugin');
 const CircularDependencyPlugin = require('circular-dependency-plugin')
+const CopyPlugin = require("copy-webpack-plugin");
 
 const shouldUseSourceMap = process.env.GENERATE_SOURCEMAP !== 'false';
 
@@ -35,6 +36,25 @@ module.exports = function (webpackEnv) {
       chunks: [name]
     })
   });
+
+  let copyPlugin, regExp = /'@\/(.+)'/g;
+  if (isEnvProduction) {
+    copyPlugin = new CopyPlugin({
+      patterns: [
+        {
+          from: paths.appSrc,
+          to: paths.appBuildLib,
+          transform: {
+            transformer: (input) => {
+              const str = input.toString('utf8');
+              return regExp[Symbol.replace](str, `'${path.join(paths.appBuildLib, '$1')}'`);
+            }
+          }
+        }
+      ],
+
+    });
+  }
 
   return {
     stats: 'errors-warnings',
@@ -107,7 +127,8 @@ module.exports = function (webpackEnv) {
         // set the current working directory for displaying module paths
         cwd: process.cwd(),
       }),
-      ...htmlWebpackPlugins
+      ...htmlWebpackPlugins,
+      copyPlugin
     ],
     resolve: {
       alias: {
