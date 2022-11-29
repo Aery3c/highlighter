@@ -37,25 +37,6 @@ module.exports = function (webpackEnv) {
     })
   });
 
-  let copyPlugin, regExp = /'@\/(.+)'/g;
-  if (isEnvProduction) {
-    copyPlugin = new CopyPlugin({
-      patterns: [
-        {
-          from: paths.appSrc,
-          to: paths.appBuildLib,
-          transform: {
-            transformer: (input) => {
-              const str = input.toString('utf8');
-              return regExp[Symbol.replace](str, `'${path.join(paths.appBuildLib, '$1')}'`);
-            }
-          }
-        }
-      ],
-
-    });
-  }
-
   return {
     stats: 'errors-warnings',
     mode: isEnvProduction ? 'production' : isEnvDevelopment && 'development',
@@ -128,7 +109,22 @@ module.exports = function (webpackEnv) {
         cwd: process.cwd(),
       }),
       ...htmlWebpackPlugins,
-      copyPlugin
+      isEnvProduction && 
+        new CopyPlugin({
+          patterns: [
+            {
+              from: paths.appSrc,
+              to: paths.appBuildLib,
+              transform: {
+                transformer: (input) => {
+                  const str = input.toString('utf8'), regExp = /'@\/(.+)'/g;
+                  return regExp[Symbol.replace](str, `'${path.join(paths.appBuildLib, '$1')}'`);
+                }
+              }
+            }
+          ],
+    
+        })
     ],
     resolve: {
       alias: {
