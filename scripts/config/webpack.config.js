@@ -123,9 +123,8 @@ module.exports = function (webpackEnv) {
               }
             }
           ],
-    
-        })
-    ],
+        }),
+    ].filter(Boolean),
     resolve: {
       alias: {
         '@': paths.appSrc,

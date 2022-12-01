@@ -232,17 +232,4 @@
   </div>
 </main>
 </body>
-
-<script>
-  const alertEl = document.querySelector('.alert');
-  alertEl.addEventListener('click', function () {
-    console.log('事件冒泡阶段获取');
-  })
-
-  const textEl = document.querySelector('.text');
-  textEl.addEventListener('click', function (e) {
-    e.stopPropagation();
-    console.log('text 事件冒泡阶段获取');
-  })
-</script>
 </html>
