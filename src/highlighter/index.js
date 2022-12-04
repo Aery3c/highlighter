@@ -181,17 +181,13 @@ class Highlighter extends EventEmitter {
     }
   }
 
-  _handleHighlightClick (event, el) {
+  _handleHighlightClick (event) {
+    const el = event.target
     this.emit('click', this.getHighlightForElement(el), el, event);
   }
 
   setOptions (options) {
     const newOptions = {};
-
-    const self = this;
-    function handleHighlightClick (event) {
-      self._handleHighlightClick(event, this);
-    }
 
     each(options, (propName, propValue) => {
       newOptions[propName] = propValue;
@@ -199,7 +195,7 @@ class Highlighter extends EventEmitter {
 
     newOptions['elProps'] = {
       ...newOptions['elProps'],
-      onclick: handleHighlightClick
+      onclick: this._handleHighlightClick.bind(this)
     }
 
     this.refills = new Refills(newOptions);
