@@ -28,6 +28,10 @@ class Highlight {
     return core.intersectsRange(this.characterRange.toRange(), range);
   }
 
+  getBoundingClientRect () {
+    return this.characterRange.toRange().getBoundingClientRect();
+  }
+
   _inspect () {
     inspect(this);
   }
