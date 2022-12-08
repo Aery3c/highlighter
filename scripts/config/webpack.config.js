@@ -7,9 +7,6 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ESLintPlugin = require('eslint-webpack-plugin');
 const ProgressBarPlugin = require('progress-bar-webpack-plugin');
 const CircularDependencyPlugin = require('circular-dependency-plugin')
-const CopyPlugin = require("copy-webpack-plugin");
-// eslint-disable-next-line no-unused-vars
-const os = require('os');
 
 const shouldUseSourceMap = process.env.GENERATE_SOURCEMAP !== 'false';
 
@@ -111,25 +108,6 @@ module.exports = function (webpackEnv) {
         cwd: process.cwd(),
       }),
       ...htmlWebpackPlugins,
-      isEnvProduction &&
-        new CopyPlugin({
-          patterns: [
-            {
-              from: paths.appSrc,
-              to: paths.appBuildLib,
-              transform: {
-                transformer: (input) => {
-                  // const str = input.toString('utf8'), regExp = /'@\/(.+)'/g;
-                  // let result = regExp[Symbol.replace](str, `'${path.join(paths.appBuildLib, '$1')}'`);
-                  // if (os.platform() === 'win32') {
-                  //   result = String.raw`${result}`.replace(/\\/g, '\\\\');
-                  // }
-                  // return result;
-                }
-              }
-            }
-          ],
-        }),
     ].filter(Boolean),
     resolve: {
       alias: {
