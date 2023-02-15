@@ -7,7 +7,7 @@ import CharacterRange from './utils/characterRange';
 import Highlight from './utils/highlight';
 import rangeUtils from './range-utils';
 import { createRefillsOptions } from './utils/createOptions';
-import type { RefillsOptions, UseSelOptions } from './types';
+import type { RefillsOptions, UseSelOptions, DefaultRefillsOptions } from './types';
 
 type EventMap = {|
   click: (highlight: Highlight, el: HTMLElement, event: MouseEvent) => void;
@@ -17,12 +17,13 @@ export default class Highlighter extends EventEmitter<EventMap> {
 
   refills: Refills;
   highlights: Array<Highlight> = [];
+  options: DefaultRefillsOptions;
   constructor (options?: RefillsOptions) {
     super();
-    this.setOptions(options);
+    this.options = this.setOptions(options);
   }
 
-  setOptions (options?: RefillsOptions = {}): RefillsOptions {
+  setOptions (options?: RefillsOptions = {}): DefaultRefillsOptions {
     // $FlowIgnore
     options = createRefillsOptions(options);
     options.elProps = {
@@ -31,7 +32,7 @@ export default class Highlighter extends EventEmitter<EventMap> {
       onclick: this._handleHighlightClick.bind(this)
     }
     this.refills = new Refills(options);
-
+    // $FlowIgnore
     return options;
   }
 

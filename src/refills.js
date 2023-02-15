@@ -27,7 +27,9 @@ export default class Refills {
       const lastTextNode = textNodes[textNodes.length - 1];
       // $FlowIgnore
       rangeUtils.setRange(range, textNodes[0], 0, lastTextNode, lastTextNode.length);
-      this.normalize(textNodes, range, false);
+      if (this.options.normalize) {
+        this.normalize(textNodes, range, false);
+      }
     }
   }
 
@@ -60,8 +62,9 @@ export default class Refills {
       const lastTextNode = textNodes[textNodes.length - 1];
       // $FlowIgnore
       rangeUtils.setRange(range, textNodes[0], 0, lastTextNode, lastTextNode.length);
-
-      this.normalize(textNodes, range, true);
+      if (this.options.normalize) {
+        this.normalize(textNodes, range, true);
+      }
     }
   }
 

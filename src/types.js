@@ -6,6 +6,7 @@ export type RefillsOptions = {|
   className?: string;
   elAttrs?: Object;
   elProps?: Object;
+  normalize?: boolean;
 |}
 
 export type DefaultRefillsOptions = {|
@@ -13,6 +14,7 @@ export type DefaultRefillsOptions = {|
   className: string;
   elAttrs: Object;
   elProps: Object;
+  normalize: boolean;
 |}
 
 export type UseSelOptions = {|

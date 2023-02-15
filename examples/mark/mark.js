@@ -59,16 +59,17 @@ container.addEventListener('mousedown', () => {
   popper2.forceUpdate();
 });
 
-const highlighter = new Highlighter();
+const highlighter = new Highlighter({ normalize: false });
 markButton?.addEventListener('click', () => {
   highlighter.useSelection();
+  console.log(highlighter.highlights);
   virtualElement.getBoundingClientRect = () => generateClientRect(-1000, 0);
   popper.forceUpdate();
 
   window.getSelection().removeAllRanges();
 });
 
-const underline = new Highlighter({ className: 'underline' })
+const underline = new Highlighter({ className: 'underline', normalize: false })
 
 underLineButton?.addEventListener('click', () => {
   underline.useSelection();

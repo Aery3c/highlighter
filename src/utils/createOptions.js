@@ -9,12 +9,13 @@ export function createRefillsOptions (options?: RefillsOptions = {}): DefaultRef
     tagName: 'span',
     className: 'highlight',
     elAttrs: {},
-    elProps: {}
+    elProps: {},
+    normalize: true
   }
 
   each(options, (propName, propValue) => {
     // eslint-disable-next-line no-prototype-builtins
-    if (options.hasOwnProperty(propName) && propValue) {
+    if (options.hasOwnProperty(propName)) {
       defaultOptions[propName] = propValue;
     }
   });
