@@ -1,7 +1,7 @@
 // @flow
 'use strict'
 
-type Listener = () => void;
+type Listener = (...args: Array<any>) => void;
 type ListenerMap = { [key: string]: Listener };
 const apply = Function.prototype.apply, call = Function.prototype.call;
 export default class EventEmitter<U: ListenerMap> {
@@ -58,11 +58,11 @@ export default class EventEmitter<U: ListenerMap> {
     return this;
   }
 
-  emit<T: Object> (type: T): void {
+  emit<T: Object> (type: T, ...args: Array<any>): void {
     let listeners = this.__events__[type];
     if (!listeners) return;
 
-    let l, args, i;
+    let l, i;
 
     if (typeof listeners === 'object') {
       l = arguments.length;

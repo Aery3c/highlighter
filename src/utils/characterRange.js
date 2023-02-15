@@ -45,6 +45,30 @@ export default class CharacterRange {
     return null
   }
 
+  intersection (another: CharacterRange): CharacterRange | null {
+    another = this._createRelativeCharacterRange(another);
+    if (this.isIntersects(another)) {
+      return new CharacterRange(Math.max(this.start, another.start), Math.min(this.end, another.end), this.referenceNode);
+    }
+
+    return null;
+  }
+
+  complementarySet (another: CharacterRange): CharacterRange[] {
+    const characterRanges = [];
+    another = this._createRelativeCharacterRange(another);
+
+    if (this.start < another.start) {
+      characterRanges.push(new CharacterRange(this.start, another.start, this.referenceNode));
+    }
+
+    if (this.end > another.end) {
+      characterRanges.push(new CharacterRange(another.end, this.end, this.referenceNode));
+    }
+
+    return characterRanges;
+  }
+
   toRange (): Range {
     const range = document.createRange();
     const { start, end } = this;

@@ -4,19 +4,15 @@
 export type RefillsOptions = {|
   tagName?: string;
   className?: string;
-  elAttrs?: Obj;
-  elProps?: Obj;
+  elAttrs?: Object;
+  elProps?: Object;
 |}
 
 export type DefaultRefillsOptions = {|
   tagName: string;
   className: string;
-  elAttrs: Obj;
-  elProps: Obj;
-|}
-
-export type HighlighterOptions = {|
-  ...RefillsOptions,
+  elAttrs: Object;
+  elProps: Object;
 |}
 
 export type UseSelOptions = {|

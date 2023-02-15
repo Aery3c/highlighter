@@ -3,6 +3,7 @@
 
 import CharacterRange from './characterRange';
 import Refills from '../refills';
+import rangeUtils from '../range-utils';
 
 export default class Highlight {
   characterRange: CharacterRange;
@@ -24,5 +25,12 @@ export default class Highlight {
     this.range = this.characterRange.toRange();
     this.refills.wipeToRange(this.range);
     this.applied = false;
+  }
+
+  intersectsNode (node: Node): boolean {
+    const range = document.createRange();
+    range.selectNodeContents(node);
+
+    return rangeUtils.intersectsRange(this.characterRange.toRange(), range);
   }
 }

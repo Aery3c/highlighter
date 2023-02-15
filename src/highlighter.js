@@ -6,23 +6,48 @@ import Refills from './refills';
 import CharacterRange from './utils/characterRange';
 import Highlight from './utils/highlight';
 import rangeUtils from './range-utils';
-import type { HighlighterOptions, UseSelOptions } from './types';
+import { createRefillsOptions } from './utils/createOptions';
+import type { RefillsOptions, UseSelOptions } from './types';
 
 type EventMap = {|
-  click: () => void;
+  click: (highlight: Highlight, el: HTMLElement, event: MouseEvent) => void;
 |}
 
 export default class Highlighter extends EventEmitter<EventMap> {
 
   refills: Refills;
   highlights: Array<Highlight> = [];
-  constructor (options?: HighlighterOptions) {
+  constructor (options?: RefillsOptions) {
     super();
     this.setOptions(options);
   }
 
-  setOptions (options?: HighlighterOptions) {
+  setOptions (options?: RefillsOptions = {}): RefillsOptions {
+    // $FlowIgnore
+    options = createRefillsOptions(options);
+    options.elProps = {
+      ...options.elProps,
+      // $FlowIgnore
+      onclick: this._handleHighlightClick.bind(this)
+    }
     this.refills = new Refills(options);
+
+    return options;
+  }
+
+  _handleHighlightClick (event: MouseEvent) {
+    const el = event.target, highlight = this.getHighlightForElement(el);
+    this.emit('click', highlight, el, event);
+  }
+
+  getHighlightForElement (el: any): Highlight | null {
+    for (let i = 0, highlight; (highlight = this.highlights[i++]);) {
+      if (highlight.intersectsNode(el)) {
+        return highlight;
+      }
+    }
+
+    return null;
   }
 
   useSelection (useSelOptions?: UseSelOptions = {}): Highlight[] {
@@ -88,21 +113,75 @@ export default class Highlighter extends EventEmitter<EventMap> {
     }
   }
 
-  unSelection (useSelOptions?: UseSelOptions = {}): void {
+  unSelection (useSelOptions?: UseSelOptions = {}): Highlight[] {
+    let highlights = [];
     const sel = rangeUtils.getSelection(useSelOptions.selection),
       referenceNode = getReferenceNode(useSelOptions.referenceNodeId);
 
     if (referenceNode) {
       const characterRanges = CharacterRange.fromSelection(sel, referenceNode);
-      this._unCharacterRanges(characterRanges);
+      highlights = this._unCharacterRanges(characterRanges);
 
       restoreSelection(sel, characterRanges);
     }
+
+    return highlights;
   }
 
-  _unCharacterRanges (characterRanges: CharacterRange[]) {
-    console.log(characterRanges);
+  _unCharacterRanges (characterRanges: CharacterRange[]): Highlight[] {
+    const undoToHighlights = [];
+
+    for (let i = 0, characterRange; (characterRange = characterRanges[i++]); ) {
+      if (characterRange.isCollapsed) {
+        continue;
+      }
+
+      for (let j = 0, stockHighlight; (stockHighlight = this.highlights[j]); ++j) {
+        if (characterRange.isIntersects(stockHighlight.characterRange)) {
+          const intersectionCr = characterRange.intersection(stockHighlight.characterRange);
+          if (intersectionCr) {
+            const complementCrs = stockHighlight.characterRange.complementarySet(intersectionCr);
+            complementCrs.forEach(complementCr => {
+              // add complement
+              this.highlights.push(new Highlight(complementCr, this.refills));
+            });
+            undoToHighlights.push(stockHighlight);
+            this.highlights.splice(j--, 1);
+          }
+        }
+      }
+    }
+
+    const unHighlights: Highlight[] = [];
+    undoToHighlights.forEach(highlight => {
+      if (highlight.applied) {
+        highlight.off();
+        unHighlights.push(highlight);
+      }
+    });
+
+    this.highlights.forEach(highlight => {
+      if (!highlight.applied) {
+        highlight.on();
+      }
+    });
+
+    return unHighlights;
   }
+
+  removeHighlight (highlight: Highlight): void {
+    if (highlight instanceof Highlight) {
+      let highlights = this.highlights, index;
+      if ((index = highlights.indexOf(highlight)) > -1) {
+        if (highlight.applied) {
+          highlight.off();
+        }
+
+        highlights.splice(index, 1);
+      }
+    }
+  }
+
 }
 
 function getReferenceNode (id?: string): HTMLElement | null {
