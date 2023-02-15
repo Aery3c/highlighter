@@ -1,16 +1,8 @@
+// @flow
 'use strict'
 
-import core from '@/core';
-import dom from '@/dom';
-import utils from '@/utils';
-import Refills from '@/refills';
-import Highlighter from '@/highlighter';
-
-export {
-  dom,
-  utils,
-  Refills,
-  Highlighter
-}
-
-export default core;
+export { default as Refills } from './refills';
+export { default as Highlighter } from './highlighter';
+export { default as domUtils } from './dom-utils';
+export { default as rangeUtils } from './range-utils';
+export { default as CharacterRange } from './utils/characterRange';

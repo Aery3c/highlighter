@@ -1,7 +1,10 @@
-.idea/
 node_modules/
+.DS_Store
+.idea/
+.vscode/
+package-lock.json
+yarn-error.log
 yarn.lock
 dist/
 build/
-.DS_Store
 coverage/

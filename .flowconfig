@@ -1,0 +1,9 @@
+[ignore]
+.*/scripts/.*
+.*/node_modules/.*
+.*/.config/.*
+[declarations]
+<PROJECT_ROOT>/node_modules
+[options]
+enums=true
+

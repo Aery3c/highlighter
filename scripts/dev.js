@@ -4,14 +4,14 @@
 const webpack = require('webpack');
 const WebpackDevServer = require('webpack-dev-server');
 const fs = require('fs');
-const paths = require('./config/paths');
+const paths = require('./paths');
 const { choosePort, prepareUrls } = require('react-dev-utils/WebpackDevServerUtils');
 const output = require('friendly-errors-webpack-plugin/src/output');
 const openBrowser = require('react-dev-utils/openBrowser');
 const clearConsole = require('react-dev-utils/clearConsole');
-const configFactory = require('./config/webpack.config');
-const createCompiler = require('./utils/createCompiler');
-const createDevServerConfig = require('./config/server');
+const configFactory = require('../.config/webpack.config');
+const createCompiler = require('./createCompiler');
+const createDevServerConfig = require('./server');
 
 const useYarn = fs.existsSync(paths.yarnLockFile);
 const appName = require(paths.appPackageJson).name;
@@ -41,7 +41,7 @@ choosePort(HOST, DEFAULT_PORT)
     const serverConfig = {
       ...createDevServerConfig(),
       static: {
-        directory: paths.appBuild,
+        directory: paths.dist,
         serveIndex: true,
       },
       port
@@ -60,9 +60,7 @@ choosePort(HOST, DEFAULT_PORT)
       ['SIGINT', 'SIGTERM'].forEach(function (sig) {
         process.on(sig, function () {
           devServer.close();
-          fs.rmdirSync(paths.appBuild, { recursive: true });
           console.log();
-          output.info(`rmdir to ${paths.appBuild}`);
           console.log();
           process.exit();
         });
