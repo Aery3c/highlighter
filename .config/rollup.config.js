@@ -8,7 +8,7 @@ const getFileName = (input) => {
   return arr[arr.length - 1].split('.')[0];
 }
 
-const inputs = ['src/refills.js'];
+const inputs = ['src/refills.js', 'src/highlighter.js'];
 const bundles = [
   { inputs, format: 'umd', dir: 'build', minify: true, flow: true },
   { inputs, format: 'umd', dir: 'build' },

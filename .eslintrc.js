@@ -22,6 +22,7 @@ module.exports = {
   rules: {
     "no-debugger": "off",
     "no-unused-vars": [1, { 'argsIgnorePattern': '_' }],
-    "no-empty": "off"
+    "no-empty": "off",
+    "ft-flow/define-flow-type": "off"
   }
 };

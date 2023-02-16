@@ -1,4 +1,5 @@
 // @flow
+/* global $Values */
 'use strict'
 
 type Listener = (...args: Array<any>) => void;
@@ -10,7 +11,7 @@ export default class EventEmitter<U: ListenerMap> {
     this.__events__ = {};
   }
 
-  on<T: Object> (type: T, listener: U[T]): EventEmitter<U> {
+  on<T: string> (type: T, listener: $Values<U>): EventEmitter<U> {
     const data = this.__events__;
     if (!data[type]) data[type] = listener;
     else if (typeof data[type] === 'object') data[type].push(listener);
@@ -19,7 +20,7 @@ export default class EventEmitter<U: ListenerMap> {
     return this;
   }
 
-  once<T: Object> (type: T, listener: U[T]): EventEmitter<U> {
+  once<T: string> (type: T, listener: $Values<U>): EventEmitter<U> {
     let once, self;
 
     self = this;
@@ -34,7 +35,7 @@ export default class EventEmitter<U: ListenerMap> {
     return this;
   }
 
-  off<T: Object> (type: T, listener: U[T]): EventEmitter<U> {
+  off<T: string> (type: T, listener: $Values<U>): EventEmitter<U> {
     const data = this.__events__;
     if (!data[type]) return this;
 
@@ -58,7 +59,7 @@ export default class EventEmitter<U: ListenerMap> {
     return this;
   }
 
-  emit<T: Object> (type: T, ...args: Array<any>): void {
+  emit<T: string> (type: T, ...args: Array<any>): void {
     let listeners = this.__events__[type];
     if (!listeners) return;
 
