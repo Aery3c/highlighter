@@ -33,4 +33,12 @@ export default class Highlight {
 
     return rangeUtils.intersectsRange(this.characterRange.toRange(), range);
   }
+
+  getText (): string {
+    return this.toRange().toString();
+  }
+
+  toRange (): Range {
+    return this.characterRange.toRange();
+  }
 }
