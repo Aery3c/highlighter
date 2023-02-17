@@ -53,7 +53,8 @@
     "build:es": "babel src -d lib",
     "build:typescript": "flow-to-ts \"src/**/*.js\" --write --inline-utility-types; tsc-silent --project .config/tsconfig.json --createSourceFile .config/createSourceFile.js --suppress @; rimraf --no-preserve-root src/**/*.ts",
     "build:bundles": "rimraf build && rollup --bundleConfigAsCjs -c .config/rollup.config.js",
-    "build": "yarn clean && yarn build:es && yarn build:bundles && yarn build:typescript"
+    "build": "yarn clean && yarn build:es && yarn build:bundles && yarn build:typescript",
+    "build:remove": "rimraf --no-preserve-root src/**/*.ts"
   },
   "babel": {
     "extends": "./.config/babel.config"
