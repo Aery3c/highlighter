@@ -7,7 +7,7 @@ import CharacterRange from './utils/characterRange';
 import Highlight from './utils/highlight';
 import rangeUtils from './range-utils';
 import { createRefillsOptions } from './utils/createOptions';
-import type { RefillsOptions, UseSelOptions, DefaultRefillsOptions } from './types';
+import type { RefillsOptions, UseSelOptions, DefaultRefillsOptions, Serialize } from './types';
 
 type EventMap = {|
   click: (highlight: Highlight, el: HTMLElement, event: MouseEvent) => void;
@@ -181,6 +181,33 @@ export default class Highlighter extends EventEmitter<EventMap> {
         highlights.splice(index, 1);
       }
     }
+  }
+
+  serialize (): Serialize[] {
+    return this.highlights.map(
+      highlight => ({
+        start: highlight.characterRange.start,
+        end: highlight.characterRange.end,
+        // $FlowIgnore
+        referenceNodeId: highlight.characterRange.referenceNode.id,
+        className: this.options.className,
+        text: highlight.getText()
+      })
+    );
+  }
+
+  deserialize (serialized: Serialize[]): void {
+    const highlights = [];
+    serialized.forEach(({ start, end, referenceNodeId }) => {
+      const referenceNode = getReferenceNode(referenceNodeId);
+      if (referenceNode) {
+        const highlight = new Highlight(new CharacterRange(start, end, referenceNode), this.refills);
+        highlight.on();
+        highlights.push(highlight);
+      }
+    });
+
+    this.highlights = highlights;
   }
 
 }

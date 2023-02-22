@@ -22,4 +22,12 @@ export type UseSelOptions = {|
   referenceNodeId?: string;
 |}
 
+export type Serialize = {|
+  start: number;
+  end: number;
+  className?: string;
+  referenceNodeId?: string;
+  text?: string;
+|}
+
 export type Obj = { [key: string]: any };
