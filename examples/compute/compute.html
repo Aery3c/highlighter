@@ -5,12 +5,8 @@
   <title>compute</title>
   <style>
     #container {
-      height: 300px;
-      overflow: scroll;
-    }
-
-    .placeholder {
-      height: 150px;
+      height: 200px;
+      overflow-y: scroll;
     }
 
     .highlight {
@@ -107,22 +103,20 @@
 
   <!--      <img />-->
   <div id="container">
-    <div class="placeholder"></div>
-    <h2 id="target">What Is a Nash Equilibrium and How Do You Find One?</h2>
-    <div class="placeholder"></div>
+    <h2>What Is a Nash Equilibrium and How Do You Find One?</h2>
+    <p>The definition of a Nash equilibrium is an outcome of a game in which none of the players wants to switch
+      strategies if the others don't. The Prisoner's Dilemma has one Nash equilibrium, namely 7,7 which corresponds to
+      both players telling the truth. If player A would switch to lie while player B stays with telling the truth
+      player A would get 10 years in prison, so he won't switch. The same holds for player B.</p>
+    <p id="start">
+      It seems like 3,3 is a better solution than 7,7. However, 3,3 is not a Nash equilibrium. If the players end up
+      in 3,3 then if a player switches from lie to tell truth he reduces his penalty to 1 year if the other stays with
+      lie.
+    </p>
+    <h2 id="end">Games With Multiple Nash Equilibria</h2>
+    <p>It is possible for a game to have multiple Nash equilibria. An example is shown in the table below. In this
+      example payoffs are positive. So a higher number is better.</p>
   </div>
-  <p>The definition of a Nash equilibrium is an outcome of a game in which none of the players wants to switch
-    strategies if the others don't. The Prisoner's Dilemma has one Nash equilibrium, namely 7,7 which corresponds to
-    both players telling the truth. If player A would switch to lie while player B stays with telling the truth
-    player A would get 10 years in prison, so he won't switch. The same holds for player B.</p>
-  <p>
-    It seems like 3,3 is a better solution than 7,7. However, 3,3 is not a Nash equilibrium. If the players end up
-    in 3,3 then if a player switches from lie to tell truth he reduces his penalty to 1 year if the other stays with
-    lie.
-  </p>
-  <h2>Games With Multiple Nash Equilibria</h2>
-  <p>It is possible for a game to have multiple Nash equilibria. An example is shown in the table below. In this
-    example payoffs are positive. So a higher number is better.</p>
 
   <div>
     <table>

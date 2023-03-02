@@ -5,13 +5,18 @@ import Highlight from '../../src/utils/highlight';
 import Refills from '../../src/refills';
 import { CharacterRange } from "../../src";
 
-const target = document.querySelector('#target');
+const start = (document.querySelector('#start'): any);
+const end = (document.querySelector('#end'): any);
 const range = document.createRange();
-if (target) {
-  range.selectNodeContents(target);
-  const highlight = new Highlight(CharacterRange.fromRange(range, target.ownerDocument), new Refills());
-  highlight.on();
-}
+
+range.setStartBefore(start);
+range.setEndAfter(end);
+const highlight = new Highlight(CharacterRange.fromRange(range, range.commonAncestorContainer.ownerDocument), new Refills());
+highlight.on();
+const res = compute(range, {});
+res.forEach(({ el, top, left }) => {
+  el.scrollTo({ top, left, behavior: 'smooth' });
+});
 
 type Options = {|
   scrollMode?: 'always' | 'if-needed';
@@ -26,16 +31,16 @@ function compute (target: Range, options: Options) {
 
   // Collect all the scrolling boxes, as defined in the spec: https://drafts.csswg.org/cssom-view/#scrolling-box
   let frames: Element[] = [];
-  let cursor = target.commonAncestorContainer;
-  while (cursor) {
+  let cursor = isElement(target.commonAncestorContainer);
+  while (!!cursor) {
     if (cursor === scrollingElement) {
-      // $FlowIgnore
       frames.push(cursor);
       break;
     }
 
-
-
+    if (isScrollable(cursor)) {
+      frames.push(cursor);
+    }
     // $FlowIgnore
     cursor = cursor.parentElement;
   }
@@ -90,19 +95,40 @@ function compute (target: Range, options: Options) {
         // block === 'center' is the default
         blockScroll = targetBlock - viewportHeight / 2
       }
-      console.log(blockScroll + scrollY);
-      // blockScroll = Math.max(0, blockScroll + scrollY)
-      // inlineScroll = Math.max(0, inlineScroll + scrollX)
+      blockScroll = Math.max(0, blockScroll + scrollY)
+      inlineScroll = Math.max(0, inlineScroll + scrollX)
+    } else {
+      // blockScroll = targetBlock - (top + height / 2) + scrollbarHeight / 2
     }
 
-    computations.push({ el: frame, top: blockScroll })
+    computations.push({ el: frame, top: blockScroll, left: inlineScroll })
   })
   console.log(computations);
   return computations;
 }
 
-const res = compute(range, {});
-res.forEach(({ el, top }) => {
-  // $FlowIgnore
-  el.scrollTo({ top, left: 0, behavior: 'smooth' });
-});
+function isElement (el: any): Element | null {
+  if (el && el.nodeType === Node.ELEMENT_NODE) {
+    return el;
+  }
+
+  return null
+}
+
+function canOverflow (overflow: 'visible' | 'hidden' | 'clip' | 'scroll' | 'auto'): boolean {
+  if (overflow === 'hidden') return false;
+
+  return overflow !== 'visible' && overflow !== 'clip';
+}
+
+function isScrollable (el: Element): boolean {
+  if (el.clientHeight < el.scrollHeight || el.clientWidth < el.scrollWidth) {
+    const style = window.getComputedStyle(el);
+
+    return (
+      canOverflow(style.overflowY) || canOverflow(style.overflowX)
+    );
+  }
+
+  return false;
+}
