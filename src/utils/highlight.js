@@ -4,7 +4,13 @@
 import CharacterRange from './characterRange';
 import Refills from '../refills';
 import rangeUtils from '../range-utils';
+import { compute } from './compute';
+import type { Options } from './compute';
 
+type StandardBehaviorOptions = {|
+  ...Options;
+  behavior: 'auto' | 'smooth';
+|}
 export default class Highlight {
   characterRange: CharacterRange;
   refills: Refills;
@@ -34,6 +40,13 @@ export default class Highlight {
     return rangeUtils.intersectsRange(this.characterRange.toRange(), range);
   }
 
+  scrollIntoView (options?: StandardBehaviorOptions | boolean): void {
+    let behavior = typeof options === 'boolean' ? undefined : options?.behavior
+    compute(this.characterRange.toRange(), getOptions()).forEach(({ el, top, left }) => {
+      el.scrollTo({ top, left, behavior });
+    });
+  }
+
   getText (): string {
     return this.toRange().toString();
   }
@@ -41,4 +54,12 @@ export default class Highlight {
   toRange (): Range {
     return this.characterRange.toRange();
   }
+}
+
+function getOptions (alignToTop?: boolean): Options {
+  if (alignToTop === false) {
+    return { block: 'end', inline: 'nearest' }
+  }
+
+  return { block: 'start', inline: 'nearest' }
 }
