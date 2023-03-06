@@ -9,7 +9,7 @@ import type { Options } from './compute';
 
 type StandardBehaviorOptions = {|
   ...Options;
-  behavior: 'auto' | 'smooth';
+  behavior?: 'auto' | 'smooth';
 |}
 export default class Highlight {
   characterRange: CharacterRange;
@@ -43,7 +43,7 @@ export default class Highlight {
   scrollIntoView (options?: StandardBehaviorOptions | boolean): void {
     let behavior = typeof options === 'boolean' ? undefined : options?.behavior
     compute(this.characterRange.toRange(), getOptions(options)).forEach(({ el, top, left }) => {
-      el.scrollTo({ top, left, behavior });
+      el.scrollTo({ top, left, behavior: behavior });
     });
   }
 
@@ -61,7 +61,9 @@ function getOptions (options?: any): Options {
     return { block: 'end', inline: 'nearest' }
   }
 
+  // $FlowIgnore
   if (options === Object(options) && Object.keys(options).length !== 0) {
+    // $FlowIgnore
     return options;
   }
 

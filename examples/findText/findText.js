@@ -14,7 +14,7 @@ function getCharacterRanges (text: string, referenceNode: Element): CharacterRan
   });
 }
 
-function* generator (text: string, referenceNode: Element) {
+function* generator (text: string, referenceNode: Element): any {
   let count = 0, results = getCharacterRanges(text, referenceNode);
   while (results.length) {
     yield results[count++];
@@ -28,7 +28,7 @@ let characterRangeStore, highlights = [], next = null;
 const el = document.querySelector('#search'),
   referenceNode = document.body;
 
-el.addEventListener('input', debounce(function (e) {
+el?.addEventListener('input', debounce(function (e) {
   let highlight;
   while ((highlight = highlights.pop())) {
     highlight.off();
@@ -41,7 +41,9 @@ el.addEventListener('input', debounce(function (e) {
 
   const value = e.target.value;
   if (value) {
+    // $FlowIgnore
     characterRangeStore = generator(value, referenceNode);
+    // $FlowIgnore
     const results = getCharacterRanges(value, referenceNode);
     results.forEach((cr, indxex) => {
       highlight = new Highlight(cr, refillsYellow);
@@ -55,7 +57,7 @@ el.addEventListener('input', debounce(function (e) {
 
 }, 200));
 
-el.addEventListener('keyup', debounce(function (e) {
+el?.addEventListener('keyup', debounce(function (e) {
   if (e.keyCode === 13) {
     if (next) {
       next.off();
@@ -65,6 +67,7 @@ el.addEventListener('keyup', debounce(function (e) {
     if (value) {
       next = new Highlight(characterRangeStore.next().value, refillsOrange);
       next.on();
+      // $FlowIgnore
       next.scrollIntoView({ scrollMode: 'if-needed', block: 'center' })
     }
   }
