@@ -50,10 +50,11 @@
     "test": "jest",
     "flow": "flow",
     "dev": "yarn clean; node scripts/dev.js",
+    "build:examples": "node scripts/build.js",
     "build:es": "babel src -d lib",
     "build:typescript": "flow-to-ts \"src/**/*.js\" --write --inline-utility-types; tsc-silent --project .config/tsconfig.json --createSourceFile .config/createSourceFile.js --suppress @; rimraf --no-preserve-root src/**/*.ts",
     "build:bundles": "rimraf build && rollup --bundleConfigAsCjs -c .config/rollup.config.js",
-    "build": "yarn clean && yarn build:es && yarn build:bundles && yarn build:typescript",
+    "build": "yarn clean && yarn build:es && yarn build:bundles && yarn build:typescript && yarn build:examples",
     "build:remove": "rimraf --no-preserve-root src/**/*.ts"
   },
   "babel": {
