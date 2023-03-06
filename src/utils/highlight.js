@@ -42,7 +42,7 @@ export default class Highlight {
 
   scrollIntoView (options?: StandardBehaviorOptions | boolean): void {
     let behavior = typeof options === 'boolean' ? undefined : options?.behavior
-    compute(this.characterRange.toRange(), getOptions()).forEach(({ el, top, left }) => {
+    compute(this.characterRange.toRange(), getOptions(options)).forEach(({ el, top, left }) => {
       el.scrollTo({ top, left, behavior });
     });
   }
@@ -56,9 +56,13 @@ export default class Highlight {
   }
 }
 
-function getOptions (alignToTop?: boolean): Options {
-  if (alignToTop === false) {
+function getOptions (options?: any): Options {
+  if (options === false) {
     return { block: 'end', inline: 'nearest' }
+  }
+
+  if (options === Object(options) && Object.keys(options).length !== 0) {
+    return options;
   }
 
   return { block: 'start', inline: 'nearest' }
