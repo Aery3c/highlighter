@@ -4,7 +4,7 @@
 import type { RefillsOptions, DefaultRefillsOptions } from '../types';
 
 import { each } from './each';
-export function createRefillsOptions (options?: RefillsOptions = {}): DefaultRefillsOptions {
+export function createRefillsOptions (options: RefillsOptions = {}): DefaultRefillsOptions {
   const defaultOptions = {
     tagName: 'span',
     className: 'highlight',
@@ -22,4 +22,3 @@ export function createRefillsOptions (options?: RefillsOptions = {}): DefaultRef
 
   return defaultOptions;
 }
-
