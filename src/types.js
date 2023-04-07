@@ -9,13 +9,9 @@ export type RefillsOptions = {|
   normalize?: boolean;
 |}
 
-export type DefaultRefillsOptions = {|
-  tagName: string;
-  className: string;
-  elAttrs: Object;
-  elProps: Object;
-  normalize: boolean;
-|}
+// eslint-disable-next-line no-undef
+// $FlowIgnore
+export type DefaultRefillsOptions = Required<RefillsOptions>;
 
 export type UseSelOptions = {|
   selection?: Selection;
