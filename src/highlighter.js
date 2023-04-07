@@ -6,34 +6,42 @@ import Refills from './refills';
 import CharacterRange from './utils/characterRange';
 import Highlight from './utils/highlight';
 import rangeUtils from './range-utils';
-import { createRefillsOptions } from './utils/createOptions';
 import type { RefillsOptions, UseSelOptions, DefaultRefillsOptions, Serialize } from './types';
 
 type EventMap = {|
   click: (highlight: Highlight, el: HTMLElement, event: MouseEvent) => void;
 |}
 
+const defaultOptions = {
+  tagName: 'span',
+  className: 'highlight',
+  elAttrs: {},
+  elProps: {},
+  normalize: true
+}
+
 export default class Highlighter extends EventEmitter<EventMap> {
 
   refills: Refills;
   highlights: Array<Highlight> = [];
-  options: DefaultRefillsOptions;
-  constructor (options?: RefillsOptions) {
+  options: DefaultRefillsOptions = defaultOptions;
+  constructor (options: RefillsOptions = {}) {
     super();
-    this.options = this.setOptions(options);
+    this.setOptions(options);
   }
 
-  setOptions (options?: RefillsOptions = {}): DefaultRefillsOptions {
-    // $FlowIgnore
-    options = createRefillsOptions(options);
-    options.elProps = {
-      ...options.elProps,
-      // $FlowIgnore
-      onclick: this._handleHighlightClick.bind(this)
+  setOptions (options: RefillsOptions = {}): DefaultRefillsOptions {
+    this.options = {
+      ...this.options,
+      ...options,
+      elProps: {
+        ...options.elProps,
+        // $FlowIgnore
+        onclick: this._handleHighlightClick.bind(this)
+      }
     }
-    this.refills = new Refills(options);
-    // $FlowIgnore
-    return options;
+
+    this.refills = new Refills(this.options);
   }
 
   _handleHighlightClick (event: MouseEvent) {
@@ -51,7 +59,7 @@ export default class Highlighter extends EventEmitter<EventMap> {
     return null;
   }
 
-  useSelection (useSelOptions?: UseSelOptions = {}): Highlight[] {
+  useSelection (useSelOptions: UseSelOptions = {}): Highlight[] {
     let highlights = [];
     const sel = rangeUtils.getSelection(useSelOptions.selection),
       referenceNode = getReferenceNode(useSelOptions.referenceNodeId);
@@ -76,7 +84,7 @@ export default class Highlighter extends EventEmitter<EventMap> {
       }
 
       let isEqual = false;
-      for (let j = 0, stockHighlight; (stockHighlight = this.highlights[j]); ++j) {
+      for (let j = 0, stockHighlight; (stockHighlight = this.highlights[j]) && this.options.normalize; ++j) {
 
         if (characterRange.isEqual(stockHighlight.characterRange)) {
           isEqual = true;
@@ -114,7 +122,7 @@ export default class Highlighter extends EventEmitter<EventMap> {
     }
   }
 
-  unSelection (useSelOptions?: UseSelOptions = {}): Highlight[] {
+  unSelection (useSelOptions: UseSelOptions = {}): Highlight[] {
     let highlights = [];
     const sel = rangeUtils.getSelection(useSelOptions.selection),
       referenceNode = getReferenceNode(useSelOptions.referenceNodeId);
@@ -198,7 +206,10 @@ export default class Highlighter extends EventEmitter<EventMap> {
 
   deserialize (serialized: Serialize[]): void {
     const highlights = [];
-    serialized.forEach(({ start, end, referenceNodeId }) => {
+    serialized.forEach(({ start, end, referenceNodeId, className }) => {
+      if (className !== this.options.className) {
+        this.setOptions({ className });
+      }
       const referenceNode = getReferenceNode(referenceNodeId);
       if (referenceNode) {
         const highlight = new Highlight(new CharacterRange(start, end, referenceNode), this.refills);
