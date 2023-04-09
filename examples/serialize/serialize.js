@@ -25,7 +25,7 @@ document.getElementById('submit')?.addEventListener('click', () => {
 });
 
 highlighter.on('click', (highlight) => {
-  if (window.confirm('remove highlight ??')) {
+  if (window.confirm(`remove highlight ${highlight.highlightId} ??`)) {
     highlighter.removeHighlight(highlight);
     const serialize = JSON.stringify(highlighter.serialize());
     setCookie(cookieKey, serialize);

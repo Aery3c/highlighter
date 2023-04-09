@@ -46,7 +46,7 @@ el?.addEventListener('input', debounce(function (e) {
     // $FlowIgnore
     const results = getCharacterRanges(value, referenceNode);
     results.forEach((cr, indxex) => {
-      highlight = new Highlight(cr, refillsYellow);
+      highlight = new Highlight(cr, null, refillsYellow);
       highlights.push(highlight);
       highlight.on();
       if (indxex === 0) {
@@ -65,7 +65,7 @@ el?.addEventListener('keyup', debounce(function (e) {
 
     const value = e.target.value;
     if (value) {
-      next = new Highlight(characterRangeStore.next().value, refillsOrange);
+      next = new Highlight(characterRangeStore.next().value, null, refillsOrange);
       next.on();
       // $FlowIgnore
       next.scrollIntoView({ scrollMode: 'if-needed', block: 'center' })

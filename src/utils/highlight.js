@@ -11,14 +11,24 @@ type StandardBehaviorOptions = {|
   ...Options;
   behavior?: 'auto' | 'smooth';
 |}
+
+let nextHighlightId = 1;
+
 export default class Highlight {
   characterRange: CharacterRange;
   refills: Refills;
   applied: boolean = false;
   range: Range;
-  constructor (characterRange: CharacterRange, refills: Refills) {
+  highlightId: number;
+  constructor (characterRange: CharacterRange, highlightId: number | null, refills: Refills) {
     this.characterRange = characterRange;
     this.refills = refills;
+    if (highlightId) {
+      this.highlightId = highlightId;
+      nextHighlightId = Math.max(nextHighlightId, highlightId + 1);
+    } else {
+      this.highlightId = nextHighlightId++;
+    }
   }
 
   on (): void {

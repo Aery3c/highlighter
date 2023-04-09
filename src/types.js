@@ -21,6 +21,7 @@ export type UseSelOptions = {|
 export type Serialize = {|
   start: number;
   end: number;
+  highlightId: number;
   className?: string;
   referenceNodeId?: string;
   text?: string;

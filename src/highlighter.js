@@ -100,7 +100,7 @@ export default class Highlighter extends EventEmitter<EventMap> {
       }
 
       if (!isEqual && characterRange) {
-        this.highlights.push(new Highlight(characterRange, this.refills));
+        this.highlights.push(new Highlight(characterRange, null, this.refills));
       }
 
       undoToHighligts.forEach(highlight => {
@@ -152,7 +152,7 @@ export default class Highlighter extends EventEmitter<EventMap> {
             const complementCrs = stockHighlight.characterRange.complementarySet(intersectionCr);
             complementCrs.forEach(complementCr => {
               // add complement
-              this.highlights.push(new Highlight(complementCr, this.refills));
+              this.highlights.push(new Highlight(complementCr, null, this.refills));
             });
             undoToHighlights.push(stockHighlight);
             this.highlights.splice(j--, 1);
@@ -196,6 +196,7 @@ export default class Highlighter extends EventEmitter<EventMap> {
       highlight => ({
         start: highlight.characterRange.start,
         end: highlight.characterRange.end,
+        highlightId: highlight.highlightId,
         // $FlowIgnore
         referenceNodeId: highlight.characterRange.referenceNode.id,
         className: this.options.className,
@@ -206,13 +207,13 @@ export default class Highlighter extends EventEmitter<EventMap> {
 
   deserialize (serialized: Serialize[]): void {
     const highlights = [];
-    serialized.forEach(({ start, end, referenceNodeId, className }) => {
+    serialized.forEach(({ start, end, highlightId, referenceNodeId, className }) => {
       if (className !== this.options.className) {
         this.setOptions({ className });
       }
       const referenceNode = getReferenceNode(referenceNodeId);
       if (referenceNode) {
-        const highlight = new Highlight(new CharacterRange(start, end, referenceNode), this.refills);
+        const highlight = new Highlight(new CharacterRange(start, end, referenceNode), highlightId, this.refills);
         highlight.on();
         highlights.push(highlight);
       }
