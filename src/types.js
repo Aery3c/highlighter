@@ -1,5 +1,8 @@
 // @flow
+/* eslint-disable no-undef */
 'use strict'
+
+export type Obj = { [key: string]: any };
 
 export type RefillsOptions = {|
   tagName?: string;
@@ -18,6 +21,10 @@ export type UseSelOptions = {|
   referenceNodeId?: string;
 |}
 
+export type UseRangeOptions = {|
+  ...UseSelOptions
+|}
+
 export type Serialize = {|
   start: number;
   end: number;
@@ -27,4 +34,9 @@ export type Serialize = {|
   text?: string;
 |}
 
-export type Obj = { [key: string]: any };
+export type HighlighterOptions = {|
+  ...RefillsOptions
+|};
+
+// $FlowIgnore
+export type DefaultHighlighterOptions = Required<HighlighterOptions>;
